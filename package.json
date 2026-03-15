@@ -1,0 +1,18 @@
+{
+  "name": "maistar",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm exec cnako3 server.nako3",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "nadesiko3": "^3.7.16",
+    "nadesiko3-websocket": "^3.6.5"
+  }
+}

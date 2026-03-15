@@ -1,0 +1,21 @@
+# 依存関係
+node_modules/
+
+# 環境変数
+.env
+.env.local
+
+# ログ
+*.log
+npm-debug.log*
+
+# OS系
+.DS_Store
+Thumbs.db
+
+# エディタ系
+.vscode/
+*.swp
+
+# なでしこ3のキャッシュ
+*.nako3c
