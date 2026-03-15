@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npm exec cnako3 server.nako3",
+    "start": "npm exec cnako3 server/server.nako3",
+    "client": "npx serve client",
+    "dev": "concurrently \"npm start\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
