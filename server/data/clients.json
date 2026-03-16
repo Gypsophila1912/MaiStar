@@ -1,0 +1,710 @@
+{
+  "version": 5,
+  "note": "10種類の客カード定義。各種類は赤青緑の3色があり各色2枚(合計60枚)。typeIdは使わず、各カード実体をcardNo連番で扱う。 effectIdは廃止し、効果文はefextTextに統一。効果分岐はカード名で行う。",
+  "deckRule": {
+    "colors": [
+      "red",
+      "blue",
+      "green"
+    ],
+    "copiesPerColor": 2,
+    "copiesPerType": 6,
+    "totalTypes": 10,
+    "totalCardsFromThisSet": 60,
+    "promoColorFollowsCardColor": true,
+    "yakushaPromoIsAllPlus1": true,
+    "thisSetIsSubset": true,
+    "instanceNumbering": "cardNo(1..N)"
+  },
+  "cardTypes": [
+    {
+      "name": "遊女",
+      "condition": 3,
+      "income": 0,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "同色かつ条件を満たすカード1枚を客として出す"
+    },
+    {
+      "name": "商人",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "1人が2枚引く or 自分が2枚引き1枚捨てる"
+    },
+    {
+      "name": "力士",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "1人の手札をランダムに1枚捨てる"
+    },
+    {
+      "name": "侍",
+      "condition": 6,
+      "income": 5,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "1人の最新の評判を自分の評判に加える"
+    },
+    {
+      "name": "盗人",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "1人の最新の客を捨て札にする"
+    },
+    {
+      "name": "役者",
+      "condition": 5,
+      "income": 5,
+      "promo": 1,
+      "promoColorRule": "all",
+      "efextText": "-"
+    },
+    {
+      "name": "町人",
+      "condition": 1,
+      "income": 2,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "1人が1枚引く or 自分が1枚引き1枚捨てる"
+    },
+    {
+      "name": "医師",
+      "condition": 7,
+      "income": 5,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "追加で1回の手番を行う"
+    },
+    {
+      "name": "用心棒",
+      "condition": 2,
+      "income": 2,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "客から捨てて他人の効果を無効化する"
+    },
+    {
+      "name": "やくざ",
+      "condition": 3,
+      "income": 3,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "efextText": "1人を休業状態にする"
+    }
+  ],
+  "catalog": {
+    "setId": "citizens-core-v1",
+    "setName": "Citizens Core",
+    "isCompleteCardPool": false,
+    "description": "This file represents one subset (60 cards) and can be combined with other sets later.",
+    "instanceIdPolicy": "No typeId; each physical card has unique cardNo."
+  },
+  "cardInstances": [
+    {
+      "cardNo": 1,
+      "name": "遊女",
+      "color": "red",
+      "condition": 3,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "同色かつ条件を満たすカード1枚を客として出す"
+    },
+    {
+      "cardNo": 2,
+      "name": "遊女",
+      "color": "red",
+      "condition": 3,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "同色かつ条件を満たすカード1枚を客として出す"
+    },
+    {
+      "cardNo": 3,
+      "name": "遊女",
+      "color": "blue",
+      "condition": 3,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "同色かつ条件を満たすカード1枚を客として出す"
+    },
+    {
+      "cardNo": 4,
+      "name": "遊女",
+      "color": "blue",
+      "condition": 3,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "同色かつ条件を満たすカード1枚を客として出す"
+    },
+    {
+      "cardNo": 5,
+      "name": "遊女",
+      "color": "green",
+      "condition": 3,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "同色かつ条件を満たすカード1枚を客として出す"
+    },
+    {
+      "cardNo": 6,
+      "name": "遊女",
+      "color": "green",
+      "condition": 3,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "同色かつ条件を満たすカード1枚を客として出す"
+    },
+    {
+      "cardNo": 7,
+      "name": "商人",
+      "color": "red",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人が2枚引く or 自分が2枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 8,
+      "name": "商人",
+      "color": "red",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人が2枚引く or 自分が2枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 9,
+      "name": "商人",
+      "color": "blue",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人が2枚引く or 自分が2枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 10,
+      "name": "商人",
+      "color": "blue",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人が2枚引く or 自分が2枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 11,
+      "name": "商人",
+      "color": "green",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人が2枚引く or 自分が2枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 12,
+      "name": "商人",
+      "color": "green",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人が2枚引く or 自分が2枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 13,
+      "name": "力士",
+      "color": "red",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人の手札をランダムに1枚捨てる"
+    },
+    {
+      "cardNo": 14,
+      "name": "力士",
+      "color": "red",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人の手札をランダムに1枚捨てる"
+    },
+    {
+      "cardNo": 15,
+      "name": "力士",
+      "color": "blue",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人の手札をランダムに1枚捨てる"
+    },
+    {
+      "cardNo": 16,
+      "name": "力士",
+      "color": "blue",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人の手札をランダムに1枚捨てる"
+    },
+    {
+      "cardNo": 17,
+      "name": "力士",
+      "color": "green",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人の手札をランダムに1枚捨てる"
+    },
+    {
+      "cardNo": 18,
+      "name": "力士",
+      "color": "green",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人の手札をランダムに1枚捨てる"
+    },
+    {
+      "cardNo": 19,
+      "name": "侍",
+      "color": "red",
+      "condition": 6,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人の最新の評判を自分の評判に加える"
+    },
+    {
+      "cardNo": 20,
+      "name": "侍",
+      "color": "red",
+      "condition": 6,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人の最新の評判を自分の評判に加える"
+    },
+    {
+      "cardNo": 21,
+      "name": "侍",
+      "color": "blue",
+      "condition": 6,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人の最新の評判を自分の評判に加える"
+    },
+    {
+      "cardNo": 22,
+      "name": "侍",
+      "color": "blue",
+      "condition": 6,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人の最新の評判を自分の評判に加える"
+    },
+    {
+      "cardNo": 23,
+      "name": "侍",
+      "color": "green",
+      "condition": 6,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人の最新の評判を自分の評判に加える"
+    },
+    {
+      "cardNo": 24,
+      "name": "侍",
+      "color": "green",
+      "condition": 6,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人の最新の評判を自分の評判に加える"
+    },
+    {
+      "cardNo": 25,
+      "name": "盗人",
+      "color": "red",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人の最新の客を捨て札にする"
+    },
+    {
+      "cardNo": 26,
+      "name": "盗人",
+      "color": "red",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人の最新の客を捨て札にする"
+    },
+    {
+      "cardNo": 27,
+      "name": "盗人",
+      "color": "blue",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人の最新の客を捨て札にする"
+    },
+    {
+      "cardNo": 28,
+      "name": "盗人",
+      "color": "blue",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人の最新の客を捨て札にする"
+    },
+    {
+      "cardNo": 29,
+      "name": "盗人",
+      "color": "green",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人の最新の客を捨て札にする"
+    },
+    {
+      "cardNo": 30,
+      "name": "盗人",
+      "color": "green",
+      "condition": 4,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人の最新の客を捨て札にする"
+    },
+    {
+      "cardNo": 31,
+      "name": "役者",
+      "color": "red",
+      "condition": 5,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 32,
+      "name": "役者",
+      "color": "red",
+      "condition": 5,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 33,
+      "name": "役者",
+      "color": "blue",
+      "condition": 5,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 34,
+      "name": "役者",
+      "color": "blue",
+      "condition": 5,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 35,
+      "name": "役者",
+      "color": "green",
+      "condition": 5,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 36,
+      "name": "役者",
+      "color": "green",
+      "condition": 5,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 37,
+      "name": "町人",
+      "color": "red",
+      "condition": 1,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人が1枚引く or 自分が1枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 38,
+      "name": "町人",
+      "color": "red",
+      "condition": 1,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人が1枚引く or 自分が1枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 39,
+      "name": "町人",
+      "color": "blue",
+      "condition": 1,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人が1枚引く or 自分が1枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 40,
+      "name": "町人",
+      "color": "blue",
+      "condition": 1,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人が1枚引く or 自分が1枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 41,
+      "name": "町人",
+      "color": "green",
+      "condition": 1,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人が1枚引く or 自分が1枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 42,
+      "name": "町人",
+      "color": "green",
+      "condition": 1,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人が1枚引く or 自分が1枚引き1枚捨てる"
+    },
+    {
+      "cardNo": 43,
+      "name": "医師",
+      "color": "red",
+      "condition": 7,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "追加で1回の手番を行う"
+    },
+    {
+      "cardNo": 44,
+      "name": "医師",
+      "color": "red",
+      "condition": 7,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "追加で1回の手番を行う"
+    },
+    {
+      "cardNo": 45,
+      "name": "医師",
+      "color": "blue",
+      "condition": 7,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "追加で1回の手番を行う"
+    },
+    {
+      "cardNo": 46,
+      "name": "医師",
+      "color": "blue",
+      "condition": 7,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "追加で1回の手番を行う"
+    },
+    {
+      "cardNo": 47,
+      "name": "医師",
+      "color": "green",
+      "condition": 7,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "追加で1回の手番を行う"
+    },
+    {
+      "cardNo": 48,
+      "name": "医師",
+      "color": "green",
+      "condition": 7,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "追加で1回の手番を行う"
+    },
+    {
+      "cardNo": 49,
+      "name": "用心棒",
+      "color": "red",
+      "condition": 2,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "客から捨てて他人の効果を無効化する"
+    },
+    {
+      "cardNo": 50,
+      "name": "用心棒",
+      "color": "red",
+      "condition": 2,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "客から捨てて他人の効果を無効化する"
+    },
+    {
+      "cardNo": 51,
+      "name": "用心棒",
+      "color": "blue",
+      "condition": 2,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "客から捨てて他人の効果を無効化する"
+    },
+    {
+      "cardNo": 52,
+      "name": "用心棒",
+      "color": "blue",
+      "condition": 2,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "客から捨てて他人の効果を無効化する"
+    },
+    {
+      "cardNo": 53,
+      "name": "用心棒",
+      "color": "green",
+      "condition": 2,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "客から捨てて他人の効果を無効化する"
+    },
+    {
+      "cardNo": 54,
+      "name": "用心棒",
+      "color": "green",
+      "condition": 2,
+      "income": 2,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "客から捨てて他人の効果を無効化する"
+    },
+    {
+      "cardNo": 55,
+      "name": "やくざ",
+      "color": "red",
+      "condition": 3,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人を休業状態にする"
+    },
+    {
+      "cardNo": 56,
+      "name": "やくざ",
+      "color": "red",
+      "condition": 3,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人を休業状態にする"
+    },
+    {
+      "cardNo": 57,
+      "name": "やくざ",
+      "color": "blue",
+      "condition": 3,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人を休業状態にする"
+    },
+    {
+      "cardNo": 58,
+      "name": "やくざ",
+      "color": "blue",
+      "condition": 3,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人を休業状態にする"
+    },
+    {
+      "cardNo": 59,
+      "name": "やくざ",
+      "color": "green",
+      "condition": 3,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人を休業状態にする"
+    },
+    {
+      "cardNo": 60,
+      "name": "やくざ",
+      "color": "green",
+      "condition": 3,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人を休業状態にする"
+    }
+  ]
+}
