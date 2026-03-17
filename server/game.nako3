@@ -31,7 +31,14 @@
 		redDoubleUsed:0,
 		promoEffectUsed:0,
 		extraBlueUsed:0,
-		handRepSwapUsed:0
+		handRepSwapUsed:0,
+		extraReservationUsed:0,
+		reputationBoostUsed:0,
+		copiedGeishaId:"",
+		copyExtraBlueUsed:0,
+		copyRedDoubleUsed:0,
+		copyPromoEffectUsed:0,
+		copyExtraM06Used:0
 	}
 	フラグを戻す。
 ここまで。
@@ -44,6 +51,11 @@
 	P["effectFlags"]["promoEffectUsed"]=0
 	P["effectFlags"]["extraBlueUsed"]=0
 	P["effectFlags"]["handRepSwapUsed"]=0
+	P["effectFlags"]["extraReservationUsed"]=0
+	P["effectFlags"]["copyExtraBlueUsed"]=0
+	P["effectFlags"]["copyRedDoubleUsed"]=0
+	P["effectFlags"]["copyPromoEffectUsed"]=0
+	P["effectFlags"]["copyExtraM06Used"]=0
 	Pを戻す。
 ここまで。
 
@@ -57,6 +69,7 @@
 	7を戻す。
 ここまで。
 
+		GとPIDのM01追加予約をGに代入。
 ●(Pの)初期手札ボーナス取得とは
 	ボーナス=0
 	もしP["geishaId"]="M08"ならば
@@ -91,6 +104,34 @@
 	ここまで。
 	Gを戻す。
 ここまで。
+
+	●(GとPIDの)M01追加予約とは
+		P=G["players"][PID]
+		もしP["geishaId"]!="M01"ならば
+			Gを戻す。
+		ここまで。
+		もしP["effectFlags"]["extraReservationUsed"]=1ならば
+			Gを戻す。
+		ここまで。
+		手札数=P["hand"]の要素数
+		I=0
+		I<手札数の間
+			カード=P["hand"][I]
+			カードとP["reputation"]の座敷条件判定をOKに代入。
+			もしOK=1ならば
+				P["hand"]のIを配列切取して追加カードに代入。
+				P["zashiki"]に追加カードを配列追加。
+				GとPIDと追加カードと"zashiki"の客カード効果適用をGに代入。
+				G["discard"]に追加カードを配列追加。
+				P["effectFlags"]["extraReservationUsed"]=1
+				手札数=P["hand"]の要素数
+				I=手札数
+				ここまで。
+			ここまで。
+			I=I+1
+		ここまで。
+		Gを戻す。
+	ここまで。
 
 ●(GとIndexの)開始プレイヤー設定とは
 	G["startPlayerIndex"]=Index
@@ -364,7 +405,65 @@
 	ここまで。
 	GとPIDと"skill"と技情報の芸者能力適用をGに代入。
 	P=G["players"][PID]
+	GとPIDと技情報のM10コピー設定をGに代入。
+	GとPIDと技情報のM11手札評判交換をGに代入。
+	GとPIDと技情報のM12評判強化をGに代入。
 	P["usedGeishaSkill"]=1
+	Gを戻す。
+ここまで。
+
+●(GとPIDと技情報の)M10コピー設定とは
+	P=G["players"][PID]
+	もしP["geishaId"]!="M10"ならば
+		Gを戻す。
+	ここまで。
+	コピー対象=技情報["copyTargetId"]
+	もしコピー対象=""ならば
+		Gを戻す。
+	ここまで。
+	P["effectFlags"]["copiedGeishaId"]=コピー対象
+	P["effectFlags"]["copyExtraBlueUsed"]=0
+	P["effectFlags"]["copyRedDoubleUsed"]=0
+	P["effectFlags"]["copyPromoEffectUsed"]=0
+	P["effectFlags"]["copyExtraM06Used"]=0
+	Gを戻す。
+ここまで。
+
+●(GとPIDと技情報の)M11手札評判交換とは
+	P=G["players"][PID]
+	もしP["geishaId"]!="M11"ならば
+		Gを戻す。
+	ここまで。
+	もしP["effectFlags"]["handRepSwapUsed"]=1ならば
+		Gを戻す。
+	ここまで。
+	手札番号=技情報["swapHandIndex"]
+	もし手札番号=""ならば
+		Gを戻す。
+	ここまで。
+	Pと手札番号の手札番号妥当判定をOKに代入。
+	もしOK=0ならば
+		Gを戻す。
+	ここまで。
+	P["hand"]の手札番号を配列切取して捨てカードに代入。
+	G["discard"]に捨てカードを配列追加。
+	P["reputation"]=P["reputation"]+1
+	P["effectFlags"]["handRepSwapUsed"]=1
+	Gを戻す。
+ここまで。
+
+●(GとPIDと技情報の)M12評判強化とは
+	P=G["players"][PID]
+	もしP["geishaId"]!="M12"ならば
+		Gを戻す。
+	ここまで。
+	もしP["effectFlags"]["reputationBoostUsed"]=1ならば
+		Gを戻す。
+	ここまで。
+	もし技情報["boostReputation"]=1ならば
+		P["reputation"]=P["reputation"]+3
+		P["effectFlags"]["reputationBoostUsed"]=1
+	ここまで。
 	Gを戻す。
 ここまで。
 
@@ -430,6 +529,17 @@
 			P["effectFlags"]["redDoubleUsed"]=1
 		ここまで。
 	ここまで。
+	コピー対象=P["effectFlags"]["copiedGeishaId"]
+	もしコピー対象="M03"かつP["effectFlags"]["copyExtraBlueUsed"]=0ならば
+		GとPIDとカードのM03追加青カードをGに代入。
+		P["effectFlags"]["copyExtraBlueUsed"]=1
+		ここまで。
+	ここまで。
+	もしコピー対象="M04"かつ色="red"かつP["effectFlags"]["copyRedDoubleUsed"]=0ならば
+		GとPIDとカードと"zashiki"の客カード効果適用をGに代入。
+		P["effectFlags"]["copyRedDoubleUsed"]=1
+		ここまで。
+	ここまで。
 	GとPIDの基本行動完了記録をGに代入。
 	G["phase"]="turn"
 	Gを戻す。
@@ -455,6 +565,7 @@
 			ここまで。
 		ここまで。
 	ここまで。
+	コピー対象=P["effectFlags"]["copiedGeishaId"]
 	もし追加宣伝=0ならば
 		GとPIDの基本行動前判定を基本OKに代入。
 		もし基本OK=0ならば
@@ -485,6 +596,15 @@
 	もしある=1ならば
 		宣伝力=カード["promo"]
 	ここまで。
+	もしP["geishaId"]="M06"ならば
+		宣伝力=宣伝力+1
+		ここまで。
+	ここまで。
+	もしコピー対象="M06"かつP["effectFlags"]["copyExtraM06Used"]=0ならば
+		宣伝力=宣伝力+1
+		P["effectFlags"]["copyExtraM06Used"]=1
+		ここまで。
+	ここまで。
 
 	P["hand"]の手札番号を配列切取してカードに代入。
 	P["ad"]にカードを配列追加。
@@ -499,6 +619,14 @@
 			ここまで。
 		ここまで。
 	ここまで。
+	もしコピー対象="M07"かつP["effectFlags"]["copyPromoEffectUsed"]=0ならば
+		カードとP["reputation"]の座敷条件判定を可能に代入。
+		もし可能=1ならば
+			GとPIDとカードと"宣伝"の客カード効果適用をGに代入。
+			P["effectFlags"]["copyPromoEffectUsed"]=1
+			ここまで。
+		ここまで。
+	ここまで。
 	GとPIDの基本行動完了記録をGに代入。
 	G["phase"]="turn"
 	Gを戻す。
@@ -509,7 +637,7 @@
 	GとPIDの手番判定を手番中に代入。
 	もし手番中=0ならば
 		Gを戻す。
-	ここまで。
+		ここまで。
 	GとPIDの基本行動前判定を基本OKに代入。
 	もし基本OK=0ならば
 		Gを戻す。
