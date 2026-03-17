@@ -16,20 +16,21 @@ myNickname＝「」。
 
 ●部屋作成完了受信とは
   データ＝「window.__nakoData」をJS実行。
-「console.log('部屋作成完了データ:', JSON.stringify(window.__nakoData))」をJS実行。
   myRoomId＝データ[「roomId」]。
   myPassword＝データ[「password」]。
   myPlayerId＝データ[「playerId」]。
-  JS文＝「window.myRoomId = '」＆myRoomId＆「'」。
+  JS文＝「window.__myPlayerId = 」＆myPlayerId＆「; window.__myRoomId = '」＆myRoomId＆「'」。
   JS文をJS実行。
   データで待機室初期化。
   「waiting」で画面切替。
 ここまで。
 
 ●入室完了受信とは
-  データ＝『window.__nakoData』をJS実行。
+  データ＝「window.__nakoData」をJS実行。
   myRoomId＝データ[「roomId」]。
   myPlayerId＝データ[「playerId」]。
+  JS文＝「window.__myPlayerId = 」＆myPlayerId＆「; window.__myRoomId = '」＆myRoomId＆「'」。
+  JS文をJS実行。
   データで待機室初期化。
   「waiting」で画面切替。
 ここまで。
@@ -42,7 +43,6 @@ myNickname＝「」。
 ここまで。
 
 ●ゲーム開始受信とは
-  データ＝『window.__nakoData』をJS実行。
   『sessionStorage.setItem("currentScreen", "game")』をJS実行。
   「game」で画面切替。
 ここまで。

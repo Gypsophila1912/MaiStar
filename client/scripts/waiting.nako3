@@ -1,3 +1,15 @@
+●ゲームスタート押下とは
+  PID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  もし PID≠0 ならば
+    「ホストのみ開始できます」と言う。
+    戻る。
+  ここまで。
+  送信JSON＝{「roomId」:RID}をJSONエンコード。
+  JS文＝「emit('ゲーム開始', 」＆送信JSON＆「)」。
+  JS文をJS実行。
+ここまで。
+
 ●（データで）待機室初期化とは
   players＝データ[「players」]。
   PW＝データ[「password」]。
@@ -63,14 +75,5 @@
     emit("退室", {});
   』をJS実行。
   「home」で画面切替。
-ここまで。
-
-●ゲームスタート押下とは
-  もし myPlayerId≠0 ならば
-    「ホストのみ開始できます」と言う。
-    戻る。
-  ここまで。
-  JS文＝『emit('ゲーム開始', {roomId: '」＆myRoomId＆「'})』。
-  JS文をJS実行。
 ここまで。
 
