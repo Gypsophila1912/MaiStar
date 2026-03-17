@@ -70,112 +70,286 @@
 
     <!-- ゲーム画面 -->
     <div id="screen-game" class="screen" style="display: none">
-      <!-- game.htmlの中身をここに貼る -->
+      <div id="game-root">
+       
+        <!-- ヘッダー -->
+        <div id="header">
+          <div id="title-text">舞　星</div>
+          <div id="phase-badge">宣伝フェーズ</div>
+          <div id="round-info">
+            第<span id="round-num">3</span>局・<span id="turn-num">4</span>巡目<br>
+            残り時間 <span id="timer">1:42</span>
+          </div>
+        </div>
+       
+        <!-- メインレイアウト -->
+        <div id="main-layout">
+       
+          <!-- 中央エリア -->
+          <div id="center-area">
+       
+            <!-- 相手の芸者3人 -->
+            <div id="opponents">
+       
+              <div class="geisha-card active" id="geisha-0">
+                <div class="geisha-header">
+                  <div class="avatar">🌸</div>
+                  <div>
+                    <div class="geisha-name">紅葉</div>
+                    <div class="geisha-score" id="score-0">点数: 24点</div>
+                  </div>
+                </div>
+                <div class="card-backs" id="hand-0"></div>
+                <div class="status-badge status-seki">席中</div>
+              </div>
+       
+              <div class="geisha-card" id="geisha-1">
+                <div class="geisha-header">
+                  <div class="avatar">🏮</div>
+                  <div>
+                    <div class="geisha-name">雪月</div>
+                    <div class="geisha-score" id="score-1">点数: 18点</div>
+                  </div>
+                </div>
+                <div class="card-backs" id="hand-1"></div>
+                <div class="status-badge status-normal">待機中</div>
+              </div>
+       
+              <div class="geisha-card" id="geisha-2">
+                <div class="geisha-header">
+                  <div class="avatar">🎋</div>
+                  <div>
+                    <div class="geisha-name">花音</div>
+                    <div class="geisha-score" id="score-2">点数: 31点</div>
+                  </div>
+                </div>
+                <div class="card-backs" id="hand-2"></div>
+                <div class="status-badge status-normal">待機中</div>
+              </div>
+       
+            </div><!-- /opponents -->
+       
+            <!-- 座敷の場 -->
+            <div id="table-area">
+              <div class="area-label">◆ 座敷の場</div>
+              <div id="table-cards"></div>
+            </div>
+       
+          </div><!-- /center-area -->
+       
+          <!-- 自分の手札エリア -->
+          <div id="hand-area">
+            <div id="hand-label">
+              <span style="color:#8B5E2A">◈</span>
+              あなたの手札（自分のみ表示）
+              <span id="selected-count" style="font-size:9px;color:#9a6a40;margin-left:auto">
+                選択中: 0枚
+              </span>
+            </div>
+            <div id="my-cards"></div>
+          </div>
+       
+          <!-- サイドバー -->
+          <div id="sidebar">
+       
+            <!-- アクションボタン -->
+            <div id="actions">
+              <div class="section-title">◆ アクション</div>
+              <button class="action-btn primary" onclick="jsActionClick('座敷に出す')">座敷に出す</button>
+              <button class="action-btn"         onclick="jsActionClick('宣伝する')">宣伝する</button>
+              <button class="action-btn"         onclick="jsActionClick('芸者を招く')">芸者を招く</button>
+              <button class="action-btn"         onclick="jsActionClick('場を換える')">場を換える</button>
+              <div class="divider"></div>
+              <button class="action-btn danger"  onclick="jsActionClick('パス')">パス</button>
+            </div>
+       
+            <!-- 行動記録ログ -->
+            <div id="log-area">
+              <div class="section-title">◆ 行動記録</div>
+              <div id="log-list"></div>
+            </div>
+       
+            <!-- スコアバー -->
+            <div id="score-bar">
+              <div class="score-item">
+                <span class="score-val" id="my-score">42</span>
+                <span class="score-label">あなた</span>
+              </div>
+              <div class="score-sep"></div>
+              <div class="score-item">
+                <span class="score-val" id="top-score">31</span>
+                <span class="score-label">最高点</span>
+              </div>
+              <div class="score-sep"></div>
+              <div class="score-item">
+                <span class="score-val" id="game-progress">3/6</span>
+                <span class="score-label">局数</span>
+              </div>
+            </div>
+       
+          </div><!-- /sidebar -->
+        </div><!-- /main-layout -->
+      </div><!-- /game-root -->
+       
+      <!-- なでしこ3 状態表示 -->
+      <div id="nako-output">なでしこ3 起動中…</div>
+       
+       
+      <!-- ========================================
+           JavaScript：なでしこ3との橋渡し関数
+           （カードクリック・ボタン処理）
+      ======================================== -->
+      <script>
+        /**
+         * カードクリック
+         * なでしこ3が生成したカードのonclickから呼ばれる
+         */
+        function jsCardClick(el) {
+          el.classList.toggle('selected');
+          const count = document.querySelectorAll('#my-cards .card-face.selected').length;
+          document.getElementById('selected-count').textContent = '選択中: ' + count + '枚';
+        }
+       
+        /**
+         * アクションボタンクリック
+         * HTML側ボタンのonclickから呼ばれ、ログ追記などを行う
+         */
+        function jsActionClick(action) {
+          const selected = document.querySelectorAll('#my-cards .card-face.selected');
+          const output   = document.getElementById('nako-output');
+       
+          // 座敷に出す／宣伝するはカード選択必須
+          if ((action === '座敷に出す' || action === '宣伝する') && selected.length === 0) {
+            output.textContent = '⚠ カードを選択してください';
+            output.style.color = '#e87060';
+            setTimeout(() => {
+              output.textContent = '✓ なでしこ3 動作中';
+              output.style.color = '#E8C97A';
+            }, 2000);
+            return;
+          }
+       
+          // 選択カード名を取得
+          let cardName = '';
+          if (selected.length > 0) {
+            const val = selected[0].querySelector('.card-value');
+            const pts = selected[0].querySelector('.card-pts');
+            if (val) cardName = val.textContent + '（' + (pts ? pts.textContent : '') + '）';
+          }
+       
+          // ログエントリを先頭に追加
+          const timer = document.getElementById('timer').textContent;
+          const log   = document.getElementById('log-list');
+          const entry = document.createElement('div');
+          entry.className = 'log-entry';
+       
+          if (cardName) {
+            entry.innerHTML =
+              `<span class="log-time">${timer}</span>` +
+              `<span class="log-actor">あなた</span>` +
+              `<span class="log-action">が</span>` +
+              `<span class="log-highlight">${cardName}</span>` +
+              `<span class="log-action">を${action}</span>`;
+          } else {
+            entry.innerHTML =
+              `<span class="log-time">${timer}</span>` +
+              `<span class="log-actor">あなた</span>` +
+              `<span class="log-action">が${action}</span>`;
+          }
+       
+          log.insertBefore(entry, log.firstChild);
+       
+          // 選択状態を解除
+          selected.forEach(c => c.classList.remove('selected'));
+          document.getElementById('selected-count').textContent = '選択中: 0枚';
+       
+          output.textContent = '▶ ' + action + ' を実行';
+          output.style.color = '#E8C97A';
+        }
+      </script>
     </div>
 
     <!-- Socket.io -->
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script>
-  const socket = io("http://localhost:5001");
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+      const socket = io("http://localhost:5001");
 
-  function emit(action, data) {
-    socket.emit(action, data);
-  }
+      function emit(action, data) {
+        socket.emit(action, data);
+      }
 
-  // 未処理のイベントを保存
-  let pendingEvent = null;
+      // なでしこ3が読み込まれてから実行する
+      function nakoRun(funcName) {
+        if (navigator.nako3) {
+          navigator.nako3.run(funcName + '。');
+        } else {
+          // なでしこ3がまだ読み込まれていない場合は待つ
+          setTimeout(() => nakoRun(funcName), 100);
+        }
+      }
 
-  function nakoRun(funcName) {
-    if (navigator.nako3) {
-      navigator.nako3.run(funcName + '。');
-    } else {
-      setTimeout(() => nakoRun(funcName), 100);
-    }
-  }
-
-  // なでしこ3読み込み後にpendingEventを処理
-  function checkPending() {
-    if (pendingEvent) {
-      const { funcName, data } = pendingEvent;
-      pendingEvent = null;
-      if (data) window.__nakoData = data;
-      nakoRun(funcName);
-    }
-  }
-  // 500ms後にチェック（なでしこ3の読み込み完了を待つ）
-  setTimeout(checkPending, 500);
-
-  socket.on("connect", () => {
-    const savedRoomId = sessionStorage.getItem("myRoomId");
-    const savedPlayerId = sessionStorage.getItem("myPlayerId");
-    if (savedRoomId) {
-      socket.emit("再接続", {
-        roomId: savedRoomId,
-        playerId: parseInt(savedPlayerId),
-        socketId: socket.id
+      socket.on("connect", () => {
+        const savedRoomId = sessionStorage.getItem("myRoomId");
+        const savedPlayerId = sessionStorage.getItem("myPlayerId");
+        if (savedRoomId) {
+          socket.emit("再接続", {
+            roomId: savedRoomId,
+            playerId: parseInt(savedPlayerId),
+            socketId: socket.id
+          });
+        } else {
+          nakoRun("接続完了受信");
+        }
       });
-    } else {
-      nakoRun("接続完了受信");
-    }
-  });
 
-  socket.on("再接続完了", (data) => {
-    window.__nakoData = data;
-    if (navigator.nako3) {
-      nakoRun("再接続完了受信");
-    } else {
-      pendingEvent = { funcName: "再接続完了受信", data: data };
-    }
-  });
+      socket.on("再接続完了", (data) => {
+        window.__nakoData = data;
+        nakoRun("再接続完了受信");
+      });
 
-  socket.on("再接続失敗", () => {
-    sessionStorage.clear();
-    if (navigator.nako3) {
-      nakoRun("接続完了受信");
-    } else {
-      pendingEvent = { funcName: "接続完了受信", data: null };
-    }
-  });
+      socket.on("再接続失敗", () => {
+        sessionStorage.clear();
+        nakoRun("接続完了受信");
+      });
 
-  socket.on("部屋作成完了", (data) => {
-    sessionStorage.setItem("myRoomId", data.roomId);
-    sessionStorage.setItem("myPlayerId", data.playerId);
-    sessionStorage.setItem("myPassword", data.password);
-    window.__nakoData = data;
-    nakoRun("部屋作成完了受信");
-  });
+      socket.on("部屋作成完了", (data) => {
+        sessionStorage.setItem("myRoomId", data.roomId);
+        sessionStorage.setItem("myPlayerId", data.playerId);
+        sessionStorage.setItem("myPassword", data.password);
+        window.__nakoData = data;
+        nakoRun("部屋作成完了受信");
+      });
 
-  socket.on("入室完了", (data) => {
-    sessionStorage.setItem("myRoomId", data.roomId);
-    sessionStorage.setItem("myPlayerId", data.playerId);
-    sessionStorage.setItem("myPassword", data.password || "");
-    window.__nakoData = data;
-    nakoRun("入室完了受信");
-  });
+      socket.on("入室完了", (data) => {
+        sessionStorage.setItem("myRoomId", data.roomId);
+        sessionStorage.setItem("myPlayerId", data.playerId);
+        sessionStorage.setItem("myPassword", data.password || "");
+        window.__nakoData = data;
+        nakoRun("入室完了受信");
+      });
 
-  socket.on("待機室更新", (data) => {
-    console.log("待機室更新受信:", data);
-    window.__nakoData = data;
-    nakoRun("待機室更新受信");
-  });
+      socket.on("待機室更新", (data) => {
+        window.__nakoData = data;
+        nakoRun("待機室更新受信");
+      });
 
-  socket.on("部屋解散", (data) => {
-    sessionStorage.clear();
-    window.__nakoData = data;
-    nakoRun("部屋解散受信");
-  });
+      socket.on("部屋解散", (data) => {
+        sessionStorage.clear();
+        window.__nakoData = data;
+        nakoRun("部屋解散受信");
+      });
 
-  socket.on("ゲーム開始", (data) => {
-    sessionStorage.setItem("currentScreen", "game");
-    window.__nakoData = data;
-    nakoRun("ゲーム開始受信");
-  });
+      socket.on("ゲーム開始", (data) => {
+        sessionStorage.setItem("currentScreen", "game");
+        window.__nakoData = data;
+        nakoRun("ゲーム開始受信");
+      });
 
-  socket.on("エラー", (data) => {
-    window.__nakoData = data;
-    nakoRun("エラー受信");
-  });
-</script>
+      socket.on("エラー", (data) => {
+        window.__nakoData = data;
+        nakoRun("エラー受信");
+      });
+    </script>    <!-- なでしこ3 -->
     <script src="https://nadesi.com/v3/cdn.php?v=3.3.71&f=release/wnako3.js&run"></script>
     <script type="なでしこ">
       !「scripts/home.nako3」を取り込む。

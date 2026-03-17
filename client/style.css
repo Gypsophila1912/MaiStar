@@ -323,6 +323,565 @@ button:disabled {
 #display-password {
   position: absolute;
   top: 50%;
+}
+
+/* ========================================
+舞星 ゲーム画面 - スタイルシート
+maiboshi_game.css (merged)
+======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500&display=swap');
+
+/* ----------------------------------------
+ リセット・基本 (既存と統合)
+---------------------------------------- */
+/* 
+* { margin: 0; padding: 0; box-sizing: border-box; } -> 既存記述あり
+*/
+/*
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+-> 既存の body スタイルがあるため、ゲーム画面固有のラッピングが必要かもしれません。
+   一旦、#screen-game 内でのスタイルとして適用するか、競合しないように記述します。
+*/
+
+/* ----------------------------------------
+ 畳背景 第1層：い草の基本色
+---------------------------------------- */
+.tatami-bg {
+background-color: #8fad6a;
+background-image:
+  repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.04)        0px, rgba(0,0,0,0.04)        1px,
+    transparent              1px, transparent             9px,
+    rgba(0,0,0,0.03)        9px, rgba(0,0,0,0.03)       10px,
+    transparent             10px, transparent            19px,
+    rgba(255,255,255,0.06) 19px, rgba(255,255,255,0.06) 20px,
+    transparent             20px, transparent            29px
+  ),
+  repeating-linear-gradient(
+    90deg,
+    rgba(0,0,0,0.04)        0px, rgba(0,0,0,0.04)        1px,
+    transparent              1px, transparent             9px,
+    rgba(0,0,0,0.03)        9px, rgba(0,0,0,0.03)       10px,
+    transparent             10px, transparent            19px,
+    rgba(255,255,255,0.06) 19px, rgba(255,255,255,0.06) 20px,
+    transparent             20px, transparent            29px
+  );
+}
+
+/* 畳の縁（へり） */
+.tatami-heri {
+background-image:
+  repeating-linear-gradient(
+    0deg,
+    transparent             0px, transparent            179px,
+    rgba(90,60,20,0.18)   179px, rgba(90,60,20,0.18)   185px,
+    transparent            185px, transparent           364px,
+    rgba(90,60,20,0.18)   364px, rgba(90,60,20,0.18)   370px,
+    transparent            370px
+  ),
+  repeating-linear-gradient(
+    90deg,
+    transparent             0px, transparent            239px,
+    rgba(90,60,20,0.18)   239px, rgba(90,60,20,0.18)   245px,
+    transparent            245px, transparent           484px,
+    rgba(90,60,20,0.18)   484px, rgba(90,60,20,0.18)   490px,
+    transparent            490px
+  );
+}
+
+/* い草の繊維感オーバーレイ */
+.tatami-fiber {
+background-image: repeating-linear-gradient(
+  90deg,
+  rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+  transparent            1px, transparent            3px
+);
+}
+
+/* ----------------------------------------
+ ゲームウィンドウ全体
+---------------------------------------- */
+#game-root {
+position: relative;
+width: 900px;
+min-height: 700px;
+border-radius: 12px;
+overflow: hidden;
+border: 2px solid #6a4a20;
+box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+margin: 0 auto; /* 中央寄せ */
+background-color: #8fad6a; /* 畳のベース色 */
+font-family: 'Noto Sans JP', sans-serif;
+color: #333;
+}
+
+/* ----------------------------------------
+ ヘッダー
+---------------------------------------- */
+#header {
+position: relative;
+z-index: 2;
+background: rgba(45,28,10,0.92);
+border-bottom: 2px solid #8B5E2A;
+padding: 8px 16px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+#title-text {
+font-family: 'Noto Serif JP', serif;
+font-size: 18px;
+font-weight: 700;
+color: #E8C97A;
+letter-spacing: 0.15em;
+text-shadow: 0 0 12px rgba(232,201,122,0.4);
+}
+
+#phase-badge {
+background: rgba(60,30,8,0.9);
+border: 1px solid #8B5E2A;
+border-radius: 20px;
+padding: 4px 14px;
+font-size: 12px;
+color: #E8C97A;
+letter-spacing: 0.1em;
+}
+
+#round-info {
+font-size: 12px;
+color: #c0a06a;
+text-align: right;
+line-height: 1.6;
+}
+
+#timer {
+color: #E8C97A;
+}
+
+/* ----------------------------------------
+ メインレイアウト
+---------------------------------------- */
+#main-layout {
+position: relative;
+z-index: 1;
+display: grid;
+grid-template-columns: 1fr 200px;
+grid-template-rows: auto 1fr auto;
+height: calc(700px - 52px);
+}
+
+/* ----------------------------------------
+ 中央エリア・相手
+---------------------------------------- */
+#center-area {
+grid-column: 1;
+grid-row: 1 / 3;
+padding: 12px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+#opponents {
+display: flex;
+gap: 8px;
+}
+
+/* 芸者カード */
+.geisha-card {
+flex: 1;
+background: rgba(245,235,210,0.82);
+border: 1px solid rgba(140,100,50,0.5);
+border-radius: 8px;
+padding: 10px;
+position: relative;
+box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+transition: border-color 0.2s;
+}
+
+.geisha-card.active {
+border-color: #8B5E2A;
+box-shadow: 0 2px 12px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(200,160,80,0.3);
+}
+
+.geisha-card.active::before {
+content: '';
+position: absolute;
+top: -1px; left: -1px; right: -1px;
+height: 3px;
+background: linear-gradient(90deg, #8B5E2A, #E8C97A, #8B5E2A);
+border-radius: 8px 8px 0 0;
+}
+
+.geisha-header {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 8px;
+}
+
+.avatar {
+width: 32px;
+height: 32px;
+border-radius: 50%;
+border: 1px solid #8B5E2A;
+background: rgba(255,245,220,0.9);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 16px;
+flex-shrink: 0;
+}
+
+.geisha-name {
+font-family: 'Noto Serif JP', serif;
+font-size: 13px;
+font-weight: 600;
+color: #3a1e08;
+}
+
+.geisha-score {
+font-size: 11px;
+color: #7a5030;
+margin-top: 1px;
+}
+
+.card-backs {
+display: flex;
+gap: 4px;
+flex-wrap: wrap;
+}
+
+.card-back {
+width: 22px;
+height: 32px;
+background: linear-gradient(135deg, #7a4a18 0%, #5a3010 100%);
+border: 1px solid #8B5E2A;
+border-radius: 3px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 9px;
+color: rgba(232,201,122,0.5);
+}
+
+.status-badge {
+display: inline-block;
+padding: 2px 8px;
+border-radius: 10px;
+font-size: 10px;
+margin-top: 4px;
+}
+
+.status-seki {
+background: rgba(200,80,50,0.12);
+border: 1px solid rgba(180,60,30,0.35);
+color: #b04020;
+}
+
+.status-normal {
+background: rgba(60,120,70,0.1);
+border: 1px solid rgba(60,120,70,0.25);
+color: #3a7848;
+}
+
+/* ----------------------------------------
+ 座敷エリア
+---------------------------------------- */
+#table-area {
+background: rgba(230,215,180,0.75);
+border: 1px solid rgba(140,100,50,0.4);
+border-radius: 8px;
+padding: 12px;
+flex: 1;
+display: flex;
+flex-direction: column;
+box-shadow: inset 0 1px 4px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.area-label {
+font-size: 10px;
+color: #7a5030;
+letter-spacing: 0.15em;
+margin-bottom: 8px;
+}
+
+#table-cards {
+display: flex;
+gap: 6px;
+flex-wrap: wrap;
+align-items: flex-start;
+}
+
+/* ----------------------------------------
+ カード（表面）
+---------------------------------------- */
+.card-face {
+width: 44px;
+height: 62px;
+background: #fdf8ee;
+border: 1px solid #c0a060;
+border-radius: 4px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: transform 0.15s;
+position: relative;
+box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.card-face:hover {
+transform: translateY(-4px);
+}
+
+.card-face.selected {
+transform: translateY(-8px);
+border-color: #8B5E2A;
+box-shadow: 0 4px 10px rgba(0,0,0,0.2), 0 0 0 2px rgba(200,160,80,0.5);
+}
+
+.card-suit {
+font-size: 18px;
+line-height: 1;
+}
+
+.card-value {
+font-family: 'Noto Serif JP', serif;
+font-size: 10px;
+color: #5a3a1a;
+margin-top: 2px;
+}
+
+.card-pts {
+position: absolute;
+bottom: 2px;
+right: 4px;
+font-size: 8px;
+color: #9a6a30;
+}
+
+/* ----------------------------------------
+ 手札エリア
+---------------------------------------- */
+#hand-area {
+grid-column: 1;
+grid-row: 3;
+background: rgba(200,185,150,0.88);
+border-top: 2px solid rgba(120,85,40,0.4);
+padding: 10px 12px;
+box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+}
+
+#hand-label {
+font-size: 10px;
+color: #7a5030;
+letter-spacing: 0.15em;
+margin-bottom: 8px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+#my-cards {
+display: flex;
+gap: 6px;
+justify-content: center;
+flex-wrap: wrap;
+}
+
+/* ----------------------------------------
+ サイドバー
+---------------------------------------- */
+#sidebar {
+grid-column: 2;
+grid-row: 1 / 4;
+background: rgba(45,28,10,0.9);
+border-left: 2px solid #6B4520;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+}
+
+/* アクションボタン群 */
+#actions {
+padding: 12px;
+border-bottom: 1px solid rgba(107,69,32,0.5);
+}
+
+.section-title {
+font-size: 10px;
+color: #8B6030;
+letter-spacing: 0.15em;
+margin-bottom: 8px;
+}
+
+.action-btn {
+display: block;
+width: 100%;
+margin-bottom: 6px;
+padding: 8px 10px;
+border-radius: 6px;
+border: 1px solid #6B4520;
+background: rgba(60,35,10,0.6);
+color: #d4b48a;
+font-family: 'Noto Sans JP', sans-serif;
+font-size: 12px;
+cursor: pointer;
+text-align: center;
+letter-spacing: 0.05em;
+transition: all 0.15s;
+}
+
+.action-btn:hover {
+background: rgba(100,60,20,0.7);
+border-color: #a07040;
+color: #E8C97A;
+}
+
+.action-btn.primary {
+background: rgba(120,80,20,0.5);
+border-color: #E8C97A;
+color: #E8C97A;
+font-weight: 500;
+}
+
+.action-btn.primary:hover {
+background: rgba(160,110,30,0.6);
+}
+
+.action-btn.danger {
+border-color: #7a2a18;
+color: #c07060;
+}
+
+.action-btn.danger:hover {
+background: rgba(110,35,18,0.5);
+border-color: #b04030;
+color: #e09080;
+}
+
+.divider {
+width: 100%;
+height: 1px;
+background: linear-gradient(90deg, transparent, #6B4520, transparent);
+margin: 6px 0;
+}
+
+/* 行動ログ */
+#log-area {
+flex: 1;
+padding: 10px 12px;
+overflow-y: auto;
+display: flex;
+flex-direction: column;
+}
+
+.log-entry {
+padding: 5px 0;
+border-bottom: 1px solid rgba(107,69,32,0.25);
+font-size: 10px;
+line-height: 1.5;
+color: #c0a06a;
+}
+
+.log-time {
+color: #6B4520;
+font-size: 9px;
+margin-right: 4px;
+}
+
+.log-actor {
+color: #E8C97A;
+font-weight: 500;
+}
+
+.log-action {
+color: #b08050;
+}
+
+.log-highlight {
+color: #e8a060;
+}
+
+/* スコアバー */
+#score-bar {
+padding: 8px 12px;
+border-top: 1px solid rgba(107,69,32,0.5);
+display: flex;
+gap: 6px;
+align-items: center;
+background: rgba(30,15,5,0.6);
+}
+
+.score-item {
+flex: 1;
+text-align: center;
+}
+
+.score-val {
+font-family: 'Noto Serif JP', serif;
+font-size: 16px;
+color: #E8C97A;
+font-weight: 600;
+display: block;
+}
+
+.score-label {
+font-size: 9px;
+color: #8B6030;
+letter-spacing: 0.1em;
+}
+
+.score-sep {
+width: 1px;
+height: 28px;
+background: rgba(107,69,32,0.5);
+}
+
+/* ----------------------------------------
+ なでしこ3 状態表示
+---------------------------------------- */
+#nako-output {
+position: fixed;
+bottom: 10px;
+left: 10px;
+background: rgba(20,10,3,0.85);
+border: 1px solid #6B4520;
+border-radius: 6px;
+padding: 6px 12px;
+font-size: 11px;
+color: #E8C97A;
+font-family: 'Noto Sans JP', sans-serif;
+pointer-events: none;
+min-width: 180px;
+}
+
+/* 待機室の合言葉（中央寄せ） */
+.waiting-password {
+  text-align: center;
+  margin: 1rem auto 2rem auto;
+}
+
+.waiting-password .input-wrapper {
+  margin: 0 auto;
+  width: 360px; /* 少し大きめに */
+}
+
+/* 既存の #display-password 設定を上書きまたは削除 */
+#display-password {
+  position: absolute;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 70%;

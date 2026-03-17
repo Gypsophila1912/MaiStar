@@ -69,16 +69,6 @@ WEBサーバ起動成功時には
   resultをJSONエンコードしてWEBサーバ出力。
 ここまで。
 
-「/api/game/start」へWEBサーバPOST時には
-  データ＝POSTデータ。
-  RID＝データ[「roomId」]。
-  「ゲーム開始: {RID}」と表示。
-  # 部屋のstatusをplayingに変更
-  JS文＝「if(sys.__nako_rooms['」＆RID＆「']) sys.__nako_rooms['」＆RID＆「'].status = 'playing'」。
-  JS文をJS実行。
-  {「success」:真,「roomId」:RID}をJSONエンコードしてWEBサーバ出力。
-ここまで。
-
 ここまで。
 
 3001でWEBサーバ起動。
