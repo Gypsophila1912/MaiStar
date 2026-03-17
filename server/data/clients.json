@@ -1,6 +1,6 @@
 {
-  "version": 5,
-  "note": "10種類の客カード定義。各種類は赤青緑の3色があり各色2枚(合計60枚)。typeIdは使わず、各カード実体をcardNo連番で扱う。 effectIdは廃止し、効果文はefextTextに統一。効果分岐はカード名で行う。",
+  "version": 8,
+  "note": "10種類の客カード定義。各種類は赤青緑の3色があり各色2枚(合計60枚)。typeIdは使わず、各カード実体をcardNo連番で扱う。 effectIdは廃止し、効果文はefextTextに統一。効果分岐はカード名で行う。 幇間(宣伝+2)を追加。 大名・忍者(各3枚:赤青緑1枚ずつ)を追加。 コピー数1の無色カード8種(横綱・くの一・劇作家・学者・異人・奉行・花魁・将軍)を追加。conditionType:anyで赤青緑いずれか1色が条件値以上なら使用可。花魁はconditionType:hand(手札反応)。",
   "deckRule": {
     "colors": [
       "red",
@@ -9,12 +9,14 @@
     ],
     "copiesPerColor": 2,
     "copiesPerType": 6,
-    "totalTypes": 10,
-    "totalCardsFromThisSet": 60,
+    "totalTypes": 21,
+    "totalCardsFromThisSet": 80,
     "promoColorFollowsCardColor": true,
     "yakushaPromoIsAllPlus1": true,
     "thisSetIsSubset": true,
-    "instanceNumbering": "cardNo(1..N)"
+    "instanceNumbering": "cardNo(1..N)",
+    "perTypeCopiesSupported": true,
+    "colorlessCardsSupported": true
   },
   "cardTypes": [
     {
@@ -96,6 +98,112 @@
       "promo": 1,
       "promoColorRule": "byCardColor",
       "efextText": "1人を休業状態にする"
+    },
+    {
+      "name": "幇間",
+      "condition": 2,
+      "income": 1,
+      "promo": 2,
+      "promoColorRule": "byCardColor",
+      "efextText": "あなたは「宣伝」を1回行う"
+    },
+    {
+      "name": "大名",
+      "condition": 9,
+      "income": 15,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "copiesPerColor": 1,
+      "efextText": "-"
+    },
+    {
+      "name": "忍者",
+      "condition": 8,
+      "income": 8,
+      "promo": 1,
+      "promoColorRule": "byCardColor",
+      "copiesPerColor": 1,
+      "efextText": "1人選ぶ。そのプレイヤーの最新の客を自分の客に加える（効果なし）。そのプレイヤーは休業状態になる"
+    },
+    {
+      "name": "横綱",
+      "conditionType": "any",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColorRule": "all",
+      "totalCopies": 1,
+      "efextText": "プレイヤーを1人選ぶ。そのプレイヤーは手札を全て山札に加えてシャッフルし、同じ枚数だけ引く"
+    },
+    {
+      "name": "くの一",
+      "conditionType": "any",
+      "condition": 8,
+      "income": 5,
+      "promo": 1,
+      "promoColorRule": "all",
+      "totalCopies": 1,
+      "efextText": "プレイヤーを1人選ぶ。そのプレイヤーの最も新しい評判と客をあなたの評判と客に加える（効果は発動しない）"
+    },
+    {
+      "name": "劇作家",
+      "conditionType": "any",
+      "condition": 1,
+      "income": 1,
+      "promo": 1,
+      "promoColorRule": "all",
+      "totalCopies": 1,
+      "efextText": "あなたは自分の芸者をゲームに使われていない別の芸者と交換してもよい"
+    },
+    {
+      "name": "学者",
+      "conditionType": "any",
+      "condition": 7,
+      "income": 0,
+      "promo": 1,
+      "promoColorRule": "all",
+      "totalCopies": 1,
+      "efextText": "あなたは追加で2回の手番を行う"
+    },
+    {
+      "name": "異人",
+      "conditionType": "any",
+      "condition": 9,
+      "income": 5,
+      "promo": 1,
+      "promoColorRule": "all",
+      "totalCopies": 1,
+      "efextText": "あなたの手札を全て捨え札にする"
+    },
+    {
+      "name": "奉行",
+      "conditionType": "any",
+      "condition": 6,
+      "income": 4,
+      "promo": 1,
+      "promoColorRule": "all",
+      "totalCopies": 1,
+      "efextText": "プレイヤーを1人選ぶ。そのプレイヤーの予約客1枚をあなたの予約客に加える"
+    },
+    {
+      "name": "花魁",
+      "conditionType": "hand",
+      "condition": null,
+      "income": 0,
+      "promo": 1,
+      "promoColorRule": "all",
+      "totalCopies": 1,
+      "efextText": "他プレイヤーの客の効果を受けた時、これを手札から捨て札にすることで効果を無効にする"
+    },
+    {
+      "name": "将軍",
+      "conditionType": "any",
+      "condition": 10,
+      "income": 0,
+      "promo": 1,
+      "promoColorRule": "all",
+      "totalCopies": 1,
+      "efextText": "あなたの手札全てをあなたの客に加える（効果は発動しない）"
     }
   ],
   "catalog": {
@@ -705,6 +813,214 @@
       "promo": 1,
       "promoColor": "green",
       "efextText": "1人を休業状態にする"
+    },
+    {
+      "cardNo": 61,
+      "name": "幇間",
+      "color": "red",
+      "condition": 2,
+      "income": 1,
+      "promo": 2,
+      "promoColor": "red",
+      "efextText": "あなたは「宣伝」を1回行う"
+    },
+    {
+      "cardNo": 62,
+      "name": "幇間",
+      "color": "red",
+      "condition": 2,
+      "income": 1,
+      "promo": 2,
+      "promoColor": "red",
+      "efextText": "あなたは「宣伝」を1回行う"
+    },
+    {
+      "cardNo": 63,
+      "name": "幇間",
+      "color": "blue",
+      "condition": 2,
+      "income": 1,
+      "promo": 2,
+      "promoColor": "blue",
+      "efextText": "あなたは「宣伝」を1回行う"
+    },
+    {
+      "cardNo": 64,
+      "name": "幇間",
+      "color": "blue",
+      "condition": 2,
+      "income": 1,
+      "promo": 2,
+      "promoColor": "blue",
+      "efextText": "あなたは「宣伝」を1回行う"
+    },
+    {
+      "cardNo": 65,
+      "name": "幇間",
+      "color": "green",
+      "condition": 2,
+      "income": 1,
+      "promo": 2,
+      "promoColor": "green",
+      "efextText": "あなたは「宣伝」を1回行う"
+    },
+    {
+      "cardNo": 66,
+      "name": "幇間",
+      "color": "green",
+      "condition": 2,
+      "income": 1,
+      "promo": 2,
+      "promoColor": "green",
+      "efextText": "あなたは「宣伝」を1回行う"
+    },
+    {
+      "cardNo": 67,
+      "name": "大名",
+      "color": "red",
+      "condition": 9,
+      "income": 15,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 68,
+      "name": "大名",
+      "color": "blue",
+      "condition": 9,
+      "income": 15,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 69,
+      "name": "大名",
+      "color": "green",
+      "condition": 9,
+      "income": 15,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "-"
+    },
+    {
+      "cardNo": 70,
+      "name": "忍者",
+      "color": "red",
+      "condition": 8,
+      "income": 8,
+      "promo": 1,
+      "promoColor": "red",
+      "efextText": "1人選ぶ。そのプレイヤーの最新の客を自分の客に加える（効果なし）。そのプレイヤーは休業状態になる"
+    },
+    {
+      "cardNo": 71,
+      "name": "忍者",
+      "color": "blue",
+      "condition": 8,
+      "income": 8,
+      "promo": 1,
+      "promoColor": "blue",
+      "efextText": "1人選ぶ。そのプレイヤーの最新の客を自分の客に加える（効果なし）。そのプレイヤーは休業状態になる"
+    },
+    {
+      "cardNo": 72,
+      "name": "忍者",
+      "color": "green",
+      "condition": 8,
+      "income": 8,
+      "promo": 1,
+      "promoColor": "green",
+      "efextText": "1人選ぶ。そのプレイヤーの最新の客を自分の客に加える（効果なし）。そのプレイヤーは休業状態になる"
+    },
+    {
+      "cardNo": 73,
+      "name": "横綱",
+      "color": "none",
+      "conditionType": "any",
+      "condition": 5,
+      "income": 3,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "プレイヤーを1人選ぶ。そのプレイヤーは手札を全て山札に加えてシャッフルし、同じ枚数だけ引く"
+    },
+    {
+      "cardNo": 74,
+      "name": "くの一",
+      "color": "none",
+      "conditionType": "any",
+      "condition": 8,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "プレイヤーを1人選ぶ。そのプレイヤーの最も新しい評判と客をあなたの評判と客に加える（効果は発動しない）"
+    },
+    {
+      "cardNo": 75,
+      "name": "劇作家",
+      "color": "none",
+      "conditionType": "any",
+      "condition": 1,
+      "income": 1,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "あなたは自分の芸者をゲームに使われていない別の芸者と交換してもよい"
+    },
+    {
+      "cardNo": 76,
+      "name": "学者",
+      "color": "none",
+      "conditionType": "any",
+      "condition": 7,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "あなたは追加で2回の手番を行う"
+    },
+    {
+      "cardNo": 77,
+      "name": "異人",
+      "color": "none",
+      "conditionType": "any",
+      "condition": 9,
+      "income": 5,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "あなたの手札を全て捨え札にする"
+    },
+    {
+      "cardNo": 78,
+      "name": "奉行",
+      "color": "none",
+      "conditionType": "any",
+      "condition": 6,
+      "income": 4,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "プレイヤーを1人選ぶ。そのプレイヤーの予約客1枚をあなたの予約客に加える"
+    },
+    {
+      "cardNo": 79,
+      "name": "花魁",
+      "color": "none",
+      "conditionType": "hand",
+      "condition": null,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "他プレイヤーの客の効果を受けた時、これを手札から捨て札にすることで効果を無効にする"
+    },
+    {
+      "cardNo": 80,
+      "name": "将軍",
+      "color": "none",
+      "conditionType": "any",
+      "condition": 10,
+      "income": 0,
+      "promo": 1,
+      "promoColor": "all",
+      "efextText": "あなたの手札全てをあなたの客に加える（効果は発動しない）"
     }
   ]
 }
