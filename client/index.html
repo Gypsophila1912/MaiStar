@@ -74,86 +74,108 @@
     </div>
 
     <!-- Socket.io -->
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script>
-      const socket = io("http://localhost:5001");
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+  const socket = io("http://localhost:5001");
 
-      function emit(action, data) {
-        socket.emit(action, data);
-      }
+  function emit(action, data) {
+    socket.emit(action, data);
+  }
 
-      // なでしこ3が読み込まれてから実行する
-      function nakoRun(funcName) {
-        if (navigator.nako3) {
-          navigator.nako3.run(funcName + '。');
-        } else {
-          // なでしこ3がまだ読み込まれていない場合は待つ
-          setTimeout(() => nakoRun(funcName), 100);
-        }
-      }
+  // 未処理のイベントを保存
+  let pendingEvent = null;
 
-      socket.on("connect", () => {
-        const savedRoomId = sessionStorage.getItem("myRoomId");
-        const savedPlayerId = sessionStorage.getItem("myPlayerId");
-        if (savedRoomId) {
-          socket.emit("再接続", {
-            roomId: savedRoomId,
-            playerId: parseInt(savedPlayerId),
-            socketId: socket.id
-          });
-        } else {
-          nakoRun("接続完了受信");
-        }
+  function nakoRun(funcName) {
+    if (navigator.nako3) {
+      navigator.nako3.run(funcName + '。');
+    } else {
+      setTimeout(() => nakoRun(funcName), 100);
+    }
+  }
+
+  // なでしこ3読み込み後にpendingEventを処理
+  function checkPending() {
+    if (pendingEvent) {
+      const { funcName, data } = pendingEvent;
+      pendingEvent = null;
+      if (data) window.__nakoData = data;
+      nakoRun(funcName);
+    }
+  }
+  // 500ms後にチェック（なでしこ3の読み込み完了を待つ）
+  setTimeout(checkPending, 500);
+
+  socket.on("connect", () => {
+    const savedRoomId = sessionStorage.getItem("myRoomId");
+    const savedPlayerId = sessionStorage.getItem("myPlayerId");
+    if (savedRoomId) {
+      socket.emit("再接続", {
+        roomId: savedRoomId,
+        playerId: parseInt(savedPlayerId),
+        socketId: socket.id
       });
+    } else {
+      nakoRun("接続完了受信");
+    }
+  });
 
-      socket.on("再接続完了", (data) => {
-        window.__nakoData = data;
-        nakoRun("再接続完了受信");
-      });
+  socket.on("再接続完了", (data) => {
+    window.__nakoData = data;
+    if (navigator.nako3) {
+      nakoRun("再接続完了受信");
+    } else {
+      pendingEvent = { funcName: "再接続完了受信", data: data };
+    }
+  });
 
-      socket.on("再接続失敗", () => {
-        sessionStorage.clear();
-        nakoRun("接続完了受信");
-      });
+  socket.on("再接続失敗", () => {
+    sessionStorage.clear();
+    if (navigator.nako3) {
+      nakoRun("接続完了受信");
+    } else {
+      pendingEvent = { funcName: "接続完了受信", data: null };
+    }
+  });
 
-      socket.on("部屋作成完了", (data) => {
-        sessionStorage.setItem("myRoomId", data.roomId);
-        sessionStorage.setItem("myPlayerId", data.playerId);
-        sessionStorage.setItem("myPassword", data.password);
-        window.__nakoData = data;
-        nakoRun("部屋作成完了受信");
-      });
+  socket.on("部屋作成完了", (data) => {
+    sessionStorage.setItem("myRoomId", data.roomId);
+    sessionStorage.setItem("myPlayerId", data.playerId);
+    sessionStorage.setItem("myPassword", data.password);
+    window.__nakoData = data;
+    nakoRun("部屋作成完了受信");
+  });
 
-      socket.on("入室完了", (data) => {
-        sessionStorage.setItem("myRoomId", data.roomId);
-        sessionStorage.setItem("myPlayerId", data.playerId);
-        sessionStorage.setItem("myPassword", data.password || "");
-        window.__nakoData = data;
-        nakoRun("入室完了受信");
-      });
+  socket.on("入室完了", (data) => {
+    sessionStorage.setItem("myRoomId", data.roomId);
+    sessionStorage.setItem("myPlayerId", data.playerId);
+    sessionStorage.setItem("myPassword", data.password || "");
+    window.__nakoData = data;
+    nakoRun("入室完了受信");
+  });
 
-      socket.on("待機室更新", (data) => {
-        window.__nakoData = data;
-        nakoRun("待機室更新受信");
-      });
+  socket.on("待機室更新", (data) => {
+    console.log("待機室更新受信:", data);
+    window.__nakoData = data;
+    nakoRun("待機室更新受信");
+  });
 
-      socket.on("部屋解散", (data) => {
-        sessionStorage.clear();
-        window.__nakoData = data;
-        nakoRun("部屋解散受信");
-      });
+  socket.on("部屋解散", (data) => {
+    sessionStorage.clear();
+    window.__nakoData = data;
+    nakoRun("部屋解散受信");
+  });
 
-      socket.on("ゲーム開始", (data) => {
-        sessionStorage.setItem("currentScreen", "game");
-        window.__nakoData = data;
-        nakoRun("ゲーム開始受信");
-      });
+  socket.on("ゲーム開始", (data) => {
+    sessionStorage.setItem("currentScreen", "game");
+    window.__nakoData = data;
+    nakoRun("ゲーム開始受信");
+  });
 
-      socket.on("エラー", (data) => {
-        window.__nakoData = data;
-        nakoRun("エラー受信");
-      });
-    </script>    <!-- なでしこ3 -->
+  socket.on("エラー", (data) => {
+    window.__nakoData = data;
+    nakoRun("エラー受信");
+  });
+</script>
     <script src="https://nadesi.com/v3/cdn.php?v=3.3.71&f=release/wnako3.js&run"></script>
     <script type="なでしこ">
       !「scripts/home.nako3」を取り込む。

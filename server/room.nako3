@@ -10,8 +10,6 @@
       status: "waiting",
       players: [{ id: 0, nickname: nn, socketId: sid, isHost: true }]
     };
-    console.log("部屋作成:", rid, "pw:", pw);
-    console.log("rooms確認:", JSON.stringify(sys.__nako_rooms));
     return JSON.stringify({ roomId: rid, password: pw, playerId: 0, players: sys.__nako_rooms[rid].players });
   };
 
@@ -23,7 +21,6 @@
     if (rooms[rid].players.length >= 6) return JSON.stringify({ error: true, message: "満員です" });
     const newId = rooms[rid].players.length;
     rooms[rid].players.push({ id: newId, nickname: nn, socketId: sid, isHost: false });
-    console.log("入室:", nn, "部屋:", rid);
   return JSON.stringify({ 
     roomId: rid, 
     password: rooms[rid].password,  // ← 追加
