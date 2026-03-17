@@ -25,29 +25,22 @@
     戻る。
   ここまで。
   myNickname＝NN。
-  JS文＝『emit('部屋作成', {nickname: '」＆myNickname＆「'})』。
+  「部屋作成開始」をコンソール表示。
+  送信JSON＝{「nickname」:myNickname}をJSONエンコード。
+  JS文＝「emit('部屋作成', 」＆送信JSON＆「)」。
   JS文をJS実行。
 ここまで。
 
 ●部屋入室押下とは
   JOINFORM＝「#join-form」のDOM要素取得。
   JOINFORMの「display」へ「block」をDOMスタイル設定。
-ここまで。
-
-●部屋作成押下とは
-  NN＝「#nickname-input」のDOM要素取得のテキスト取得。
-  もし NN＝「」 ならば
-    ERR＝「#error-message」のDOM要素取得。
-    ERRへ「ニックネームを入力してください」をテキスト設定。
-    戻る。
-  ここまで。
-  myNickname＝NN。
-  送信JSON＝{「nickname」:myNickname}をJSONエンコード。
-  JS文＝「emit('部屋作成', 」＆送信JSON＆「)」。
-  JS文をJS実行。
+  # 誤操作防止のためボタン群を隠す
+  BTNGROUP＝「.button-group」のDOM要素取得。
+  BTNGROUPの「display」へ「none」をDOMスタイル設定。
 ここまで。
 
 ●入室確定押下とは
+  「入室確定ボタン処理開始」をコンソール表示。
   NN＝「#nickname-input」のDOM要素取得のテキスト取得。
   PW＝「#password-input」のDOM要素取得のテキスト取得。
   もし NN＝「」 ならば
@@ -62,6 +55,7 @@
   ここまで。
   myNickname＝NN。
   myPW＝PW。
+  「emit:入室」をコンソール表示。
   送信JSON＝{「nickname」:myNickname,「password」:myPW}をJSONエンコード。
   JS文＝「emit('入室', 」＆送信JSON＆「)」。
   JS文をJS実行。
