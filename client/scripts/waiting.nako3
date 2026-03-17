@@ -4,8 +4,10 @@
   PWEL＝「#display-password」のDOM要素取得。
   PWELへPWをテキスト設定。
   players で待機室プレイヤー表示。
+  # 初期状態は無効化(クラス付与)
+  『document.getElementById("btn-start").classList.add("disabled")』をJS実行。
   もし myPlayerId＝0 ならば
-    『document.getElementById("btn-start").disabled = false』をJS実行。
+    # ホストなら有効化判定へ
   ここまで。
   待機室イベント設定。
 ここまで。
@@ -16,9 +18,9 @@
     NN＝対象[「nickname」]。
     ID＝対象[「id」]。
     もし ID＝0 ならば
-      HTML＝HTML＆「<div class='player-item host'>👑 」＆NN＆「</div>」。
+      HTML＝HTML＆「<div class='player-item host-wrapper'><img src='assets/hostuser.png' class='player-bg'><span class='player-name'>」＆NN＆「</span></div>」。
     違えば
-      HTML＝HTML＆「<div class='player-item'>」＆NN＆「</div>」。
+      HTML＝HTML＆「<div class='player-item normal-wrapper'><img src='assets/nomaluser.png' class='player-bg'><span class='player-name'>」＆NN＆「</span></div>」。
     ここまで。
   ここまで。
   EL＝「#player-list」のDOM要素取得。
@@ -29,12 +31,19 @@
   データ＝『window.__nakoData』をJS実行。
   players＝データ[「players」]。
   players で待機室プレイヤー表示。
+
+  # プレイヤー数チェック
+  有効フラグ＝偽。
   もし myPlayerId＝0 ならば
-    もし players の要素数が3以上 ならば
-      『document.getElementById("btn-start").disabled = false』をJS実行。
-    違えば
-      『document.getElementById("btn-start").disabled = true』をJS実行。
+    もし players の要素数が2以上 ならば
+      有効フラグ＝真。
     ここまで。
+  ここまで。
+  
+  もし 有効フラグ ならば
+    『document.getElementById("btn-start").classList.remove("disabled")』をJS実行。
+  違えば
+    『document.getElementById("btn-start").classList.add("disabled")』をJS実行。
   ここまで。
 ここまで。
 
@@ -43,6 +52,10 @@
   スタートボタンDOM＝「#btn-start」のDOM要素取得。
   退室ボタンDOM＝「#btn-leave」のDOM要素取得。
   スタートボタンDOMをクリックした時には
+    # disabledクラスがあるときは何もしない
+    もし 『document.getElementById("btn-start").classList.contains("disabled")』をJS実行 ならば
+      戻る。
+    ここまで。
     ゲームスタート押下。
   ここまで。
   退室ボタンDOMをクリックした時には

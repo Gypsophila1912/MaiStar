@@ -10,31 +10,36 @@
       <!-- ホーム画面 -->
     <div id="screen-home" class="screen active">        
       <div class="home-container">
-          <h1>舞星・雅</h1>
 
-          <div class="form-group">
+          <div class="form-group nickname-group">
             <label>ニックネーム</label>
-            <input
-              type="text"
-              id="nickname-input"
-              placeholder="ニックネームを入力"
-            />
+            <div class="input-wrapper">
+              <img src="assets/nomaluser.png" class="input-bg" alt="入力枠" />
+              <input
+                type="text"
+                id="nickname-input"
+                placeholder=""
+              />
+            </div>
           </div>
 
           <div class="button-group">
-            <button id="btn-create">部屋を作る</button>
-            <button id="btn-join">部屋に入る</button>
+            <img id="btn-create" src="assets/roommake.png" alt="部屋を作る" />
+            <img id="btn-join" src="assets/search.png" alt="部屋に入る" />
           </div>
 
           <!-- 入室用パスワード入力（入室ボタン押したら表示） -->
           <div id="join-form" style="display: none">
-            <div class="form-group">
+            <div class="form-group password-group">
               <label>合言葉</label>
-              <input
-                type="text"
-                id="password-input"
-                placeholder="合言葉を入力"
-              />
+              <div class="input-wrapper">
+                <img src="assets/pass.png" class="input-bg" alt="合言葉入力枠" />
+                <input
+                  type="text"
+                  id="password-input"
+                  placeholder="合言葉を入力"
+                />
+              </div>
             </div>
             <button id="btn-join-confirm">入室する</button>
           </div>
@@ -48,10 +53,18 @@
       <div id="screen-waiting" class="screen" style="display:none">
         <div class="home-container">
           <h2>待機室</h2>
-          <p>合言葉: <span id="display-password"></span></p>
+          <div class="password-group waiting-password">
+            <label>合言葉</label>
+            <div class="input-wrapper">
+              <img src="assets/pass.png" class="input-bg" alt="合言葉" />
+              <div id="display-password" class="text-overlay"></div>
+            </div>
+          </div>
           <div id="player-list"></div>
-          <button id="btn-start" disabled>ゲームスタート</button>
-          <button id="btn-leave">退室する</button>
+          <div class="start-button-wrapper">
+             <img id="btn-start" src="assets/startbutton.png" alt="ゲームスタート" />
+          </div>
+          <img id="btn-leave" src="assets/logout.png" alt="退室する" />
         </div>
       </div>
 
