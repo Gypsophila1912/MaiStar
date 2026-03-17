@@ -14,7 +14,7 @@
 		ad:[],
 		reputation:0,
 		closed:0,
-		effectFlags:{},
+		effectFlags:Pの効果フラグ初期化。
 		extraTurnCount:0,
 		usedBaseAction:0,
 		scoreByRound:[0,0,0],
@@ -22,6 +22,40 @@
 		usedGeishaSkill:0,
 		drawCountAtRoundStart:0
 	}
+	Pを戻す。
+ここまで。
+
+●(Pの)効果フラグ初期化とは
+	フラグ={
+		extraAdAvailable:0,
+		redDoubleUsed:0,
+		promoEffectUsed:0,
+		extraBlueUsed:0,
+		handRepSwapUsed:0,
+		extraReservationUsed:0,
+		reputationBoostUsed:0,
+		copiedGeishaId:"",
+		copyExtraBlueUsed:0,
+		copyRedDoubleUsed:0,
+		copyPromoEffectUsed:0,
+		copyExtraM06Used:0
+	}
+	フラグを戻す。
+ここまで。
+
+●(Pの)ターンフラグ準備とは
+	もしP["geishaId"]="M02"ならば
+		P["effectFlags"]["extraAdAvailable"]=1
+		ここまで。
+	P["effectFlags"]["redDoubleUsed"]=0
+	P["effectFlags"]["promoEffectUsed"]=0
+	P["effectFlags"]["extraBlueUsed"]=0
+	P["effectFlags"]["handRepSwapUsed"]=0
+	P["effectFlags"]["extraReservationUsed"]=0
+	P["effectFlags"]["copyExtraBlueUsed"]=0
+	P["effectFlags"]["copyRedDoubleUsed"]=0
+	P["effectFlags"]["copyPromoEffectUsed"]=0
+	P["effectFlags"]["copyExtraM06Used"]=0
 	Pを戻す。
 ここまで。
 
@@ -33,6 +67,15 @@
 		6を戻す。
 	ここまで。
 	7を戻す。
+ここまで。
+
+		GとPIDのM01追加予約をGに代入。
+●(Pの)初期手札ボーナス取得とは
+	ボーナス=0
+	もしP["geishaId"]="M08"ならば
+		ボーナス=ボーナス+2
+	ここまで。
+	ボーナスを戻す。
 ここまで。
 
 ●(人数の)空ゲーム状態作成とは
@@ -62,6 +105,34 @@
 	Gを戻す。
 ここまで。
 
+	●(GとPIDの)M01追加予約とは
+		P=G["players"][PID]
+		もしP["geishaId"]!="M01"ならば
+			Gを戻す。
+		ここまで。
+		もしP["effectFlags"]["extraReservationUsed"]=1ならば
+			Gを戻す。
+		ここまで。
+		手札数=P["hand"]の要素数
+		I=0
+		I<手札数の間
+			カード=P["hand"][I]
+			カードとP["reputation"]の座敷条件判定をOKに代入。
+			もしOK=1ならば
+				P["hand"]のIを配列切取して追加カードに代入。
+				P["zashiki"]に追加カードを配列追加。
+				GとPIDと追加カードと"zashiki"の客カード効果適用をGに代入。
+				G["discard"]に追加カードを配列追加。
+				P["effectFlags"]["extraReservationUsed"]=1
+				手札数=P["hand"]の要素数
+				I=手札数
+				ここまで。
+			ここまで。
+			I=I+1
+		ここまで。
+		Gを戻す。
+	ここまで。
+
 ●(GとIndexの)開始プレイヤー設定とは
 	G["startPlayerIndex"]=Index
 	G["turnIndex"]=Index
@@ -89,12 +160,14 @@
 		P["zashiki"]=[]
 		P["ad"]=[]
 		P["closed"]=0
-		P["effectFlags"]={}
+		P["effectFlags"]=Pの効果フラグ初期化。
 		P["extraTurnCount"]=0
 		P["usedBaseAction"]=0
 		P["usedGeishaSkill"]=0
 		P["reputation"]=0
-		P["drawCountAtRoundStart"]=手札枚数
+		Pの初期手札ボーナス取得をボーナスに代入。
+		P["drawCountAtRoundStart"]=手札枚数+ボーナス
+		Pのターンフラグ準備をPに代入。
 	ここまで。
 	Gを戻す。
 ここまで。
@@ -107,12 +180,51 @@
 	カード["name"]を戻す。
 ここまで。
 
+●(GとPIDの)山札から手札へ補充とは
+	山札=G["山札"]
+	山札の要素数を山札枚数に代入。
+	もし山札枚数>0ならば
+		山札の0を配列切取してカードに代入。
+		G["プレイヤー"][PID]["hand"]にカードを配列追加。
+	ここまで。
+	Gを戻す。
+ここまで。
+
 ●(GとPIDとカードと起点の)客カード効果適用とは
 	カードのカード効果ID取得を効果IDに代入。
 	もし効果ID=""ならば
 		Gを戻す。
 	ここまで。
 	GとPIDとカードと起点の客カード効果実行をGに代入。
+	Gを戻す。
+ここまで。
+
+●(GとPIDとカードの)M03追加青カードとは
+	P=G["players"][PID]
+	もしP["geishaId"]="M03"ならば
+		もしカード["color"]="blue"ならば
+			もしP["effectFlags"]["extraBlueUsed"]=0ならば
+				手札数=P["hand"]の要素数
+				I=0
+				I<手札数の間
+					候補=P["hand"][I]
+					もし候補["color"]="blue"ならば
+						候補とP["reputation"]の座敷条件判定を可に代入。
+						もし可=1ならば
+							P["hand"]のIを配列切取して追加カードに代入。
+							P["zashiki"]に追加カードを配列追加。
+							GとPIDと追加カードと"zashiki"の客カード効果適用をGに代入。
+							P["effectFlags"]["extraBlueUsed"]=1
+							手札数=P["hand"]の要素数
+							I=手札数
+							ここまで。
+						ここまで。
+					ここまで。
+					I=I+1
+				ここまで。
+			ここまで。
+		ここまで。
+	ここまで。
 	Gを戻す。
 ここまで。
 
@@ -171,15 +283,16 @@
 	ここまで。
 
 	P=G["players"][PID]
+	Pの実質閉業状態を閉業に代入。
 	もし行動名="座敷"ならば
-		もしP["closed"]=1ならば
+		もし閉業=1ならば
 			0を戻す。
 		ここまで。
 		1を戻す。
 	ここまで。
 
 	もし行動名="予約客使用"ならば
-		もしP["closed"]=1ならば
+		もし閉業=1ならば
 			0を戻す。
 		ここまで。
 		もしP["hasReservation"]=1ならば
@@ -189,6 +302,10 @@
 	ここまで。
 
 	もし行動名="宣伝"ならば
+		Pの宣伝許可判定を宣伝可に代入。
+		もし宣伝可=0ならば
+			0を戻す。
+		ここまで。
 		1を戻す。
 	ここまで。
 	もし行動名="紹介"ならば
@@ -246,6 +363,7 @@
 	次P=G["players"][次番号]
 	次P["usedGeishaSkill"]=0
 	次P["usedBaseAction"]=0
+	次Pのターンフラグ準備を次Pに代入。
 	G["phase"]="turn"
 	Gを戻す。
 ここまで。
@@ -287,7 +405,65 @@
 	ここまで。
 	GとPIDと"skill"と技情報の芸者能力適用をGに代入。
 	P=G["players"][PID]
+	GとPIDと技情報のM10コピー設定をGに代入。
+	GとPIDと技情報のM11手札評判交換をGに代入。
+	GとPIDと技情報のM12評判強化をGに代入。
 	P["usedGeishaSkill"]=1
+	Gを戻す。
+ここまで。
+
+●(GとPIDと技情報の)M10コピー設定とは
+	P=G["players"][PID]
+	もしP["geishaId"]!="M10"ならば
+		Gを戻す。
+	ここまで。
+	コピー対象=技情報["copyTargetId"]
+	もしコピー対象=""ならば
+		Gを戻す。
+	ここまで。
+	P["effectFlags"]["copiedGeishaId"]=コピー対象
+	P["effectFlags"]["copyExtraBlueUsed"]=0
+	P["effectFlags"]["copyRedDoubleUsed"]=0
+	P["effectFlags"]["copyPromoEffectUsed"]=0
+	P["effectFlags"]["copyExtraM06Used"]=0
+	Gを戻す。
+ここまで。
+
+●(GとPIDと技情報の)M11手札評判交換とは
+	P=G["players"][PID]
+	もしP["geishaId"]!="M11"ならば
+		Gを戻す。
+	ここまで。
+	もしP["effectFlags"]["handRepSwapUsed"]=1ならば
+		Gを戻す。
+	ここまで。
+	手札番号=技情報["swapHandIndex"]
+	もし手札番号=""ならば
+		Gを戻す。
+	ここまで。
+	Pと手札番号の手札番号妥当判定をOKに代入。
+	もしOK=0ならば
+		Gを戻す。
+	ここまで。
+	P["hand"]の手札番号を配列切取して捨てカードに代入。
+	G["discard"]に捨てカードを配列追加。
+	P["reputation"]=P["reputation"]+1
+	P["effectFlags"]["handRepSwapUsed"]=1
+	Gを戻す。
+ここまで。
+
+●(GとPIDと技情報の)M12評判強化とは
+	P=G["players"][PID]
+	もしP["geishaId"]!="M12"ならば
+		Gを戻す。
+	ここまで。
+	もしP["effectFlags"]["reputationBoostUsed"]=1ならば
+		Gを戻す。
+	ここまで。
+	もし技情報["boostReputation"]=1ならば
+		P["reputation"]=P["reputation"]+3
+		P["effectFlags"]["reputationBoostUsed"]=1
+	ここまで。
 	Gを戻す。
 ここまで。
 
@@ -337,6 +513,7 @@
 	ここまで。
 
 	カード=P["hand"][手札番号]
+	色=カード["color"]
 	カードとP["reputation"]の座敷条件判定をOKに代入。
 	もしOK=0ならば
 		Gを戻す。
@@ -345,6 +522,24 @@
 	P["hand"]の手札番号を配列切取してカードに代入。
 	P["zashiki"]にカードを配列追加。
 	GとPIDとカードと"zashiki"の客カード効果適用をGに代入。
+	GとPIDとカードのM03追加青カードをGに代入。
+	もしP["geishaId"]="M04"かつ色="red"ならば
+		もしP["effectFlags"]["redDoubleUsed"]=0ならば
+			GとPIDとカードと"zashiki"の客カード効果適用をGに代入。
+			P["effectFlags"]["redDoubleUsed"]=1
+		ここまで。
+	ここまで。
+	コピー対象=P["effectFlags"]["copiedGeishaId"]
+	もしコピー対象="M03"かつP["effectFlags"]["copyExtraBlueUsed"]=0ならば
+		GとPIDとカードのM03追加青カードをGに代入。
+		P["effectFlags"]["copyExtraBlueUsed"]=1
+		ここまで。
+	ここまで。
+	もしコピー対象="M04"かつ色="red"かつP["effectFlags"]["copyRedDoubleUsed"]=0ならば
+		GとPIDとカードと"zashiki"の客カード効果適用をGに代入。
+		P["effectFlags"]["copyRedDoubleUsed"]=1
+		ここまで。
+	ここまで。
 	GとPIDの基本行動完了記録をGに代入。
 	G["phase"]="turn"
 	Gを戻す。
@@ -356,9 +551,26 @@
 	もし手番中=0ならば
 		Gを戻す。
 	ここまで。
-	GとPIDの基本行動前判定を基本OKに代入。
-	もし基本OK=0ならば
-		Gを戻す。
+	P=G["players"][PID]
+	追加宣伝=0
+	もしP["usedBaseAction"]=1ならば
+		追加宣伝=1
+		もしP["geishaId"]="M02"ならば
+			もしP["effectFlags"]["extraAdAvailable"]=1ならば
+				P["effectFlags"]["extraAdAvailable"]=0
+				ここまで。
+			ここまで。
+			もしP["effectFlags"]["extraAdAvailable"]=0ならば
+				Gを戻す。
+			ここまで。
+		ここまで。
+	ここまで。
+	コピー対象=P["effectFlags"]["copiedGeishaId"]
+	もし追加宣伝=0ならば
+		GとPIDの基本行動前判定を基本OKに代入。
+		もし基本OK=0ならば
+			Gを戻す。
+		ここまで。
 	ここまで。
 
 	GとPIDと"宣伝"の行動可能判定を可能に代入。
@@ -384,10 +596,37 @@
 	もしある=1ならば
 		宣伝力=カード["promo"]
 	ここまで。
+	もしP["geishaId"]="M06"ならば
+		宣伝力=宣伝力+1
+		ここまで。
+	ここまで。
+	もしコピー対象="M06"かつP["effectFlags"]["copyExtraM06Used"]=0ならば
+		宣伝力=宣伝力+1
+		P["effectFlags"]["copyExtraM06Used"]=1
+		ここまで。
+	ここまで。
 
 	P["hand"]の手札番号を配列切取してカードに代入。
 	P["ad"]にカードを配列追加。
 	P["reputation"]=P["reputation"]+宣伝力
+	もしP["geishaId"]="M07"ならば
+		もしP["effectFlags"]["promoEffectUsed"]=0ならば
+			カードとP["reputation"]の座敷条件判定を可能に代入。
+			もし可能=1ならば
+				GとPIDとカードと"宣伝"の客カード効果適用をGに代入。
+				P["effectFlags"]["promoEffectUsed"]=1
+				ここまで。
+			ここまで。
+		ここまで。
+	ここまで。
+	もしコピー対象="M07"かつP["effectFlags"]["copyPromoEffectUsed"]=0ならば
+		カードとP["reputation"]の座敷条件判定を可能に代入。
+		もし可能=1ならば
+			GとPIDとカードと"宣伝"の客カード効果適用をGに代入。
+			P["effectFlags"]["copyPromoEffectUsed"]=1
+			ここまで。
+		ここまで。
+	ここまで。
 	GとPIDの基本行動完了記録をGに代入。
 	G["phase"]="turn"
 	Gを戻す。
@@ -398,7 +637,7 @@
 	GとPIDの手番判定を手番中に代入。
 	もし手番中=0ならば
 		Gを戻す。
-	ここまで。
+		ここまで。
 	GとPIDの基本行動前判定を基本OKに代入。
 	もし基本OK=0ならば
 		Gを戻す。
@@ -581,6 +820,10 @@
 		もしある=1ならば
 			収入=収入+カード["income"]
 		ここまで。
+		色=カード["color"]
+		もしP["geishaId"]="M06"かつ色="green"ならば
+			収入=収入+2
+			ここまで。
 	ここまで。
 	収入を戻す。
 ここまで。
@@ -611,6 +854,8 @@
 		Rの条件Aボーナス取得をボーナスに代入。
 		得点=得点+ボーナス
 	ここまで。
+
+	Pと得点のM05得点半減を得点に代入。
 
 	RI=R-1
 	P["scoreByRound"][RI]=得点
@@ -747,8 +992,14 @@
     プレイヤー一覧を反復
         もし対象=「」ならば、続ける。
         PID = 対象
-        5回
-            GとPIDに山札から手札へ補充。
+        R=G["ラウンド"]
+        Rの初期手札枚数取得を基本枚数に代入。
+        P=G["プレイヤー"][PID]
+        Pの初期手札ボーナス取得をボーナスに代入。
+        枚数=基本枚数+ボーナス
+        # 朧の能力で初期手札が2枚増える
+        枚数回
+            GとPIDの山札から手札へ補充。
         ここまで。
     ここまで。
     Gを戻す。
