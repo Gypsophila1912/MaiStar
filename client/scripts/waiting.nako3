@@ -5,7 +5,11 @@
   PWELへPWをテキスト設定。
   players で待機室プレイヤー表示。
   もし myPlayerId＝0 ならば
-    『document.getElementById("btn-start").disabled = false』をJS実行。
+    もし players の要素数が3以上 ならば
+      『document.getElementById("btn-start").disabled = false』をJS実行。
+    違えば
+      『document.getElementById("btn-start").disabled = true』をJS実行。
+    ここまで。
   ここまで。
   待機室イベント設定。
 ここまで。
@@ -26,11 +30,13 @@
 ここまで。
 
 ●待機室更新受信とは
-  データ＝『window.__nakoData』をJS実行。
+  データ＝「window.__nakoData」をJS実行。
   players＝データ[「players」]。
+  NUM＝playersの要素数。
   players で待機室プレイヤー表示。
   もし myPlayerId＝0 ならば
-    もし players の要素数が3以上 ならば
+    もし playersの要素数が3以上 ならば
+    「人数確認」と言う。
       『document.getElementById("btn-start").disabled = false』をJS実行。
     違えば
       『document.getElementById("btn-start").disabled = true』をJS実行。
@@ -64,6 +70,7 @@
     「ホストのみ開始できます」と言う。
     戻る。
   ここまで。
-  『emit("ゲーム開始", {roomId: window.__myRoomId})』をJS実行。
+  JS文＝『emit('ゲーム開始', {roomId: '」＆myRoomId＆「'})』。
+  JS文をJS実行。
 ここまで。
 

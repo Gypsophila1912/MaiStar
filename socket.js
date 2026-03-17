@@ -98,7 +98,8 @@ io.on("connection", (socket) => {
       }
       socket.join(result.roomId);
       socket.emit("入室完了", result);
-      socket.to(result.roomId).emit("待機室更新", result);
+      console.log("待機室更新送信先:", result.roomId); // ← 追加
+      io.to(result.roomId).emit("待機室更新", result);
     } catch (e) {
       console.error("入室エラー:", e.message);
       socket.emit("エラー", { message: "サーバーエラーが発生しました" });
@@ -115,6 +116,7 @@ io.on("connection", (socket) => {
         socket.emit("エラー", result);
         return;
       }
+      // 部屋全員をゲーム画面に遷移させる
       io.to(data.roomId).emit("ゲーム開始", result);
     } catch (e) {
       console.error("ゲーム開始エラー:", e.message);
@@ -129,6 +131,7 @@ io.on("connection", (socket) => {
         socketId: socket.id,
       });
       if (result.error) {
+        // 部屋が見つからない場合はホームに戻す
         socket.emit("再接続失敗", {});
         return;
       }
