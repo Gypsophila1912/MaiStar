@@ -20,11 +20,37 @@ body {
   display: block;
 }
 
-/* ホーム画面 */
-.home-container {
-  max-width: 400px;
-  margin: 4rem auto;
+/* ホーム画面の背景設定 */
+#screen-home {
+  background-image: url("assets/title.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* 背景を少し暗くして文字を見やすくするオーバーレイ */
+#screen-home::before {
+  content: "";
+  position: absolute;
   text-align: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 10; /* オーバーレイを少し前面へ */
+}
+
+/* コンテンツを前面に出す */
+.home-container {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  min-height: 100vh; /* 画面全体を使うように */
+  padding: 2rem; /* 左上の余白 */
+  text-align: left;
+  margin: 0;
 }
 
 h1 {
@@ -43,7 +69,7 @@ h2 {
 
 .form-group {
   margin-bottom: 1rem;
-  text-align: left;
+  text-align: center;
 }
 
 .form-group label {
@@ -60,7 +86,7 @@ input[type="text"] {
   border: 1px solid #c9a84c;
   border-radius: 4px;
   background: rgba(245, 239, 224, 0.1);
-  color: #f5efe0;
+  color:#f5efe0;
   font-size: 1rem;
   font-family: inherit;
 }
@@ -73,10 +99,119 @@ input[type="text"]:focus {
   border-color: #e8c96e;
 }
 
+/* ニックネーム入力欄の特別デザイン */
+.nickname-group {
+  position: relative; /* fixedから変更 */
+  text-align: left;
+  margin: 0;
+  margin-bottom: 2rem;
+}
+
+.nickname-group .input-wrapper {
+  width: 300px;
+  /* margin-left: 30px; */ /* 全体のコンテナの位置に依存させる */
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-bg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 共通：画像の上に重ねるインプット */
+.input-wrapper input[type="text"] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 60%;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ニックネーム用テキスト色 */
+.nickname-group input[type="text"] {
+  color: gray;
+}
+
+/* パスワード入力欄のデザイン（左上に配置） */
+#join-form {
+  position: relative;
+  width: 300px; /* ニックネームと同じ幅に合わせる */
+  z-index: 10;   /* 手前に表示 */
+  text-align: left;
+  margin-top: 1rem; /* ニックネームとの間隔 */
+}
+
+.password-group {
+  margin: 0;
+  margin-bottom: 1rem;
+}
+
+.password-group .input-wrapper {
+  width: 100%; /* 親要素(300px)に合わせる */
+  margin: 0;
+}
+
+#btn-join-confirm {
+  width: 100%; /* 親要素(300px)に合わせる */
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: #c0392b;
+  color: #f5efe0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+/* パスワード用テキスト色（巻物の上なので黒っぽく） */
+.password-group input[type="text"] {
+  color: #3e2723;
+}
+
+
+/* 背景画像があるのでフォーカス時の枠線も消す */
+.input-wrapper input[type="text"]:focus {
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+
 .button-group {
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 1rem;
-  margin: 1.5rem 0;
+  
+  /* 画面下部中央へ配置 */
+  position: absolute;
+  bottom: 80px;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  margin: 0;
+}
+
+.button-group img {
+  height: 360px;
+  width: auto;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.button-group img:hover {
+  transform: scale(1.05);
 }
 
 button {
@@ -109,18 +244,133 @@ button:disabled {
   transform: none;
 }
 
+/* 待機室の背景設定 */
+#screen-waiting {
+  background-image: url("assets/waiting.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* 退室ボタン（左上配置） */
+#btn-leave {
+  position: absolute; /* fixedから変更 */
+  top: 30px;
+  left: 30px;
+  width: 150px; /* サイズを大きく */
+  height: auto;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  z-index: 200;
+}
+
+#btn-leave:hover {
+  transform: scale(1.05);
+}
+
+/* 背景を少し暗くして文字を見やすくするオーバーレイ */
+#screen-waiting::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 0;
+}
+
 /* 待機室 */
 #screen-waiting .home-container {
+  position: relative;
+  z-index: 1;
   max-width: 480px;
   margin: 3rem auto;
 }
 
-#display-password {
-  font-size: 1.8rem;
+/* 待機室用：テキストオーバーレイ */
+.text-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #c0392b;
-  letter-spacing: 0.4em;
+  color: #c0392b; /* 赤色に変更 */
+  letter-spacing: 0.2em;
+  z-index: 10; /* 画像より前面に表示 */
 }
+
+/* 待機室の合言葉（中央寄せ） */
+.waiting-password {
+  text-align: center;
+  margin: 1rem auto 2rem auto;
+}
+
+.waiting-password .input-wrapper {
+  margin: 0 auto;
+  width: 360px; /* 少し大きめに */
+}
+
+/* 既存の #display-password 設定を上書きまたは削除 */
+#display-password {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #c0392b; /* 赤色 */
+  letter-spacing: 0.2em;
+  z-index: 20; /* 確実に最前面へ */
+}
+
+/* スタートボタン */
+.start-button-wrapper {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  background: transparent; /* 背景透明 */
+  padding: 0;
+  border: none;
+  display: inline-block; /* imgタグをボタンのように扱うため */
+}
+
+#btn-start {
+  width: 250px;
+  height: auto;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* disabled時に半透明にする */
+  opacity: 1;
+  background: transparent; /* ボタン自体の背景も透明に */
+  border: none;
+  display: block; /* 画像の隙間を消す */
+}
+
+#btn-start.disabled {
+  /* opacity: 0.5; */  /* 半透明を解除 */
+  cursor: not-allowed;
+  /* filter: grayscale(100%); */ /* グレースケールを解除 */
+ /* 少しだけ暗くする程度にしておく？あるいは完全にそのままでもOK */
+}
+
+#btn-start:hover:not(.disabled) {
+  transform: scale(1.05);
+}
+
 
 #player-list {
   margin: 1.5rem 0;
@@ -129,6 +379,69 @@ button:disabled {
   gap: 0.5rem;
 }
 
+/* プレイヤーリストのスタイル */
+.player-item.host-wrapper {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0.5rem auto;
+  width: 100%;
+  max-width: 480px; /* 画像サイズに合わせて調整 */
+}
+
+/* ホスト画像のスタイル */
+.host-wrapper .player-bg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ホストの名前のスタイル */
+.host-wrapper .player-name {
+  position: absolute;
+  top: 50%;
+  left: 55%; /* 画像の右側のスペースに配置 */
+  transform: translate(-50%, -50%);
+  color: #3e2723;
+  font-weight: bold;
+  font-size: 1.2rem;
+  width: 60%;
+  text-align: center;
+}
+
+/* 通常プレイヤーのスタイル */
+.player-item.normal-wrapper {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0.5rem auto;
+  width: 100%;
+  max-width: 400px; /* ホストより少し小さく？ 調整可 */
+}
+
+/* 通常プレイヤー画像のスタイル */
+.normal-wrapper .player-bg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 通常プレイヤーの名前のスタイル */
+.normal-wrapper .player-name {
+  position: absolute;
+  top: 50%;
+  left: 55%; /* 画像の右側に配置 */
+  transform: translate(-50%, -50%);
+  color: #3e2723;
+  font-weight: bold;
+  font-size: 1.1rem;
+  width: 60%;
+  text-align: center;
+}
+
+/* 通常プレイヤーのスタイル（フォールバック） */
 .player-item {
   padding: 0.6rem 1rem;
   background: rgba(245, 239, 224, 0.08);
@@ -141,9 +454,10 @@ button:disabled {
   border-color: rgba(201, 168, 76, 0.5);
 }
 
-#btn-start {
+/* これが原因の可能性があるため削除または無効化 */
+/* #btn-start {
   width: 100%;
   margin-top: 1rem;
   background: #c9a84c;
   color: #1a1208;
-}
+} */

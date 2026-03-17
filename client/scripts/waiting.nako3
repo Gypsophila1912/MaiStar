@@ -32,9 +32,9 @@
     NN＝対象[「nickname」]。
     ID＝対象[「id」]。
     もし ID＝0 ならば
-      HTML＝HTML＆「<div class='player-item host'>👑 」＆NN＆「</div>」。
+      HTML＝HTML＆「<div class='player-item host-wrapper'><img src='assets/hostuser.png' class='player-bg'><span class='player-name'>」＆NN＆「</span></div>」。
     違えば
-      HTML＝HTML＆「<div class='player-item'>」＆NN＆「</div>」。
+      HTML＝HTML＆「<div class='player-item normal-wrapper'><img src='assets/nomaluser.png' class='player-bg'><span class='player-name'>」＆NN＆「</span></div>」。
     ここまで。
   ここまで。
   EL＝「#player-list」のDOM要素取得。
@@ -61,6 +61,10 @@
   スタートボタンDOM＝「#btn-start」のDOM要素取得。
   退室ボタンDOM＝「#btn-leave」のDOM要素取得。
   スタートボタンDOMをクリックした時には
+    # disabledクラスがあるときは何もしない
+    もし 『document.getElementById("btn-start").classList.contains("disabled")』をJS実行 ならば
+      戻る。
+    ここまで。
     ゲームスタート押下。
   ここまで。
   退室ボタンDOMをクリックした時には
