@@ -1,0 +1,71 @@
+!「../node_modules/nadesiko3-server/nadesiko3-server.mjs」を取り込む。
+!「room.nako3」を取り込む。
+
+WEBサーバ起動成功時には
+  「APIサーバー起動: 3001」と表示。
+
+  「/api/room/create」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    result＝データで部屋作成処理。
+    resultをJSONエンコードしてWEBサーバ出力。
+  ここまで。
+
+  「/api/room/join」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    result＝データで入室処理。
+    resultをJSONエンコードしてWEBサーバ出力。
+  ここまで。
+
+  # ← これを追加
+  「/api/room/rejoin」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    result＝データで再接続処理。
+    resultをJSONエンコードしてWEBサーバ出力。
+  ここまで。
+
+  「/api/game/start」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    「ゲーム開始処理未実装」と表示。
+    {「success」:真}をJSONエンコードしてWEBサーバ出力。
+  ここまで。
+
+  「/api/room/leave」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    データで退室処理。
+    {「success」:真}をJSONエンコードしてWEBサーバ出力。
+  ここまで。
+  
+  「/api/room/remove」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    データで完全退室処理。
+    {「success」:真}をJSONエンコードしてWEBサーバ出力。
+  ここまで。
+  
+「/api/room/get-by-socket」へWEBサーバPOST時には
+  データ＝POSTデータ。
+  result＝データでsocket部屋取得。
+  resultをJSONエンコードしてWEBサーバ出力。
+ここまで。
+
+「/api/room/get」へWEBサーバPOST時には
+  データ＝POSTデータ。
+  RID＝データ[「roomId」]。
+  result＝RIDで部屋情報取得。
+  resultをJSONエンコードしてWEBサーバ出力。
+  ここまで。
+  
+  「/api/room/delete」へWEBサーバPOST時には
+  データ＝POSTデータ。
+  データで部屋削除処理。
+  {「success」:真}をJSONエンコードしてWEBサーバ出力。
+ここまで。
+
+「/api/room/is-host」へWEBサーバPOST時には
+  データ＝POSTデータ。
+  result＝データでホスト判定処理。
+  resultをJSONエンコードしてWEBサーバ出力。
+ここまで。
+
+ここまで。
+
+3001でWEBサーバ起動。

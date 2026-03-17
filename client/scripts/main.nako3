@@ -1,0 +1,65 @@
+myRoomId＝「」。
+myPlayerId＝0。
+myPassword＝「」。
+myNickname＝「」。
+
+●（画面名で）画面切替とは
+  SCREEN＝「screen-」＆画面名。
+  JS文＝「console.log('切替:screen-」＆画面名＆「'); document.querySelectorAll('.screen').forEach(el=>el.style.display='none'); var t=document.getElementById('screen-」＆画面名＆「'); console.log('要素:', t); if(t) t.style.display='block';」。
+  JS文をJS実行。
+ここまで。
+
+●接続完了受信とは
+  「home」で画面切替。
+ここまで。
+
+●部屋作成完了受信とは
+  データ＝『window.__nakoData』をJS実行。
+  myRoomId＝データ[「roomId」]。
+  myPassword＝データ[「password」]。
+  myPlayerId＝データ[「playerId」]。
+  JS文＝「window.__myRoomId = '」＆myRoomId＆「'」。
+  JS文をJS実行。
+  データで待機室初期化。
+  「waiting」で画面切替。
+ここまで。
+
+●入室完了受信とは
+  データ＝『window.__nakoData』をJS実行。
+  myRoomId＝データ[「roomId」]。
+  myPlayerId＝データ[「playerId」]。
+  データで待機室初期化。
+  「waiting」で画面切替。
+ここまで。
+
+●部屋解散受信とは
+  データ＝『window.__nakoData』をJS実行。
+  MSG＝データ[「message」]。
+  「エラー:{MSG}」と言う。
+  「home」で画面切替。
+ここまで。
+
+●ゲーム開始受信とは
+  データ＝『window.__nakoData』をJS実行。
+  「game」で画面切替。
+ここまで。
+
+●再接続完了受信とは
+  データ＝『window.__nakoData』をJS実行。
+  myRoomId＝データ[「roomId」]。
+  myPlayerId＝データ[「playerId」]。
+  myPassword＝データ[「password」]。
+  STATUS＝データ[「status」]。
+  もし STATUS＝「playing」 ならば
+    「game」で画面切替。
+  違えば
+    データで待機室初期化。
+    「waiting」で画面切替。
+  ここまで。
+ここまで。
+
+●エラー受信とは
+  データ＝『window.__nakoData』をJS実行。
+  MSG＝データ[「message」]。
+  「エラー:{MSG}」と言う。
+ここまで。

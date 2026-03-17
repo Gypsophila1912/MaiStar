@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npm exec cnako3 server/server.nako3",
+    "start:api": "npm exec cnako3 server/server.nako3",
+    "start:socket": "node socket.js",
     "client": "npx serve client",
-    "dev": "concurrently \"npm start\" \"npm run client\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"npm run start:api\" \"npm run start:socket\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
@@ -15,7 +15,8 @@
   "dependencies": {
     "dotenv": "^17.3.1",
     "nadesiko3": "^3.7.16",
-    "nadesiko3-websocket": "^3.6.5"
+    "nadesiko3-server": "^3.6.6",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

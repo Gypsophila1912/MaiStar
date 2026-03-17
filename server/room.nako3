@@ -1,0 +1,179 @@
+# 起動時に部屋管理をJS内で完結させる
+『
+  sys.__nako_rooms = {};
+  
+  sys.__createRoom = function(nn, sid) {
+    const rid = Math.random().toString(36).slice(2,8).toUpperCase();
+    const pw  = Math.random().toString(36).slice(2,8).toUpperCase();
+    sys.__nako_rooms[rid] = {
+      password: pw,
+      status: "waiting",
+      players: [{ id: 0, nickname: nn, socketId: sid, isHost: true }]
+    };
+    console.log("部屋作成:", rid, "pw:", pw);
+    console.log("rooms確認:", JSON.stringify(sys.__nako_rooms));
+    return JSON.stringify({ roomId: rid, password: pw, playerId: 0, players: sys.__nako_rooms[rid].players });
+  };
+
+  sys.__joinRoom = function(nn, pw, sid) {
+    const rooms = sys.__nako_rooms;
+    const rid = Object.keys(rooms).find(key => rooms[key].password === pw);
+    if (!rid) return JSON.stringify({ error: true, message: "部屋が見つかりません" });
+    if (rooms[rid].status === "playing") return JSON.stringify({ error: true, message: "ゲームはすでに始まっています" });
+    if (rooms[rid].players.length >= 6) return JSON.stringify({ error: true, message: "満員です" });
+    const newId = rooms[rid].players.length;
+    rooms[rid].players.push({ id: newId, nickname: nn, socketId: sid, isHost: false });
+    console.log("入室:", nn, "部屋:", rid);
+  return JSON.stringify({ 
+    roomId: rid, 
+    password: rooms[rid].password,  // ← 追加
+    playerId: newId, 
+    players: rooms[rid].players 
+  });  };
+
+  sys.__leaveRoom = function(sid) {
+    const rooms = sys.__nako_rooms;
+    Object.keys(rooms).forEach(key => {
+      rooms[key].players.forEach(p => {
+        if (p.socketId === sid) {
+          p.socketId = null; // 削除せずnullにする
+          p.online = false;
+        }
+      });
+    });
+  };
+  
+  sys.__removePlayer = function(sid) {
+    const rooms = sys.__nako_rooms;
+    Object.keys(rooms).forEach(key => {
+      rooms[key].players = rooms[key].players.filter(p => p.socketId !== sid);
+      // プレイヤーが0人になったら部屋も削除
+      if (rooms[key].players.length === 0) {
+        delete rooms[key];
+      }
+    });
+  };
+  
+  sys.__getRoomBySocket = function(sid) {
+  const rooms = sys.__nako_rooms;
+  let found = null;
+  Object.keys(rooms).forEach(key => {
+    const player = rooms[key].players.find(p => p.socketId === sid);
+    if (player) found = { roomId: key, players: rooms[key].players, password: rooms[key].password };
+  });
+  return found ? JSON.stringify(found) : JSON.stringify({ error: true });
+};
+
+sys.__isHost = function(sid) {
+  const rooms = sys.__nako_rooms;
+  let isHost = false;
+  Object.keys(rooms).forEach(key => {
+    const player = rooms[key].players.find(p => p.socketId === sid);
+    if (player && player.isHost) isHost = true;
+  });
+  return isHost;
+};
+
+sys.__getRoomIdBySocket = function(sid) {
+  const rooms = sys.__nako_rooms;
+  let foundRoomId = null;
+  Object.keys(rooms).forEach(key => {
+    const player = rooms[key].players.find(p => p.socketId === sid);
+    if (player) foundRoomId = key;
+  });
+  return foundRoomId || '';
+};
+
+sys.__deleteRoom = function(roomId) {
+  delete sys.__nako_rooms[roomId];
+};
+    
+  sys.__rejoinRoom = function(roomId, playerId, sid) {
+    const rooms = sys.__nako_rooms;
+    if (!rooms[roomId]) return JSON.stringify({ error: true, message: '部屋が見つかりません' });
+    // ← parseInt で数値に変換
+    const player = rooms[roomId].players.find(p => p.id === parseInt(playerId));
+    if (!player) return JSON.stringify({ error: true, message: 'プレイヤーが見つかりません' });
+    player.socketId = sid;
+    return JSON.stringify({
+      roomId: roomId,
+      playerId: parseInt(playerId),
+      password: rooms[roomId].password,
+      players: rooms[roomId].players,
+      status: rooms[roomId].status
+    });
+  };
+』をJS実行。
+
+●ランダムID生成とは
+  「Math.random().toString(36).slice(2,8).toUpperCase()」をJS実行して戻す。
+ここまで。
+
+●（データで）部屋作成処理とは
+  NN＝データ[「nickname」]。
+  SID＝データ[「socketId」]。
+  JS文＝「sys.__createRoom('」＆NN＆「', '」＆SID＆「')」。
+  result＝JS文をJS実行。
+  resultをJSONデコードして戻す。
+ここまで。
+
+●（データで）入室処理とは
+  NN＝データ[「nickname」]。
+  PW＝データ[「password」]。
+  SID＝データ[「socketId」]。
+  JS文＝「sys.__joinRoom('」＆NN＆「', '」＆PW＆「', '」＆SID＆「')」。
+  result＝JS文をJS実行。
+  resultをJSONデコードして戻す。
+ここまで。
+
+●（データで）socket部屋取得とは
+  SID＝データ[「socketId」]。
+  JS文＝「sys.__getRoomBySocket('」＆SID＆「')」。
+  result＝JS文をJS実行。
+  resultをJSONデコードして戻す。
+ここまで。
+
+●（データで）退室処理とは
+  SID＝データ[「socketId」]。
+  JS文＝「sys.__leaveRoom('」＆SID＆「')」。
+  JS文をJS実行。
+ここまで。
+
+●（データで）完全退室処理とは
+  SID＝データ[「socketId」]。
+  JS文＝「sys.__removePlayer('」＆SID＆「')」。
+  JS文をJS実行。
+ここまで。
+
+●（データで）部屋削除処理とは
+  RID＝データ[「roomId」]。
+  JS文＝「sys.__deleteRoom('」＆RID＆「')」。
+  JS文をJS実行。
+  「部屋削除: {RID}」と表示。
+ここまで。
+
+●（データで）ホスト判定処理とは
+  SID＝データ[「socketId」]。
+  JS文＝「sys.__isHost('」＆SID＆「')」。
+  result＝JS文をJS実行。
+  {「isHost」:result}を戻す。
+ここまで。
+
+●（RIDで）部屋情報取得とは
+  JS文＝「JSON.stringify(sys.__nako_rooms['」＆RID＆「'] || null)」。
+  ROOM_JSON＝JS文をJS実行。
+  もし ROOM_JSON＝「null」 ならば
+    空を戻す。
+    戻る。
+  ここまで。
+  ROOM_JSONをJSONデコードして戻す。
+ここまで。
+
+●（データで）再接続処理とは
+  RID＝データ[「roomId」]。
+  PID＝データ[「playerId」]。
+  SID＝データ[「socketId」]。
+  JS文＝「sys.__rejoinRoom('」＆RID＆「', 」＆PID＆「, '」＆SID＆「')」。
+  result＝JS文をJS実行。
+  resultをJSONデコードして戻す。
+ここまで。
