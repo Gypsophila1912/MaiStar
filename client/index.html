@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>舞星・雅</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+      <!-- ホーム画面 -->
+    <div id="screen-home" class="screen active">        
+      <div class="home-container">
+          <h1>舞星・雅</h1>
+
+          <div class="form-group">
+            <label>ニックネーム</label>
+            <input
+              type="text"
+              id="nickname-input"
+              placeholder="ニックネームを入力"
+            />
+          </div>
+
+          <div class="button-group">
+            <button id="btn-create">部屋を作る</button>
+            <button id="btn-join">部屋に入る</button>
+          </div>
+
+          <!-- 入室用パスワード入力（入室ボタン押したら表示） -->
+          <div id="join-form" style="display: none">
+            <div class="form-group">
+              <label>合言葉</label>
+              <input
+                type="text"
+                id="password-input"
+                placeholder="合言葉を入力"
+              />
+            </div>
+            <button id="btn-join-confirm">入室する</button>
+          </div>
+
+          <div id="error-message" style="color: red"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 待機室 -->
+      <div id="screen-waiting" class="screen" style="display:none">
+        <div class="home-container">
+          <h2>待機室</h2>
+          <p>合言葉: <span id="display-password"></span></p>
+          <div id="player-list"></div>
+          <button id="btn-start" disabled>ゲームスタート</button>
+          <button id="btn-leave">退室する</button>
+        </div>
+      </div>
+
+    <!-- ゲーム画面 -->
+    <div id="screen-game" class="screen" style="display: none">
+      <!-- game.htmlの中身をここに貼る -->
+    </div>
+
+    <!-- Socket.io -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+      const socket = io("http://localhost:5001");
+
+      function emit(action, data) {
+        socket.emit(action, data);
+      }
+
+      // なでしこ3が読み込まれてから実行する
+      function nakoRun(funcName) {
+        if (navigator.nako3) {
+          navigator.nako3.run(funcName + '。');
+        } else {
+          // なでしこ3がまだ読み込まれていない場合は待つ
+          setTimeout(() => nakoRun(funcName), 100);
+        }
+      }
+
+      socket.on("connect", () => {
+        const savedRoomId = sessionStorage.getItem("myRoomId");
+        const savedPlayerId = sessionStorage.getItem("myPlayerId");
+        if (savedRoomId) {
+          socket.emit("再接続", {
+            roomId: savedRoomId,
+            playerId: parseInt(savedPlayerId),
+            socketId: socket.id
+          });
+        } else {
+          nakoRun("接続完了受信");
+        }
+      });
+
+      socket.on("再接続完了", (data) => {
+        window.__nakoData = data;
+        nakoRun("再接続完了受信");
+      });
+
+      socket.on("再接続失敗", () => {
+        sessionStorage.clear();
+        nakoRun("接続完了受信");
+      });
+
+      socket.on("部屋作成完了", (data) => {
+        sessionStorage.setItem("myRoomId", data.roomId);
+        sessionStorage.setItem("myPlayerId", data.playerId);
+        sessionStorage.setItem("myPassword", data.password);
+        window.__nakoData = data;
+        nakoRun("部屋作成完了受信");
+      });
+
+      socket.on("入室完了", (data) => {
+        sessionStorage.setItem("myRoomId", data.roomId);
+        sessionStorage.setItem("myPlayerId", data.playerId);
+        sessionStorage.setItem("myPassword", data.password || "");
+        window.__nakoData = data;
+        nakoRun("入室完了受信");
+      });
+
+      socket.on("待機室更新", (data) => {
+        window.__nakoData = data;
+        nakoRun("待機室更新受信");
+      });
+
+      socket.on("部屋解散", (data) => {
+        sessionStorage.clear();
+        window.__nakoData = data;
+        nakoRun("部屋解散受信");
+      });
+
+      socket.on("ゲーム開始", (data) => {
+        sessionStorage.setItem("currentScreen", "game");
+        window.__nakoData = data;
+        nakoRun("ゲーム開始受信");
+      });
+
+      socket.on("エラー", (data) => {
+        window.__nakoData = data;
+        nakoRun("エラー受信");
+      });
+    </script>    <!-- なでしこ3 -->
+    <script src="https://nadesi.com/v3/cdn.php?v=3.3.71&f=release/wnako3.js&run"></script>
+    <script type="なでしこ">
+      !「scripts/home.nako3」を取り込む。
+      !「scripts/waiting.nako3」を取り込む。
+      !「scripts/game.nako3」を取り込む。
+      !「scripts/main.nako3」を取り込む。
+    </script>
+  </body>
+</html>

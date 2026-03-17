@@ -1,0 +1,68 @@
+# DOM取得
+作成ボタンDOM＝「#btn-create」のDOM要素取得。
+入室ボタンDOM＝「#btn-join」のDOM要素取得。
+入室確定ボタンDOM＝「#btn-join-confirm」のDOM要素取得。
+
+# イベント設定
+作成ボタンDOMをクリックした時には
+  部屋作成押下。
+ここまで。
+
+入室ボタンDOMをクリックした時には
+  部屋入室押下。
+ここまで。
+
+入室確定ボタンDOMをクリックした時には
+  入室確定押下。
+ここまで。
+
+
+●部屋作成押下とは
+  NN＝「#nickname-input」のDOM要素取得のテキスト取得。
+  もし NN＝「」 ならば
+    ERR＝「#error-message」のDOM要素取得。
+    ERRへ「ニックネームを入力してください」をテキスト設定。
+    戻る。
+  ここまで。
+  myNickname＝NN。
+  JS文＝『emit('部屋作成', {nickname: '」＆myNickname＆「'})』。
+  JS文をJS実行。
+ここまで。
+
+●部屋入室押下とは
+  JOINFORM＝「#join-form」のDOM要素取得。
+  JOINFORMの「display」へ「block」をDOMスタイル設定。
+ここまで。
+
+●部屋作成押下とは
+  NN＝「#nickname-input」のDOM要素取得のテキスト取得。
+  もし NN＝「」 ならば
+    ERR＝「#error-message」のDOM要素取得。
+    ERRへ「ニックネームを入力してください」をテキスト設定。
+    戻る。
+  ここまで。
+  myNickname＝NN。
+  送信JSON＝{「nickname」:myNickname}をJSONエンコード。
+  JS文＝「emit('部屋作成', 」＆送信JSON＆「)」。
+  JS文をJS実行。
+ここまで。
+
+●入室確定押下とは
+  NN＝「#nickname-input」のDOM要素取得のテキスト取得。
+  PW＝「#password-input」のDOM要素取得のテキスト取得。
+  もし NN＝「」 ならば
+    ERR＝「#error-message」のDOM要素取得。
+    ERRへ「ニックネームを入力してください」をテキスト設定。
+    戻る。
+  ここまで。
+  もし PW＝「」 ならば
+    ERR＝「#error-message」のDOM要素取得。
+    ERRへ「合言葉を入力してください」をテキスト設定。
+    戻る。
+  ここまで。
+  myNickname＝NN。
+  myPW＝PW。
+  送信JSON＝{「nickname」:myNickname,「password」:myPW}をJSONエンコード。
+  JS文＝「emit('入室', 」＆送信JSON＆「)」。
+  JS文をJS実行。
+ここまで。
