@@ -1,0 +1,98 @@
+[
+  {
+    "id": "M01",
+    "name": "朝霧・夕霧",
+    "reputation": { "red": 3, "blue": 3, "green": 3 },
+    "effectDescription": "予約客を追加で1枚出すことができる",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M02",
+    "name": "鈴音",
+    "reputation": { "red": 2, "blue": 2, "green": 2 },
+    "effectDescription": "追加で「宣伝」を行うことができる（各手番に1回）",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M03",
+    "name": "夏海",
+    "reputation": { "red": 3, "blue": 5, "green": 1 },
+    "effectDescription": "青いカードを客として場に出したとき、追加で青いカードを客として場に出してもよい",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M04",
+    "name": "紅葉",
+    "reputation": { "red": 5, "blue": 1, "green": 3 },
+    "effectDescription": "赤いカードを客として場に出したとき、その効果を2回使用できる（各手番に1回）",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M05",
+    "name": "初代舞星",
+    "reputation": { "red": 7, "blue": 7, "green": 7 },
+    "effectDescription": "「宣伝」を行うことができない。各ラウンドに獲得する金子が半分（端数切り上げ）になる",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M06",
+    "name": "春風",
+    "reputation": { "red": 1, "blue": 3, "green": 5 },
+    "effectDescription": "「宣伝」時、カードを裏向きで出してもよい。その場合「教養+1」の宣伝力をもつものとして扱う。あなたの緑の客の収入は+2される",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M07",
+    "name": "雪",
+    "reputation": { "red": 3, "blue": 3, "green": 3 },
+    "effectDescription": "「宣伝」時、使用したカードの条件を満たしていたならその効果を使用してもよい（各手番に1回）",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M08",
+    "name": "朧",
+    "reputation": { "red": 5, "blue": 5, "green": 5 },
+    "effectDescription": "各ラウンドの初期手札が2枚増える",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M09",
+    "name": "へのろいど",
+    "reputation": { "red": 4, "blue": 4, "green": 4 },
+    "effectDescription": "この芸者は休業状態にならない",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M10",
+    "name": "葛葉",
+    "reputation": { "red": 3, "blue": 3, "green": 3 },
+    "effectDescription": "他の芸者を1名選ぶ。このラウンドの終了時までその芸者の特殊能力をもつものとして扱う（各ラウンドに1回）。直前のラウンドで選んだ芸者を再び選ぶことはできない",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M11",
+    "name": "沙羅",
+    "reputation": { "red": 4, "blue": 4, "green": 4 },
+    "effectDescription": "手札1枚と評判1枚を入れ替えてもよい（各手番に1回）",
+    "skillName": "",
+    "skillDescription": ""
+  },
+  {
+    "id": "M12",
+    "name": "明星",
+    "reputation": { "red": 3, "blue": 3, "green": 3 },
+    "effectDescription": "この手番の間、1つの評判を＋3する（各ラウンドに1回）",
+    "skillName": "",
+    "skillDescription": ""
+  }
+]
