@@ -137,12 +137,12 @@
                 <div id="ad-0"></div>
               </div>
               <div id="table-1">
-                <div id="client-0"></div>
-                <div id="ad-0"></div>
+                <div id="client-1"></div>
+                <div id="ad-1"></div>
               </div>
               <div id="table-2">
-                <div id="client-0"></div>
-                <div id="ad-0"></div>
+                <div id="client-2"></div>
+                <div id="ad-2"></div>
               </div>
             </div>
        
@@ -166,10 +166,10 @@
             <!-- アクションボタン -->
             <div id="actions">
               <div class="section-title">◆ アクション</div>
-              <img src="assets/kyaku.png" class="action-img-btn" id=zasiki onclick="jsActionClick('客を出す')" alt="客を出す" />
-              <img src="assets/api.png"   class="action-img-btn" id=senden onclick="jsActionClick('宣伝する')"   alt="宣伝する" />
-              <img src="assets/syokai.png"      class="action-img-btn" id=syoukai onclick="jsActionClick('場を換える')"   alt="場を換える" />
-              <img src="assets/yoyakukyaku.png" class="action-img-btn" id=yoyaku onclick="jsActionClick('予約客を出す')" alt="予約客を出す" />
+              <img src="assets/kyaku.png" class="action-img-btn" id=zasiki onclick="jsActionClick('座敷')" alt="客を出す" />
+              <img src="assets/api.png"   class="action-img-btn" id=senden onclick="jsActionClick('宣伝')"   alt="宣伝する" />
+              <img src="assets/syokai.png"      class="action-img-btn" id=syoukai onclick="jsActionClick('紹介')"   alt="場を換える" />
+              <img src="assets/yoyakukyaku.png" class="action-img-btn" id=yoyaku onclick="jsActionClick('予約客')" alt="予約客を出す" />
             </div>
        
             <!-- 行動記録ログ -->
@@ -218,68 +218,64 @@
          * アクションボタンクリック
          * HTML側ボタンのonclickから呼ばれ、ログ追記などを行う
          */
-        function jsActionClick(action) {
-          window.__actionType = action;
-          navigator.nako3.run('アクション実行。');
-          const selected = document.querySelectorAll('#my-cards .card-face.selected');
-          const output   = document.getElementById('nako-output');
-       
-          // 客を出す／宣伝するはカード選択必須チェックを一時的に無効化（UI動作確認用）
-          /*
-          if ((action === '客を出す' || action === '宣伝する') && selected.length === 0) {
-            output.textContent = '⚠ カードを選択してください';
-            output.style.color = '#e87060';
-            setTimeout(() => {
-              output.textContent = '✓ なでしこ3 動作中';
-              output.style.color = '#E8C97A';
-            }, 2000);
-            return;
-          }
-          */
-       
-          // 選択カード名を取得
-          let cardName = '';
-          if (selected.length > 0) {
-            const val = selected[0].querySelector('.card-value');
-            const pts = selected[0].querySelector('.card-pts');
-            if (val) cardName = val.textContent + '（' + (pts ? pts.textContent : '') + '）';
-          }
-       
-          // ログエントリを先頭に追加
-          const timer = document.getElementById('timer').textContent;
-          const log   = document.getElementById('log-list');
-          const entry = document.createElement('div');
-          entry.className = 'log-entry';
-       
-          if (action === '場を換える') {
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が山札からカードを2枚引く</span>`;
-          } else if (cardName) {
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が</span>` +
-              `<span class="log-highlight">${cardName}</span>` +
-              `<span class="log-action">を${action}</span>`;
-          } else {
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が${action}</span>`;
-          }
-       
-          log.insertBefore(entry, log.firstChild);
-       
-          // 選択状態を解除
-          selected.forEach(c => c.classList.remove('selected'));
-          document.getElementById('selected-count').textContent = '選択中: 0枚';
-       
-          output.textContent = '▶ ' + action + ' を実行';
-          output.style.color = '#E8C97A';
-        }
+function jsActionClick(action) {
+  const selected = document.querySelectorAll('#my-cards .card-face.selected');
 
+  // 座敷・宣伝・予約客用：最初の選択カードのインデックス
+  window.__cardIdx = -1;
+  // 紹介用：全選択カードのインデックス
+  window.__cardIdxs = [];
+  const cards = document.querySelectorAll('#my-cards .card-face');
+  for (let i = 0; i < cards.length; i++) {
+    if (cards[i].classList.contains('selected')) {
+      if (window.__cardIdx === -1) window.__cardIdx = i;
+      window.__cardIdxs.push(i);
+    }
+  }
+
+  window.__actionType = action;
+  navigator.nako3.run('アクション実行。');
+
+  // ログ追記
+  const timer = document.getElementById('timer').textContent;
+  const log = document.getElementById('log-list');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  let cardName = '';
+  if (selected.length > 0) {
+    const val = selected[0].querySelector('.card-value');
+    if (val) cardName = val.textContent;
+  }
+  if (action === '紹介') {
+    const names = Array.from(selected).map(c => {
+      const v = c.querySelector('.card-value');
+      return v ? v.textContent : '';
+    }).join('・');
+    entry.innerHTML =
+      `<span class="log-time">${timer}</span>` +
+      `<span class="log-actor">あなた</span>` +
+      `<span class="log-action">が</span>` +
+      `<span class="log-highlight">${names}</span>` +
+      `<span class="log-action">を紹介</span>`;
+  } else if (cardName) {
+    entry.innerHTML =
+      `<span class="log-time">${timer}</span>` +
+      `<span class="log-actor">あなた</span>` +
+      `<span class="log-action">が</span>` +
+      `<span class="log-highlight">${cardName}</span>` +
+      `<span class="log-action">を${action}</span>`;
+  } else {
+    entry.innerHTML =
+      `<span class="log-time">${timer}</span>` +
+      `<span class="log-actor">あなた</span>` +
+      `<span class="log-action">が${action}</span>`;
+  }
+  log.insertBefore(entry, log.firstChild);
+
+  // 選択状態を解除
+  selected.forEach(c => c.classList.remove('selected'));
+  document.getElementById('selected-count').textContent = '選択中: 0枚';
+}
         /**
          * ゲーム中のタイマー開始
          */
