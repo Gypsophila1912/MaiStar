@@ -1574,3 +1574,20 @@ body {
   border: 2px solid rgba(139, 94, 42, 0.8);
   background: rgba(200, 185, 150, 0.5);
 }
+
+.skill-btn {
+  width: 100%;
+  padding: 8px;
+  background: linear-gradient(135deg, #8B5E2A, #c9942a);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.status-closed {
+  background: #555;
+  color: #fff;
+}

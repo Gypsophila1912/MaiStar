@@ -17,6 +17,8 @@
   G＝GJSONをJSONデコード。
   前状態＝G["players"][PID]["usedBaseAction"]。
   前予約＝G["players"][PID]["hasReservation"]。
+  前技状態＝G["players"][PID]["usedGeishaSkill"]。
+
   もし ACTION＝「座敷」 ならば
     手札番号＝データ["cardIndex"]。
     GとPIDと手札番号の座敷実行をGに代入。
@@ -36,9 +38,17 @@
     手札番号＝データ["cardIndex"]。
     GとPIDと手札番号の予約客セット実行をGに代入。
   ここまで。
+  もし ACTION＝「技使用」 ならば
+    技情報＝データ["skillInfo"]。
+    GとPIDと技情報の芸者技使用をGに代入。
+  ここまで。
+
   後状態＝G["players"][PID]["usedBaseAction"]。
   後予約＝G["players"][PID]["hasReservation"]。
+  後技状態＝G["players"][PID]["usedGeishaSkill"]。
+
   成功フラグ＝0。
+
   もし ACTION＝「予約客」 ならば
     もし 前予約＝1 ならば
       もし 後予約＝0 ならば
@@ -46,6 +56,7 @@
       ここまで。
     ここまで。
   ここまで。
+
   もし ACTION＝「予約客セット」 ならば
     もし 前予約＝0 ならば
       もし 後予約＝1 ならば
@@ -53,15 +64,27 @@
       ここまで。
     ここまで。
   ここまで。
+
+  もし ACTION＝「技使用」 ならば
+    もし 前技状態＝0 ならば
+      もし 後技状態＝1 ならば
+        成功フラグ＝1。
+      ここまで。
+    ここまで。
+  ここまで。
+
   もし ACTION≠「予約客」 ならば
     もし ACTION≠「予約客セット」 ならば
-      もし 前状態＝0 ならば
-        もし 後状態＝1 ならば
-          成功フラグ＝1。
+      もし ACTION≠「技使用」 ならば
+        もし 前状態＝0 ならば
+          もし 後状態＝1 ならば
+            成功フラグ＝1。
+          ここまで。
         ここまで。
       ここまで。
     ここまで。
   ここまで。
+
   もし 成功フラグ＝0 ならば
     「アクション失敗: {ACTION}」と表示。
     {"success":偽,"message":"そのカードは出せません"}をJSONエンコードしてWEBサーバ出力。
@@ -70,8 +93,10 @@
     Gの残り巡確認をGに代入。
     もし ACTION≠「予約客」 ならば
       もし ACTION≠「予約客セット」 ならば
-        もし G["phase"]≠「scoring」 ならば
-          Gの手番進行をGに代入。
+        もし ACTION≠「技使用」 ならば
+          もし G["phase"]≠「scoring」 ならば
+            Gの手番進行をGに代入。
+          ここまで。
         ここまで。
       ここまで。
     ここまで。
@@ -115,7 +140,7 @@
     {"success":真,"states":states}をJSONエンコードしてWEBサーバ出力。
   ここまで。
 ここまで。
-    
+
 ●ゲーム開始処理とは
   データ＝POSTデータ。
   RID＝データ["roomId"]。
@@ -127,11 +152,8 @@
   ここまで。
   G＝{}。
   Gとnamesでゲーム初期化してGに代入。
-
-  # ★ phaseを確認
   PHASE＝G["phase"]。
   「ゲーム初期化後のphase: {PHASE}」と表示。
-
   GJSON＝GをJSONエンコード。
   JS文＝「sys.__nako_rooms['」＆RID＆「'].game = 」＆GJSON＆「; sys.__nako_rooms['」＆RID＆「'].status = 'playing';」。
   JS文をJS実行。
