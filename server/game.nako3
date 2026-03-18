@@ -790,31 +790,54 @@
 	Gを戻す。
 ここまで。
 
+●（GとPIDと手札番号の）予約客セット実行とは
+  P＝G["players"][PID]。
+  もし P["hasReservation"]＝1 ならば
+    Gを戻す。
+  ここまで。
+  Pと手札番号の手札番号妥当判定をOKに代入。
+  もし OK＝0 ならば
+    Gを戻す。
+  ここまで。
+  P["hand"]の手札番号を配列切取して予約カードに代入。
+  P["reservation"]＝予約カード。
+  P["hasReservation"]＝1。
+
+  # 全員セット完了チェック
+  全員完了＝1。
+  G["players"]を反復して
+    もし 対象["hasReservation"]＝0 ならば
+      全員完了＝0。
+    ここまで。
+  ここまで。
+  もし 全員完了＝1 ならば
+    G["phase"]＝「turn」。
+  ここまで。
+  Gを戻す。
+ここまで。
+
 ●(GとPIDの)予約客使用実行とは
-	GとPIDと"予約客使用"の行動可能判定を可能に代入。
-	もし可能=0ならば
-		Gを戻す。
-	ここまで。
-	P=G["players"][PID]
-	予約カード=P["reservation"]
-	予約カードとP["reputation"]の座敷条件判定をOKに代入。
-	もしOK=1ならば
-		P["zashiki"]に予約カードを配列追加。
-		GとPIDと予約カードと"reservation"と{}の客カード効果適用をGに代入。
-		P["reservation"]={}
-		P["hasReservation"]=0
-	ここまで。
-	もしOK=0ならば
-		P["hand"]に予約カードを配列追加。
-		山残2=G["deck"]の要素数
-		もし山残2>0ならば
-			G["deck"]の0を配列切取してペナルティカードに代入。
-			P["hand"]にペナルティカードを配列追加。
-		ここまで。
-		P["reservation"]={}
-		P["hasReservation"]=0
-	ここまで。
-	Gを戻す。
+  GとPIDと"予約客使用"の行動可能判定を可能に代入。
+  もし可能=0ならば
+    Gを戻す。
+  ここまで。
+  P=G["players"][PID]
+  予約カード=P["reservation"]
+
+  # 予約カードが空オブジェクトでないかチェック
+  名前あり=予約カードの"name"が辞書キー存在。
+  もし名前あり=0ならば
+    Gを戻す。
+  ここまで。
+
+  予約カードとP["reputation"]の座敷条件判定をOKに代入。
+  もしOK=1ならば
+    P["zashiki"]に予約カードを配列追加。
+    GとPIDと予約カードと"reservation"と{}の客カード効果適用をGに代入。
+    P["reservation"]={}
+    P["hasReservation"]=0
+  ここまで。
+  Gを戻す。
 ここまで。
 
 ●(Gの)終了条件A判定とは
@@ -1079,6 +1102,7 @@
 		ここまで。
 		I=I+1
 	ここまで。
+	G["phase"]="reservation"
 	Gを戻す。
 ここまで。
 

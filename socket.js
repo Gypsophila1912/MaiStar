@@ -134,8 +134,11 @@ io.on("connection", (socket) => {
         ...data,
         socketId: socket.id,
       });
-      if (result.error) {
-        socket.emit("エラー", result);
+      if (!result.success) {
+        // 失敗はアクション送信者にだけエラーを返す
+        socket.emit("アクション失敗", {
+          message: result.message || "アクション失敗",
+        });
         return;
       }
       result.states.forEach(({ socketId, state }) => {

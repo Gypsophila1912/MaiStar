@@ -44,11 +44,8 @@ myNickname＝「」。
 
 ●ゲーム開始受信とは
   データ＝「window.__nakoData」をJS実行。
-#HANDJSON＝データをJSONエンコード。
-#「データ中身:{HANDJSON}」と言う。
   『sessionStorage.setItem("currentScreen", "game")』をJS実行。
   「game」で画面切替。
-  # 画面切替後にゲーム画面を初期化
   データでゲーム画面初期化。
 ここまで。
 
@@ -77,4 +74,22 @@ myNickname＝「」。
   データ＝『window.__nakoData』をJS実行。
   MSG＝データ[「message」]。
   「エラー:{MSG}」と言う。
+ここまで。
+
+●アクション失敗受信とは
+  データ＝「window.__nakoData」をJS実行。
+  MSG＝データ["message"]。
+  ACTION＝「window.__actionType || ''」をJS実行。
+  もし ACTION＝「予約客」 ならば
+    # 予約客は条件不足の場合のみアラート、それ以外は無視
+    もし MSG＝「評判が足りないため予約客を出せません」 ならば
+      「評判が足りないため予約客を出せません」と言う。
+    ここまで。
+  違えば
+    もし ACTION＝「予約客セット」 ならば
+      # 予約客セットの失敗は無視
+    違えば
+      「{MSG}」と言う。
+    ここまで。
+  ここまで。
 ここまで。
