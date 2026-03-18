@@ -616,6 +616,8 @@ overflow-y: auto; /* コンテンツが多い場合はスクロール */
  座敷エリア
 ---------------------------------------- */
 #table-area {
+  position: relative;
+  overflow: hidden;
   background: rgba(230, 215, 180, 0.75);
   border: 1px solid rgba(140, 100, 50, 0.4);
   border-radius: 8px;
@@ -626,6 +628,35 @@ overflow-y: auto; /* コンテンツが多い場合はスクロール */
   box-shadow:
     inset 0 1px 4px rgba(0, 0, 0, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-background-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: 8px; /* カードのgapと合わせる */
+  padding: 12px; /* #table-areaのpaddingと同じにする */
+  box-sizing: border-box;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.grid-col {
+  flex: 1;
+  /* 右側に線を引くが, gap(間隔)があるので, 線はカラムの右端になる */
+  border-right: 2px dashed rgba(140, 100, 50, 0.4);
+}
+
+.grid-col:last-child {
+  border-right: none;
+}
+
+.area-label, #table-0, #table-1, #table-2 {
+  position: relative;
+  z-index: 1;
 }
 
 .area-label {
