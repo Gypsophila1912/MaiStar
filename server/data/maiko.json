@@ -2,6 +2,7 @@
   {
     "id": "M01",
     "name": "朝霧・夕霧",
+    "image": "assets/maiko/cards/M01.png",
     "reputation": { "red": 3, "blue": 3, "green": 3 },
     "effectDescription": "予約客を追加で1枚出すことができる",
     "skillName": "明日は明日の風が吹く",
@@ -10,6 +11,7 @@
   {
     "id": "M02",
     "name": "鈴音",
+    "image": "assets/maiko/cards/M02.png",
     "reputation": { "red": 2, "blue": 2, "green": 2 },
     "effectDescription": "追加で「宣伝」を行うことができる（各手番に1回）",
     "skillName": "うら若き音",
@@ -18,6 +20,7 @@
   {
     "id": "M03",
     "name": "夏海",
+    "image": "assets/maiko/cards/M03.png",
     "reputation": { "red": 3, "blue": 5, "green": 1 },
     "effectDescription": "青いカードを客として場に出したとき、追加で青いカードを客として場に出してもよい",
     "skillName": "富める夏",
@@ -26,6 +29,7 @@
   {
     "id": "M04",
     "name": "紅葉",
+    "image": "assets/maiko/cards/M04.png",
     "reputation": { "red": 5, "blue": 1, "green": 3 },
     "effectDescription": "赤いカードを客として場に出したとき、その効果を2回使用できる（各手番に1回）",
     "skillName": "才能の秋風",
@@ -34,6 +38,7 @@
   {
     "id": "M05",
     "name": "初代舞星",
+    "image": "assets/maiko/cards/M05.png",
     "reputation": { "red": 7, "blue": 7, "green": 7 },
     "effectDescription": "「宣伝」を行うことができない。各ラウンドに獲得する金子が半分（端数切り上げ）になる",
     "skillName": "舞星への道",
@@ -42,6 +47,7 @@
   {
     "id": "M06",
     "name": "春風",
+    "image": "assets/maiko/cards/M06.png",
     "reputation": { "red": 1, "blue": 3, "green": 5 },
     "effectDescription": "「宣伝」時、カードを裏向きで出してもよい。その場合「教養+1」の宣伝力をもつものとして扱う。あなたの緑の客の収入は+2される",
     "skillName": "春一番",
@@ -50,6 +56,7 @@
   {
     "id": "M07",
     "name": "雪",
+    "image": "assets/maiko/cards/M07.png",
     "reputation": { "red": 3, "blue": 3, "green": 3 },
     "effectDescription": "「宣伝」時、使用したカードの条件を満たしていたならその効果を使用してもよい（各手番に1回）",
     "skillName": "儚き笑み",
@@ -58,6 +65,7 @@
   {
     "id": "M08",
     "name": "朧",
+    "image": "assets/maiko/cards/M08.png",
     "reputation": { "red": 5, "blue": 5, "green": 5 },
     "effectDescription": "各ラウンドの初期手札が2枚増える",
     "skillName": "真の実力",
@@ -66,6 +74,7 @@
   {
     "id": "M09",
     "name": "へのろいど",
+    "image": "assets/maiko/cards/M09.png",
     "reputation": { "red": 4, "blue": 4, "green": 4 },
     "effectDescription": "この芸者は休業状態にならない",
     "skillName": "機械仕掛けの熱",
@@ -74,6 +83,7 @@
   {
     "id": "M10",
     "name": "葛葉",
+    "image": "assets/maiko/cards/M10.png",
     "reputation": { "red": 3, "blue": 3, "green": 3 },
     "effectDescription": "他の芸者を1名選ぶ。このラウンドの終了時までその芸者の特殊能力をもつものとして扱う（各ラウンドに1回）。直前のラウンドで選んだ芸者を再び選ぶことはできない",
     "skillName": "隣の芝生",
@@ -82,6 +92,7 @@
   {
     "id": "M11",
     "name": "沙羅",
+    "image": "assets/maiko/cards/M11.png",
     "reputation": { "red": 4, "blue": 4, "green": 4 },
     "effectDescription": "手札1枚と評判1枚を入れ替えてもよい（各手番に1回）",
     "skillName": "異風堂々",
@@ -90,6 +101,7 @@
   {
     "id": "M12",
     "name": "明星",
+    "image": "assets/maiko/cards/M12.png",
     "reputation": { "red": 3, "blue": 3, "green": 3 },
     "effectDescription": "この手番の間、1つの評判を＋3する（各ラウンドに1回）",
     "skillName": "明けの明星",
