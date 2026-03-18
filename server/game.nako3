@@ -816,20 +816,26 @@
   Gを戻す。
 ここまで。
 
-●（GとPIDの）予約客使用実行とは
-  GとPIDと「予約客使用」の行動可能判定を可能に代入。
-  もし 可能＝0 ならば
+●(GとPIDの)予約客使用実行とは
+  GとPIDと"予約客使用"の行動可能判定を可能に代入。
+  もし可能=0ならば
+    Gを戻す。
+  ここまで。
+  P=G["players"][PID]
+  予約カード=P["reservation"]
+
+  # 予約カードが空オブジェクトでないかチェック
+  名前あり=予約カードの"name"が辞書キー存在。
+  もし名前あり=0ならば
     Gを戻す。
   ここまで。
 
-  P＝G["players"][PID]。
-  予約カード＝P["reservation"]。
   予約カードとP["reputation"]の座敷条件判定をOKに代入。
-  もし OK＝1 ならば
+  もしOK=1ならば
     P["zashiki"]に予約カードを配列追加。
-    GとPIDと予約カードと「reservation」の客カード効果適用をGに代入。
-    P["reservation"]＝{}。
-    P["hasReservation"]＝0。
+    GとPIDと予約カードと"reservation"と{}の客カード効果適用をGに代入。
+    P["reservation"]={}
+    P["hasReservation"]=0
   ここまで。
   Gを戻す。
 ここまで。
