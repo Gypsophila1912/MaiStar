@@ -491,17 +491,75 @@
 	1を戻す。
 ここまで。
 
-●(カードと評判値の)座敷条件判定とは
-	カードの"condition"が辞書キー存在を条件ありに代入。
-	もし条件あり=0ならば
-		1を戻す。
-	ここまで。
+●（カードと評判の）座敷条件判定とは
+  条件あり＝カードの「condition」が辞書キー存在。
+  もし 条件あり＝0 ならば
+    1を戻す。
+  ここまで。
 
-	必要評判=カード["condition"]
-	もし必要評判<=評判値ならば
-		1を戻す。
-	ここまで。
-	0を戻す。
+  必須値＝カード["condition"]。
+
+  TYPE＝「」。
+  もし カードの「conditionType」が辞書キー存在 ならば
+    TYPE＝カード["conditionType"]。
+  ここまで。
+
+  もし TYPE＝「any」 ならば
+    赤＝評判["red"]。
+    青＝評判["blue"]。
+    緑＝評判["green"]。
+    最大＝赤。
+    もし 青>最大 ならば
+      最大＝青。
+    ここまで。
+    もし 緑>最大 ならば
+      最大＝緑。
+    ここまで。
+    もし 最大>=必須値 ならば
+      1を戻す。
+    ここまで。
+    0を戻す。
+  ここまで。
+
+  COL＝「」。
+  もし カードの「color」が辞書キー存在 ならば
+    COL＝カード["color"]。
+  ここまで。
+
+  もし COL＝「red」 ならば
+    もし 評判["red"]>=必須値 ならば
+      1を戻す。
+    ここまで。
+    0を戻す。
+  ここまで。
+  もし COL＝「blue」 ならば
+    もし 評判["blue"]>=必須値 ならば
+      1を戻す。
+    ここまで。
+    0を戻す。
+  ここまで。
+  もし COL＝「green」 ならば
+    もし 評判["green"]>=必須値 ならば
+      1を戻す。
+    ここまで。
+    0を戻す。
+  ここまで。
+
+  # color=noneでconditionType未指定 → 最大値判定
+  赤＝評判["red"]。
+  青＝評判["blue"]。
+  緑＝評判["green"]。
+  最大＝赤。
+  もし 青>最大 ならば
+    最大＝青。
+  ここまで。
+  もし 緑>最大 ならば
+    最大＝緑。
+  ここまで。
+  もし 最大>=必須値 ならば
+    1を戻す。
+  ここまで。
+  0を戻す。
 ここまで。
 
 ●(GとPIDと手札番号の)座敷実行とは
@@ -559,88 +617,131 @@
 	Gを戻す。
 ここまで。
 
-●(GとPIDと手札番号の)宣伝実行とは
-	GとPIDの手番判定を手番中に代入。
-	もし手番中=0ならば
-		Gを戻す。
-	ここまで。
-	P=G["players"][PID]
-	追加宣伝=0
-	もしP["usedBaseAction"]=1ならば
-		追加宣伝=1
-		もしP["geishaId"]="M02"ならば
-			もしP["effectFlags"]["extraAdAvailable"]=1ならば
-				P["effectFlags"]["extraAdAvailable"]=0
-			違えば
-				Gを戻す。
-			ここまで。
-		違えば
-			Gを戻す。
-		ここまで。
-	ここまで。
-	コピー対象=P["effectFlags"]["copiedGeishaId"]
-	もし追加宣伝=0ならば
-		GとPIDの基本行動前判定を基本OKに代入。
-		もし基本OK=0ならば
-			Gを戻す。
-		ここまで。
-	ここまで。
+●（GとPIDと手札番号の）宣伝実行とは
+  GとPIDの手番判定を手番中に代入。
+  もし 手番中＝0 ならば
+    Gを戻す。
+  ここまで。
 
-	GとPIDと"宣伝"の行動可能判定を可能に代入。
-	もし可能=0ならば
-		Gを戻す。
-	ここまで。
+  P＝G["players"][PID]。
+  追加宣伝＝0。
+  もし P["usedBaseAction"]＝1 ならば
+    追加宣伝＝1。
+    もし P["geishaId"]＝「M02」 ならば
+      もし P["effectFlags"]["extraAdAvailable"]＝1 ならば
+        P["effectFlags"]["extraAdAvailable"]＝0。
+      違えば
+        Gを戻す。
+      ここまで。
+    違えば
+      Gを戻す。
+    ここまで。
+  ここまで。
 
-	山札枚数=G["deck"]の要素数
-	もし山札枚数>0ならば
-		G["deck"]の0を配列切取して引いたカードに代入。
-		G["players"][PID]["hand"]に引いたカードを配列追加。
-	ここまで。
+  もし 追加宣伝＝0 ならば
+    GとPIDの基本行動前判定を基本OKに代入。
+    もし 基本OK＝0 ならば
+      Gを戻す。
+    ここまで。
+  ここまで。
 
-	P=G["players"][PID]
-	Pと手札番号の手札番号妥当判定をOKに代入。
-	もしOK=0ならば
-		Gを戻す。
-	ここまで。
+  GとPIDと「宣伝」の行動可能判定を可能に代入。
+  もし 可能＝0 ならば
+    Gを戻す。
+  ここまで。
 
-	カード=P["hand"][手札番号]
-	宣伝力=0
-	カードの"promo"が辞書キー存在をあるに代入。
-	もしある=1ならば
-		宣伝力=カード["promo"]
-	ここまで。
-	もしP["geishaId"]="M06"ならば
-		宣伝力=宣伝力+1
-	ここまで。
-	もしコピー対象="M06"かつP["effectFlags"]["copyExtraM06Used"]=0ならば
-		宣伝力=宣伝力+1
-		P["effectFlags"]["copyExtraM06Used"]=1
-	ここまで。
+  # まず手札番号の妥当判定（山札から引く前に確認）
+  Pと手札番号の手札番号妥当判定をOKに代入。
+  もし OK＝0 ならば
+    Gを戻す。
+  ここまで。
 
-	P["hand"]の手札番号を配列切取してカードに代入。
-	P["ad"]にカードを配列追加。
-	P["reputation"]=P["reputation"]+宣伝力
-	もしP["geishaId"]="M07"ならば
-		もしP["effectFlags"]["promoEffectUsed"]=0ならば
-			カードとP["reputation"]の座敷条件判定を可能に代入。
-			もし可能=1ならば
-				GとPIDとカードと"宣伝"の客カード効果適用をGに代入。
-				P["effectFlags"]["promoEffectUsed"]=1
-			ここまで。
-		ここまで。
-	ここまで。
-	もしコピー対象="M07"かつP["effectFlags"]["copyPromoEffectUsed"]=0ならば
-		カードとP["reputation"]の座敷条件判定を可能に代入。
-		もし可能=1ならば
-			GとPIDとカードと"宣伝"の客カード効果適用をGに代入。
-			P["effectFlags"]["copyPromoEffectUsed"]=1
-		ここまで。
-	ここまで。
-	GとPIDの基本行動完了記録をGに代入。
-	G["phase"]="turn"
-	Gを戻す。
+  # 山札から1枚引く
+  山札枚数＝G["deck"]の要素数。
+  もし 山札枚数>0 ならば
+    G["deck"]の0を配列切取して引いたカードに代入。
+    G["players"][PID]["hand"]に引いたカードを配列追加。
+    # 引いたので手札番号を1つ後ろにずらす（先頭に追加された場合に備え末尾追加なのでずれない）
+  ここまで。
+
+  # 引いた後のPを再取得
+  P＝G["players"][PID]。
+  手札枚数＝P["hand"]の要素数。
+
+  # 手札番号の再妥当判定（引いた後）
+  もし 手札番号>=手札枚数 ならば
+    Gを戻す。
+  ここまで。
+
+  カード＝P["hand"][手札番号]。
+
+  # 宣伝力を計算
+  宣伝力＝0。
+  もし カードの「promo」が辞書キー存在 ならば
+    宣伝力＝カード["promo"]。
+  ここまで。
+  もし P["geishaId"]＝「M06」 ならば
+    宣伝力＝宣伝力+1。
+  ここまで。
+
+  コピー対象＝P["effectFlags"]["copiedGeishaId"]。
+  もし コピー対象＝「M06」 ならば
+    もし P["effectFlags"]["copyExtraM06Used"]＝0 ならば
+      宣伝力＝宣伝力+1。
+      P["effectFlags"]["copyExtraM06Used"]＝1。
+    ここまで。
+  ここまで。
+
+  # promoColorに応じて色別評判を加算
+  PROMO_COL＝「」。
+  もし カードの「promoColor」が辞書キー存在 ならば
+    PROMO_COL＝カード["promoColor"]。
+  ここまで。
+
+  もし PROMO_COL＝「red」 ならば
+    P["reputation"]["red"]＝P["reputation"]["red"]+宣伝力。
+  ここまで。
+  もし PROMO_COL＝「blue」 ならば
+    P["reputation"]["blue"]＝P["reputation"]["blue"]+宣伝力。
+  ここまで。
+  もし PROMO_COL＝「green」 ならば
+    P["reputation"]["green"]＝P["reputation"]["green"]+宣伝力。
+  ここまで。
+  もし PROMO_COL＝「all」 ならば
+    P["reputation"]["red"]＝P["reputation"]["red"]+宣伝力。
+    P["reputation"]["blue"]＝P["reputation"]["blue"]+宣伝力。
+    P["reputation"]["green"]＝P["reputation"]["green"]+宣伝力。
+  ここまで。
+
+  # 手札からadへ移動
+  P["hand"]の手札番号を配列切取してカードに代入。
+  P["ad"]にカードを配列追加。
+
+  # M07：宣伝時に条件を満たせばカード効果発動
+  もし P["geishaId"]＝「M07」 ならば
+    もし P["effectFlags"]["promoEffectUsed"]＝0 ならば
+      カードとP["reputation"]の座敷条件判定を可能に代入。
+      もし 可能＝1 ならば
+        GとPIDとカードと「宣伝」の客カード効果適用をGに代入。
+        P["effectFlags"]["promoEffectUsed"]＝1。
+      ここまで。
+    ここまで。
+  ここまで。
+
+  もし コピー対象＝「M07」 ならば
+    もし P["effectFlags"]["copyPromoEffectUsed"]＝0 ならば
+      カードとP["reputation"]の座敷条件判定を可能に代入。
+      もし 可能＝1 ならば
+        GとPIDとカードと「宣伝」の客カード効果適用をGに代入。
+        P["effectFlags"]["copyPromoEffectUsed"]＝1。
+      ここまで。
+    ここまで。
+  ここまで。
+
+  GとPIDの基本行動完了記録をGに代入。
+  G["phase"]＝「turn」。
+  Gを戻す。
 ここまで。
-
 ●(GとPIDと捨てる番号リストの)紹介実行とは
 	GとPIDの手番判定を手番中に代入。
 	もし手番中=0ならば
@@ -687,32 +788,48 @@
 	Gを戻す。
 ここまで。
 
-●(GとPIDの)予約客使用実行とは
-	GとPIDと"予約客使用"の行動可能判定を可能に代入。
-	もし可能=0ならば
-		Gを戻す。
-	ここまで。
+●（GとPIDと手札番号の）予約客セット実行とは
+  P＝G["players"][PID]。
+  もし P["hasReservation"]＝1 ならば
+    Gを戻す。
+  ここまで。
+  Pと手札番号の手札番号妥当判定をOKに代入。
+  もし OK＝0 ならば
+    Gを戻す。
+  ここまで。
+  P["hand"]の手札番号を配列切取して予約カードに代入。
+  P["reservation"]＝予約カード。
+  P["hasReservation"]＝1。
 
-	P=G["players"][PID]
-	予約カード=P["reservation"]
-	予約カードとP["reputation"]の座敷条件判定をOKに代入。
-	もしOK=1ならば
-		P["zashiki"]に予約カードを配列追加。
-		GとPIDと予約カードと"reservation"の客カード効果適用をGに代入。
-		P["reservation"]={}
-		P["hasReservation"]=0
-	ここまで。
-	もしOK=0ならば
-		P["hand"]に予約カードを配列追加。
-		山残2=G["deck"]の要素数
-		もし山残2>0ならば
-			G["deck"]の0を配列切取してペナルティカードに代入。
-			P["hand"]にペナルティカードを配列追加。
-		ここまで。
-		P["reservation"]={}
-		P["hasReservation"]=0
-	ここまで。
-	Gを戻す。
+  # 全員セット完了チェック
+  全員完了＝1。
+  G["players"]を反復して
+    もし 対象["hasReservation"]＝0 ならば
+      全員完了＝0。
+    ここまで。
+  ここまで。
+  もし 全員完了＝1 ならば
+    G["phase"]＝「turn」。
+  ここまで。
+  Gを戻す。
+ここまで。
+
+●（GとPIDの）予約客使用実行とは
+  GとPIDと「予約客使用」の行動可能判定を可能に代入。
+  もし 可能＝0 ならば
+    Gを戻す。
+  ここまで。
+
+  P＝G["players"][PID]。
+  予約カード＝P["reservation"]。
+  予約カードとP["reputation"]の座敷条件判定をOKに代入。
+  もし OK＝1 ならば
+    P["zashiki"]に予約カードを配列追加。
+    GとPIDと予約カードと「reservation」の客カード効果適用をGに代入。
+    P["reservation"]＝{}。
+    P["hasReservation"]＝0。
+  ここまで。
+  Gを戻す。
 ここまで。
 
 ●(Gの)終了条件A判定とは
@@ -1005,8 +1122,11 @@
 		ここまで。
 		I＝I+1。
 	ここまで。
-	Gを戻す。
+	  G["phase"]＝「reservation」。
+  Gを戻す。
 ここまで。
+
+
 ●（GとPIDで）個別state作成とは
   state＝{}。
   state[「round」]＝G[「round」]。

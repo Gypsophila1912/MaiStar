@@ -77,8 +77,12 @@
        
         <!-- ヘッダー -->
         <div id="header">
+
           <div id="title-text">舞　星</div>
           <div id="phase-badge">宣伝フェーズ</div>
+          <div id="reservation-banner" style="display:none">
+  ◆ 予約客フェーズ ― 手札から1枚選んで予約客スロットに置いてください
+</div>
           <div id="round-info">
             第<span id="round-num">1</span>局・<span id="turn-num">1</span>巡目<br>
             残り時間 <span id="timer">1:30</span>
@@ -99,6 +103,7 @@
                   <div>
                     <div class="geisha-name" id="maiko-name-0">モブA者</div>
                     <div class="geisha-score" id="score-0">点数: 0点</div>
+                    <div class="geisha-score" id="reputation-0">評判：</div>
                   </div>
                 </div>
                 <div class="card-backs" id="hand-0"></div>
@@ -110,6 +115,7 @@
                   <div>
                     <div class="geisha-name" id="maiko-name-1">モブB者</div>
                     <div class="geisha-score" id="score-1">点数: 0点</div>
+                    <div class="geisha-score" id="reputation-1">評判：</div>
                   </div>
                 </div>
                 <div class="card-backs" id="hand-1"></div>
@@ -121,6 +127,7 @@
                   <div>
                     <div class="geisha-name" id="maiko-name-2">モブC者</div>
                     <div class="geisha-score" id="score-2">点数: 0点</div>
+                    <div class="geisha-score" id="reputation-2">評判：</div>
                   </div>
                 </div>
                 <div class="card-backs" id="hand-2"></div>
@@ -129,41 +136,62 @@
        
             </div><!-- /opponents -->
        
-            <!-- 座敷の場 -->
-            <div id="table-area">
-              <div class="table-background-grid">
-                <div class="grid-col"></div>
-                <div class="grid-col"></div>
-                <div class="grid-col"></div>
-              </div>
-              <div class="area-label">◆ 座敷の場</div>
-              <div id="table-0">
-                <div id="client-0"></div>
-                <div id="ad-0"></div>
-              </div>
-              <div id="table-1">
-                <div id="client-1"></div>
-                <div id="ad-1"></div>
-              </div>
-              <div id="table-2">
-                <div id="client-2"></div>
-                <div id="ad-2"></div>
-              </div>
-            </div>
-       
+<!-- 座敷の場 -->
+<div id="table-area">
+  <div class="area-label">◆ 座敷の場</div>
+  <div class="table-columns">
+
+    <div class="table-col" id="table-0">
+      <div class="table-col-label" id="table-label-0">―</div>
+      <div class="table-section-label">◇ 客</div>
+      <div class="table-cards-row" id="client-0"></div>
+      <div class="table-section-label">◇ 宣伝</div>
+      <div class="table-cards-row" id="ad-0"></div>
+    </div>
+
+    <div class="table-col-divider"></div>
+
+    <div class="table-col" id="table-1">
+      <div class="table-col-label" id="table-label-1">―</div>
+      <div class="table-section-label">◇ 客</div>
+      <div class="table-cards-row" id="client-1"></div>
+      <div class="table-section-label">◇ 宣伝</div>
+      <div class="table-cards-row" id="ad-1"></div>
+    </div>
+
+    <div class="table-col-divider"></div>
+
+    <div class="table-col" id="table-2">
+      <div class="table-col-label" id="table-label-2">―</div>
+      <div class="table-section-label">◇ 客</div>
+      <div class="table-cards-row" id="client-2"></div>
+      <div class="table-section-label">◇ 宣伝</div>
+      <div class="table-cards-row" id="ad-2"></div>
+    </div>
+
+  </div>
+</div>       
           </div><!-- /center-area -->
        
           <!-- 自分の手札エリア -->
-          <div id="hand-area">
-            <div id="hand-label">
-              <span style="color:#8B5E2A">◈</span>
-              あなたの手札（自分のみ表示）
-              <span id="selected-count" style="font-size:9px;color:#9a6a40;margin-left:auto">
-                選択中: 0枚
-              </span>
-            </div>
-            <div id="my-cards"></div>
-          </div>
+<div id="hand-area">
+  <div id="hand-label">
+    <span style="color:#8B5E2A">◈</span>
+    あなたの手札（自分のみ表示）
+    <span id="selected-count" style="font-size:9px;color:#9a6a40;margin-left:auto">
+      選択中: 0枚
+    </span>
+  </div>
+  <div id="hand-row">
+    <div id="my-cards"></div>
+    <div id="reservation-area">
+      <div id="reservation-label">◇ 予約客</div>
+      <div id="reservation-slot" class="empty">
+        <div id="reservation-card"></div>
+      </div>
+    </div>
+  </div>
+</div>
        
           <!-- サイドバー -->
           <div id="sidebar">
@@ -398,6 +426,11 @@ function jsActionClick(action) {
       socket.on("エラー", (data) => {
         window.__nakoData = data;
         nakoRun("エラー受信");
+      });
+
+      socket.on("アクション失敗", (data) => {
+        window.__nakoData = data;
+        nakoRun("アクション失敗受信");
       });
     </script>    <!-- なでしこ3 -->
     <script src="https://nadesi.com/v3/cdn.php?v=3.3.71&f=release/wnako3.js&run"></script>

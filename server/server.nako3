@@ -2,6 +2,123 @@
 !「room.nako3」を取り込む。
 !「game.nako3」を取り込む。
 
+●ゲームアクション処理とは
+  データ＝POSTデータ。
+  RID＝データ["roomId"]。
+  PID＝データ["playerId"]。
+  ACTION＝データ["action"]。
+  「アクション受信: RID={RID} PID={PID} ACTION={ACTION}」と表示。
+  JS文＝「sys.__nako3game = JSON.stringify(sys.__nako_rooms['」＆RID＆「'].game)」。
+  JS文をJS実行。
+  GJSON＝「sys.__nako3game」をJS実行。
+  G＝GJSONをJSONデコード。
+  前状態＝G["players"][PID]["usedBaseAction"]。
+  前予約＝G["players"][PID]["hasReservation"]。
+  もし ACTION＝「座敷」 ならば
+    手札番号＝データ["cardIndex"]。
+    GとPIDと手札番号の座敷実行してGに代入。
+  ここまで。
+  もし ACTION＝「宣伝」 ならば
+    手札番号＝データ["cardIndex"]。
+    GとPIDと手札番号の宣伝実行してGに代入。
+  ここまで。
+  もし ACTION＝「紹介」 ならば
+    番号リスト＝データ["cardIndexes"]。
+    GとPIDと番号リストの紹介実行してGに代入。
+  ここまで。
+  もし ACTION＝「予約客」 ならば
+    GとPIDの予約客使用実行してGに代入。
+  ここまで。
+  もし ACTION＝「予約客セット」 ならば
+    手札番号＝データ["cardIndex"]。
+    GとPIDと手札番号の予約客セット実行してGに代入。
+  ここまで。
+
+  後状態＝G["players"][PID]["usedBaseAction"]。
+  後予約＝G["players"][PID]["hasReservation"]。
+  成功フラグ＝0。
+
+  もし ACTION＝「予約客」 ならば
+    成功フラグ＝1。
+  ここまで。
+  もし ACTION＝「予約客セット」 ならば
+    もし 前予約＝0 ならば
+      もし 後予約＝1 ならば
+        成功フラグ＝1。
+      ここまで。
+    ここまで。
+  ここまで。
+  もし ACTION≠「予約客」 ならば
+    もし ACTION≠「予約客セット」 ならば
+      もし 前状態＝0 ならば
+        もし 後状態＝1 ならば
+          成功フラグ＝1。
+        ここまで。
+      ここまで。
+    ここまで。
+  ここまで。
+  もし 成功フラグ＝0 ならば
+    「アクション失敗: {ACTION}」と表示。
+    {"success":偽,"message":"そのカードは出せません"}をJSONエンコードしてWEBサーバ出力。
+  違えば
+    Gのラウンド終了チェックをGに代入。
+    Gの残り巡確認をGに代入。
+    # 予約客・予約客セットは手番を消費しない
+    もし ACTION≠「予約客」 ならば
+      もし ACTION≠「予約客セット」 ならば
+        もし G["phase"]≠「scoring」 ならば
+          Gの手番進行をGに代入。
+        ここまで。
+      ここまで。
+    ここまで。
+    PHASE＝G["phase"]。
+    「フェーズ: {PHASE}」と表示。
+    GJSON＝GをJSONエンコード。
+    JS文＝「sys.__nako_rooms['」＆RID＆「'].game = 」＆GJSON。
+    JS文をJS実行。
+    部屋＝RIDで部屋情報取得。
+    states＝[]。
+    部屋["players"]を反復して
+      SID＝対象["socketId"]。
+      PID2＝対象["id"]。
+      state＝GとPID2で個別state作成。
+      stateJSON＝stateをJSONエンコード。
+      statesに{"socketId":SID,"state":stateJSON}を追加。
+    ここまで。
+    {"success":真,"states":states}をJSONエンコードしてWEBサーバ出力。
+  ここまで。
+  ここまで。
+  
+●ゲーム開始処理とは
+  データ＝POSTデータ。
+  RID＝データ["roomId"]。
+  「ゲーム開始: {RID}」と表示。
+  部屋＝RIDで部屋情報取得。
+  names＝[]。
+  部屋["players"]を反復して
+    namesに対象["nickname"]を追加。
+  ここまで。
+  G＝{}。
+  Gとnamesでゲーム初期化してGに代入。
+
+  # ★ phaseを確認
+  PHASE＝G["phase"]。
+  「ゲーム初期化後のphase: {PHASE}」と表示。
+
+  GJSON＝GをJSONエンコード。
+  JS文＝「sys.__nako_rooms['」＆RID＆「'].game = 」＆GJSON＆「; sys.__nako_rooms['」＆RID＆「'].status = 'playing';」。
+  JS文をJS実行。
+  states＝[]。
+  部屋["players"]を反復して
+    SID＝対象["socketId"]。
+    PID＝対象["id"]。
+    state＝GとPIDで個別state作成。
+    stateJSON＝stateをJSONエンコード。
+    statesに{"socketId":SID,"state":stateJSON}を追加。
+  ここまで。
+  {"success":真,"roomId":RID,"states":states}をJSONエンコードしてWEBサーバ出力。
+ここまで。
+
 WEBサーバ起動成功時には
   「APIサーバー起動: 3001」と表示。
 
@@ -26,13 +143,13 @@ WEBサーバ起動成功時には
   「/api/room/leave」へWEBサーバPOST時には
     データ＝POSTデータ。
     データで退室処理。
-    {「success」:真}をJSONエンコードしてWEBサーバ出力。
+    {"success":真}をJSONエンコードしてWEBサーバ出力。
   ここまで。
 
   「/api/room/remove」へWEBサーバPOST時には
     データ＝POSTデータ。
     データで完全退室処理。
-    {「success」:真}をJSONエンコードしてWEBサーバ出力。
+    {"success":真}をJSONエンコードしてWEBサーバ出力。
   ここまで。
 
   「/api/room/get-by-socket」へWEBサーバPOST時には
@@ -43,7 +160,7 @@ WEBサーバ起動成功時には
 
   「/api/room/get」へWEBサーバPOST時には
     データ＝POSTデータ。
-    RID＝データ[「roomId」]。
+    RID＝データ["roomId"]。
     result＝RIDで部屋情報取得。
     resultをJSONエンコードしてWEBサーバ出力。
   ここまで。
@@ -51,7 +168,7 @@ WEBサーバ起動成功時には
   「/api/room/delete」へWEBサーバPOST時には
     データ＝POSTデータ。
     データで部屋削除処理。
-    {「success」:真}をJSONエンコードしてWEBサーバ出力。
+    {"success":真}をJSONエンコードしてWEBサーバ出力。
   ここまで。
 
   「/api/room/is-host」へWEBサーバPOST時には
@@ -60,89 +177,13 @@ WEBサーバ起動成功時には
     resultをJSONエンコードしてWEBサーバ出力。
   ここまで。
 
-「/api/game/start」へWEBサーバPOST時には
-    データ＝POSTデータ。
-    RID＝データ[「roomId」]。
-    「ゲーム開始: {RID}」と表示。
-
-    部屋＝RIDで部屋情報取得。
-    names＝[]。
-    部屋[「players」]を反復して
-      namesに対象[「nickname」]を追加。
-    ここまで。
-
-    G＝{}。
-    Gとnamesでゲーム初期化してGに代入。
-    # ゲーム状態を部屋に保存（文字列連結で直接埋め込む）
-    GJSON＝GをJSONエンコード。
-    JS文＝「sys.__nako_rooms['」＆RID＆「'].game = 」＆GJSON＆「; sys.__nako_rooms['」＆RID＆「'].status = 'playing';」。
-    JS文をJS実行。
-
-    states＝[]。
-    部屋[「players」]を反復して
-      SID＝対象[「socketId」]。
-      PID＝対象[「id」]。
-      state＝GとPIDで個別state作成。
-      stateJSON＝stateをJSONエンコード。
-      statesに{「socketId」:SID,「state」:stateJSON}を追加。
-    ここまで。
-
-    {「success」:真,「roomId」:RID,「states」:states}をJSONエンコードしてWEBサーバ出力。
-  ここまで。
-  
-「/api/game/action」へWEBサーバPOST時には
-  データ＝POSTデータ。
-  RID＝データ[「roomId」]。
-  PID＝データ[「playerId」]。
-  ACTION＝データ[「action」]。
-
-  # メモリからゲーム状態を取得
-  JS文＝「sys.__nako3game = JSON.stringify(sys.__nako_rooms['」＆RID＆「'].game)」。
-  JS文をJS実行。
-  GJSON＝「sys.__nako3game」をJS実行。
-  G＝GJSONをJSONデコード。
-
-  もし ACTION＝「座敷」 ならば
-    手札番号＝データ[「cardIndex」]。
-    GとPIDと手札番号の座敷実行してGに代入。
-  ここまで。
-  もし ACTION＝「宣伝」 ならば
-    手札番号＝データ[「cardIndex」]。
-    GとPIDと手札番号の宣伝実行してGに代入。
-  ここまで。
-  もし ACTION＝「紹介」 ならば
-    番号リスト＝データ[「cardIndexes」]。
-    GとPIDと番号リストの紹介実行してGに代入。
-  ここまで。
-  もし ACTION＝「予約客」 ならば
-    GとPIDの予約客使用実行してGに代入。
+  「/api/game/start」へWEBサーバPOST時には
+    ゲーム開始処理。
   ここまで。
 
-  # ラウンド終了チェック
-  Gのラウンド終了チェックをGに代入。
-
-  # 手番進行（予約客は手番を消費しない）
-  もし ACTION≠「予約客」 ならば
-    Gの手番進行をGに代入。
+  「/api/game/action」へWEBサーバPOST時には
+    ゲームアクション処理。
   ここまで。
 
-  # 更新したゲーム状態を保存
-  GJSON＝GをJSONエンコード。
-  JS文＝「sys.__nako_rooms['」＆RID＆「'].game = 」＆GJSON＆「」。
-  JS文をJS実行。
-
-  # 各プレイヤーの個別stateを作成して送信
-  部屋＝RIDで部屋情報取得。
-  states＝[]。
-  部屋[「players」]を反復して
-    SID＝対象[「socketId」]。
-    PID2＝対象[「id」]。
-    state＝GとPID2で個別state作成。
-    stateJSON＝stateをJSONエンコード。
-    statesに{「socketId」:SID,「state」:stateJSON}を追加。
-  ここまで。
-
-  {「success」:真,「states」:states}をJSONエンコードしてWEBサーバ出力。
-ここまで。
 ここまで。
 3001でWEBサーバ起動。
