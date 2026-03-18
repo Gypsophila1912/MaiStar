@@ -729,6 +729,7 @@ body {
  手札エリア
 ---------------------------------------- */
 #hand-area {
+  position: relative;
   grid-column: 1;
   grid-row: 2; /* 行指定を変更 */
   background: rgba(200, 185, 150, 0.88);
@@ -736,6 +737,63 @@ body {
   padding: 10px 12px;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
 }
+
+#my-maiko-area {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%; /* 高さをエリアに合わせる */
+  display: flex;
+  align-items: flex-end; /* 画像とステータスを下揃え */
+  pointer-events: none;
+  z-index: 0;
+}
+
+#my-maiko-img {
+  height: 100%;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain; /* アスペクト比維持 */
+  opacity: 0.9;
+  display: block;
+}
+
+#my-maiko-stats {
+  height: 90%;          /* ほぼ全高を使う */
+  margin-bottom: 0;     /* 下寄せ解除 */
+  margin-left: 2px;     /* 重ならないように右へ少しずらす */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly; /* 縦方向に均等配置 */
+  z-index: 1;
+  padding-bottom: 10px; /* 手札の下端に合わせる微調整 */
+}
+
+/* ステータス行 */
+.maiko-stat-row {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 2px 5px;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  font-size: 10px;
+  font-weight: bold;
+  color: #3e2723;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* 色の四角 */
+.stat-box {
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.stat-box.red { background-color: #d32f2f; }
+.stat-box.blue { background-color: #1976d2; }
+.stat-box.green { background-color: #388e3c; }
 
 #hand-label {
   font-size: 10px;

@@ -8,6 +8,30 @@ yoyakuBtn＝空。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
   myP＝players[myPID]。
 
+  # 芸者画像設定
+  geisha＝myP[「geisha」]。
+  gImg＝geisha[「image」]。
+  もし gImg ならば
+    JS文＝「document.getElementById('my-maiko-img').src = '」＆gImg＆「'; document.getElementById('my-maiko-area').style.display = 'flex';」。
+    JS文をJS実行。
+
+    # ステータス（評判）表示
+    rep＝geisha[「reputation」]。
+    rR＝rep[「red」]。
+    rB＝rep[「blue」]。
+    rG＝rep[「green」]。
+
+    HTML＝「」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box red'></div>」＆rR＆「</div>」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box blue'></div>」＆rB＆「</div>」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box green'></div>」＆rG＆「</div>」。
+
+    EL＝「#my-maiko-stats」のDOM要素取得。
+    ELへHTMLをHTML設定。
+  違えば
+    「document.getElementById('my-maiko-area').style.display = 'none';」をJS実行。
+  ここまで。
+
   # ラウンド数表示
   ラウンド数＝state[「round」]。
   EL＝「#round-num」のDOM要素取得。
