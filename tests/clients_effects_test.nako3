@@ -9,7 +9,7 @@
 		ここまで。
 ここまで。
 
-!『../server/effects/clients.nako3』を取り込む。
+!『../server/game.nako3』を取り込む。
 
 G={"players":[{"id":0,"extraTurnCount":0,"effectFlags":{"extraAdAvailable":0},"hand":[],"zashiki":[],"ad":[],"reservation":{},"hasReservation":0}],"deck":[],"discard":[]}
 PID=0
