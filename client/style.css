@@ -86,7 +86,7 @@ input[type="text"] {
   border: 1px solid #c9a84c;
   border-radius: 4px;
   background: rgba(245, 239, 224, 0.1);
-  color:#f5efe0;
+  color: #f5efe0;
   font-size: 1rem;
   font-family: inherit;
 }
@@ -147,7 +147,7 @@ input[type="text"]:focus {
 #join-form {
   position: relative;
   width: 300px; /* ニックネームと同じ幅に合わせる */
-  z-index: 10;   /* 手前に表示 */
+  z-index: 10; /* 手前に表示 */
   text-align: left;
   margin-top: 1rem; /* ニックネームとの間隔 */
 }
@@ -178,12 +178,10 @@ input[type="text"]:focus {
   transform: scale(1.05); /* ホバー時の拡大効果 */
 }
 
-
 /* パスワード用テキスト色（巻物の上なので黒っぽく） */
 .password-group input[type="text"] {
   color: #3e2723;
 }
-
 
 /* 背景画像があるのでフォーカス時の枠線も消す */
 .input-wrapper input[type="text"]:focus {
@@ -192,13 +190,12 @@ input[type="text"]:focus {
   background: transparent;
 }
 
-
 .button-group {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  
+
   /* 画面下部中央へ配置 */
   position: absolute;
   bottom: 80px;
@@ -335,7 +332,7 @@ button:disabled {
 maiboshi_game.css (merged)
 ======================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500&display=swap");
 
 /* ----------------------------------------
  リセット・基本 (既存と統合)
@@ -359,146 +356,175 @@ body {
  畳背景 第1層：い草の基本色
 ---------------------------------------- */
 .tatami-bg {
-background-color: #8fad6a;
-background-image:
-  repeating-linear-gradient(
-    0deg,
-    rgba(0,0,0,0.04)        0px, rgba(0,0,0,0.04)        1px,
-    transparent              1px, transparent             9px,
-    rgba(0,0,0,0.03)        9px, rgba(0,0,0,0.03)       10px,
-    transparent             10px, transparent            19px,
-    rgba(255,255,255,0.06) 19px, rgba(255,255,255,0.06) 20px,
-    transparent             20px, transparent            29px
-  ),
-  repeating-linear-gradient(
-    90deg,
-    rgba(0,0,0,0.04)        0px, rgba(0,0,0,0.04)        1px,
-    transparent              1px, transparent             9px,
-    rgba(0,0,0,0.03)        9px, rgba(0,0,0,0.03)       10px,
-    transparent             10px, transparent            19px,
-    rgba(255,255,255,0.06) 19px, rgba(255,255,255,0.06) 20px,
-    transparent             20px, transparent            29px
-  );
+  background-color: #8fad6a;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.04) 0px,
+      rgba(0, 0, 0, 0.04) 1px,
+      transparent 1px,
+      transparent 9px,
+      rgba(0, 0, 0, 0.03) 9px,
+      rgba(0, 0, 0, 0.03) 10px,
+      transparent 10px,
+      transparent 19px,
+      rgba(255, 255, 255, 0.06) 19px,
+      rgba(255, 255, 255, 0.06) 20px,
+      transparent 20px,
+      transparent 29px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.04) 0px,
+      rgba(0, 0, 0, 0.04) 1px,
+      transparent 1px,
+      transparent 9px,
+      rgba(0, 0, 0, 0.03) 9px,
+      rgba(0, 0, 0, 0.03) 10px,
+      transparent 10px,
+      transparent 19px,
+      rgba(255, 255, 255, 0.06) 19px,
+      rgba(255, 255, 255, 0.06) 20px,
+      transparent 20px,
+      transparent 29px
+    );
 }
 
 /* 畳の縁（へり） */
 .tatami-heri {
-background-image:
-  repeating-linear-gradient(
-    0deg,
-    transparent             0px, transparent            179px,
-    rgba(90,60,20,0.18)   179px, rgba(90,60,20,0.18)   185px,
-    transparent            185px, transparent           364px,
-    rgba(90,60,20,0.18)   364px, rgba(90,60,20,0.18)   370px,
-    transparent            370px
-  ),
-  repeating-linear-gradient(
-    90deg,
-    transparent             0px, transparent            239px,
-    rgba(90,60,20,0.18)   239px, rgba(90,60,20,0.18)   245px,
-    transparent            245px, transparent           484px,
-    rgba(90,60,20,0.18)   484px, rgba(90,60,20,0.18)   490px,
-    transparent            490px
-  );
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 179px,
+      rgba(90, 60, 20, 0.18) 179px,
+      rgba(90, 60, 20, 0.18) 185px,
+      transparent 185px,
+      transparent 364px,
+      rgba(90, 60, 20, 0.18) 364px,
+      rgba(90, 60, 20, 0.18) 370px,
+      transparent 370px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 239px,
+      rgba(90, 60, 20, 0.18) 239px,
+      rgba(90, 60, 20, 0.18) 245px,
+      transparent 245px,
+      transparent 484px,
+      rgba(90, 60, 20, 0.18) 484px,
+      rgba(90, 60, 20, 0.18) 490px,
+      transparent 490px
+    );
 }
 
 /* い草の繊維感オーバーレイ */
 .tatami-fiber {
-background-image: repeating-linear-gradient(
-  90deg,
-  rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
-  transparent            1px, transparent            3px
-);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
 }
 
 /* ----------------------------------------
  ゲームウィンドウ全体
 ---------------------------------------- */
 #game-root {
-position: relative;
-width: 900px;
-min-height: 700px;
-border-radius: 12px;
-overflow: hidden;
-border: 2px solid #6a4a20;
-box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-margin: 0 auto; /* 中央寄せ */
-background-color: #8fad6a; /* 畳のベース色 */
-font-family: 'Noto Sans JP', sans-serif;
-color: #333;
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 4rem);
+  min-height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #6a4a20;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  margin: 0 auto; /* 中央寄せ */
+  background-color: #8fad6a; /* 畳のベース色 */
+  font-family: "Noto Sans JP", sans-serif;
+  color: #001a4dc9;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ----------------------------------------
  ヘッダー
 ---------------------------------------- */
 #header {
-position: relative;
-z-index: 2;
-background: rgba(45,28,10,0.92);
-border-bottom: 2px solid #8B5E2A;
-padding: 8px 16px;
-display: flex;
-align-items: center;
-justify-content: space-between;
+  position: relative;
+  z-index: 2;
+  background: rgba(45, 28, 10, 0.92);
+  border-bottom: 2px solid #8b5e2a;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 #title-text {
-font-family: 'Noto Serif JP', serif;
-font-size: 18px;
-font-weight: 700;
-color: #E8C97A;
-letter-spacing: 0.15em;
-text-shadow: 0 0 12px rgba(232,201,122,0.4);
+  font-family: "Noto Serif JP", serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #e8c97a;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 12px rgba(232, 201, 122, 0.4);
 }
 
 #phase-badge {
-background: rgba(60,30,8,0.9);
-border: 1px solid #8B5E2A;
-border-radius: 20px;
-padding: 4px 14px;
-font-size: 12px;
-color: #E8C97A;
-letter-spacing: 0.1em;
+  background: rgba(60, 30, 8, 0.9);
+  border: 1px solid #8b5e2a;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 12px;
+  color: #e8c97a;
+  letter-spacing: 0.1em;
 }
 
 #round-info {
-font-size: 12px;
-color: #c0a06a;
-text-align: right;
-line-height: 1.6;
+  font-size: 12px;
+  color: #c0a06a;
+  text-align: right;
+  line-height: 1.6;
 }
 
 #timer {
-color: #E8C97A;
+  color: #e8c97a;
 }
 
 /* ----------------------------------------
  メインレイアウト
 ---------------------------------------- */
 #main-layout {
-position: relative;
-z-index: 1;
-display: grid;
-grid-template-columns: 1fr 200px;
-grid-template-rows: auto 1fr auto;
-height: calc(700px - 52px);
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  grid-template-rows: 1fr auto; /* 相手エリアを1frにして自動伸縮 */
+  flex: 1; /* 親の余白を埋める */
+  height: auto;
+  min-height: 0;
+  overflow: hidden; /* はみ出し防止 */
 }
 
 /* ----------------------------------------
  中央エリア・相手
 ---------------------------------------- */
 #center-area {
-grid-column: 1;
-grid-row: 1 / 3;
-padding: 12px;
-display: flex;
-flex-direction: column;
-gap: 10px;
+  grid-column: 1;
+  grid-row: 1; /* 行指定を変更 */
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto; /* コンテンツが多い場合はスクロール */
 }
 
 #opponents {
-display: flex;
-gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 /* 芸者カード */
@@ -518,7 +544,7 @@ gap: 8px;
 
 .geisha-card.active {
   transform: scale(1.02);
-  filter: drop-shadow(0 0 5px #E8C97A);
+  filter: drop-shadow(0 0 5px #e8c97a);
 }
 
 .geisha-card.active::before {
@@ -534,233 +560,315 @@ gap: 8px;
 }
 
 .geisha-name {
-font-family: 'Noto Serif JP', serif;
-font-size: 13px;
-font-weight: 600;
-color: #3a1e08;
+  font-family: "Noto Serif JP", serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3a1e08;
 }
 
 .geisha-score {
-font-size: 11px;
-color: #7a5030;
-margin-top: 1px;
+  font-size: 11px;
+  color: #7a5030;
+  margin-top: 1px;
 }
 
 .card-backs {
-display: flex;
-gap: 4px;
-flex-wrap: wrap;
-justify-content: center;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .card-back {
-width: 22px;
-height: 32px;
-background: linear-gradient(135deg, #7a4a18 0%, #5a3010 100%);
-border: 1px solid #8B5E2A;
-border-radius: 3px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 9px;
-color: rgba(232,201,122,0.5);
+  width: 22px;
+  height: 32px;
+  background: linear-gradient(135deg, #7a4a18 0%, #5a3010 100%);
+  border: 1px solid #8b5e2a;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: rgba(232, 201, 122, 0.5);
 }
 
 .status-badge {
-display: inline-block;
-padding: 2px 8px;
-border-radius: 10px;
-font-size: 10px;
-margin-top: 4px;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  margin-top: 4px;
 }
 
 .status-seki {
-background: rgba(200,80,50,0.12);
-border: 1px solid rgba(180,60,30,0.35);
-color: #b04020;
+  background: rgba(200, 80, 50, 0.12);
+  border: 1px solid rgba(180, 60, 30, 0.35);
+  color: #b04020;
 }
 
 .status-normal {
-background: rgba(60,120,70,0.1);
-border: 1px solid rgba(60,120,70,0.25);
-color: #3a7848;
+  background: rgba(60, 120, 70, 0.1);
+  border: 1px solid rgba(60, 120, 70, 0.25);
+  color: #3a7848;
 }
 
 /* ----------------------------------------
  座敷エリア
 ---------------------------------------- */
 #table-area {
-background: rgba(230,215,180,0.75);
-border: 1px solid rgba(140,100,50,0.4);
-border-radius: 8px;
-padding: 12px;
-flex: 1;
-display: flex;
-flex-direction: column;
-box-shadow: inset 0 1px 4px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.1);
+  background: rgba(230, 215, 180, 0.75);
+  border: 1px solid rgba(140, 100, 50, 0.4);
+  border-radius: 8px;
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    inset 0 1px 4px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .area-label {
-font-size: 10px;
-color: #7a5030;
-letter-spacing: 0.15em;
-margin-bottom: 8px;
+  font-size: 10px;
+  color: #7a5030;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
 }
 
 #table-cards {
-display: flex;
-gap: 6px;
-flex-wrap: wrap;
-align-items: flex-start;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 /* ----------------------------------------
  カード（表面）
 ---------------------------------------- */
 .card-face {
-width: 44px;
-height: 62px;
-background: #fdf8ee;
-border: 1px solid #c0a060;
-border-radius: 4px;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-transition: transform 0.15s;
-position: relative;
-box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  width: 44px;
+  height: 62px;
+  background: #fdf8ee;
+  border: 1px solid #c0a060;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s;
+  position: relative;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
 .card-face:hover {
-transform: translateY(-4px);
+  transform: translateY(-4px);
 }
 
 .card-face.selected {
-transform: translateY(-8px);
-border-color: #8B5E2A;
-box-shadow: 0 4px 10px rgba(0,0,0,0.2), 0 0 0 2px rgba(200,160,80,0.5);
+  transform: translateY(-8px);
+  border-color: #8b5e2a;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.2),
+    0 0 0 2px rgba(200, 160, 80, 0.5);
 }
 
 .card-suit {
-font-size: 18px;
-line-height: 1;
+  font-size: 18px;
+  line-height: 1;
 }
 
 .card-value {
-font-family: 'Noto Serif JP', serif;
-font-size: 10px;
-color: #5a3a1a;
-margin-top: 2px;
+  font-family: "Noto Serif JP", serif;
+  font-size: 10px;
+  color: #5a3a1a;
+  margin-top: 2px;
 }
 
 .card-pts {
-position: absolute;
-bottom: 2px;
-right: 4px;
-font-size: 8px;
-color: #9a6a30;
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-size: 8px;
+  color: #9a6a30;
 }
 
 /* ----------------------------------------
  手札エリア
 ---------------------------------------- */
 #hand-area {
-grid-column: 1;
-grid-row: 3;
-background: rgba(200,185,150,0.88);
-border-top: 2px solid rgba(120,85,40,0.4);
-padding: 10px 12px;
-box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  grid-column: 1;
+  grid-row: 2; /* 行指定を変更 */
+  background: rgba(200, 185, 150, 0.88);
+  border-top: 2px solid rgba(120, 85, 40, 0.4);
+  padding: 10px 12px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
 }
 
 #hand-label {
-font-size: 10px;
-color: #7a5030;
-letter-spacing: 0.15em;
-margin-bottom: 8px;
-display: flex;
-align-items: center;
-gap: 8px;
+  font-size: 10px;
+  color: #7a5030;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #my-cards {
-display: flex;
-gap: 6px;
-justify-content: center;
-flex-wrap: wrap;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* 手札カード */
+.card-face {
+  width: 64px;
+  min-height: 90px;
+  border-radius: 6px;
+  border: 2px solid rgba(26, 18, 8, 0.15);
+  background: #fffdf7;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 3px;
+  position: relative;
+  user-select: none;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+  flex-shrink: 0;
+}
+.card-face:hover {
+  transform: translateY(-4px);
+}
+.card-face.selected {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 18px rgba(201, 168, 76, 0.5);
+  border-color: #c9a84c;
+}
+
+/* 色別ボーダー */
+.card-face.color-red {
+  border-top: 3px solid #c0392b;
+}
+.card-face.color-blue {
+  border-top: 3px solid #1a3a5c;
+}
+.card-face.color-green {
+  border-top: 3px solid #2d6a4f;
+}
+.card-face.color-none {
+  border-top: 3px solid #888;
+}
+
+.card-cost {
+  font-size: 8px;
+  color: rgba(26, 18, 8, 0.5);
+  align-self: flex-start;
+  font-family: var(--font-display, serif);
+}
+.card-value {
+  font-size: 11px;
+  font-weight: bold;
+  color: #1a1208;
+  text-align: center;
+  line-height: 1.2;
+  font-family: var(--font-display, serif);
+}
+.card-pts {
+  font-size: 9px;
+  color: #c9a84c;
+  font-family: var(--font-display, serif);
+}
+.card-promo {
+  font-size: 8px;
+  color: #2d6a4f;
+  font-family: var(--font-display, serif);
+}
+
+/* 手札エリア */
+#my-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 0;
+  min-height: 100px;
 }
 
 /* ----------------------------------------
  サイドバー
 ---------------------------------------- */
 #sidebar {
-grid-column: 2;
-grid-row: 1 / 4;
-background: rgba(45,28,10,0.9);
-border-left: 2px solid #6B4520;
-display: flex;
-flex-direction: column;
-overflow: hidden;
+  grid-column: 2;
+  grid-row: 1 / 3; /* 下まで伸ばす */
+  background: rgba(45, 28, 10, 0.9);
+  border-left: 2px solid #6b4520;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* アクションボタン群 */
 #actions {
-padding: 12px;
-border-bottom: 1px solid rgba(107,69,32,0.5);
+  padding: 12px;
+  border-bottom: 1px solid rgba(107, 69, 32, 0.5);
 }
 
 .section-title {
-font-size: 10px;
-color: #8B6030;
-letter-spacing: 0.15em;
-margin-bottom: 8px;
+  font-size: 10px;
+  color: #8b6030;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
 }
 
 .action-btn {
-display: block;
-width: 100%;
-margin-bottom: 6px;
-padding: 8px 10px;
-border-radius: 6px;
-border: 1px solid #6B4520;
-background: rgba(60,35,10,0.6);
-color: #d4b48a;
-font-family: 'Noto Sans JP', sans-serif;
-font-size: 12px;
-cursor: pointer;
-text-align: center;
-letter-spacing: 0.05em;
-transition: all 0.15s;
+  display: block;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #6b4520;
+  background: rgba(60, 35, 10, 0.6);
+  color: #d4b48a;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
 }
 
 .action-btn:hover {
-background: rgba(100,60,20,0.7);
-border-color: #a07040;
-color: #E8C97A;
+  background: rgba(100, 60, 20, 0.7);
+  border-color: #a07040;
+  color: #e8c97a;
 }
 
 .action-btn.primary {
-background: rgba(120,80,20,0.5);
-border-color: #E8C97A;
-color: #E8C97A;
-font-weight: 500;
+  background: rgba(120, 80, 20, 0.5);
+  border-color: #e8c97a;
+  color: #e8c97a;
+  font-weight: 500;
 }
 
 .action-btn.primary:hover {
-background: rgba(160,110,30,0.6);
+  background: rgba(160, 110, 30, 0.6);
 }
 
 .action-btn.danger {
-border-color: #7a2a18;
-color: #c07060;
+  border-color: #7a2a18;
+  color: #c07060;
 }
 
 .action-btn.danger:hover {
-background: rgba(110,35,18,0.5);
-border-color: #b04030;
-color: #e09080;
+  background: rgba(110, 35, 18, 0.5);
+  border-color: #b04030;
+  color: #e09080;
 }
 
 /* 画像ボタン用スタイル */
@@ -778,99 +886,99 @@ color: #e09080;
 }
 
 .divider {
-width: 100%;
-height: 1px;
-background: linear-gradient(90deg, transparent, #6B4520, transparent);
-margin: 6px 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #6b4520, transparent);
+  margin: 6px 0;
 }
 
 /* 行動ログ */
 #log-area {
-flex: 1;
-padding: 10px 12px;
-overflow-y: auto;
-display: flex;
-flex-direction: column;
+  flex: 1;
+  padding: 10px 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .log-entry {
-padding: 5px 0;
-border-bottom: 1px solid rgba(107,69,32,0.25);
-font-size: 10px;
-line-height: 1.5;
-color: #c0a06a;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(107, 69, 32, 0.25);
+  font-size: 10px;
+  line-height: 1.5;
+  color: #c0a06a;
 }
 
 .log-time {
-color: #6B4520;
-font-size: 9px;
-margin-right: 4px;
+  color: #6b4520;
+  font-size: 9px;
+  margin-right: 4px;
 }
 
 .log-actor {
-color: #E8C97A;
-font-weight: 500;
+  color: #e8c97a;
+  font-weight: 500;
 }
 
 .log-action {
-color: #b08050;
+  color: #b08050;
 }
 
 .log-highlight {
-color: #e8a060;
+  color: #e8a060;
 }
 
 /* スコアバー */
 #score-bar {
-padding: 8px 12px;
-border-top: 1px solid rgba(107,69,32,0.5);
-display: flex;
-gap: 6px;
-align-items: center;
-background: rgba(30,15,5,0.6);
+  padding: 8px 12px;
+  border-top: 1px solid rgba(107, 69, 32, 0.5);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: rgba(30, 15, 5, 0.6);
 }
 
 .score-item {
-flex: 1;
-text-align: center;
+  flex: 1;
+  text-align: center;
 }
 
 .score-val {
-font-family: 'Noto Serif JP', serif;
-font-size: 16px;
-color: #E8C97A;
-font-weight: 600;
-display: block;
+  font-family: "Noto Serif JP", serif;
+  font-size: 16px;
+  color: #e8c97a;
+  font-weight: 600;
+  display: block;
 }
 
 .score-label {
-font-size: 9px;
-color: #8B6030;
-letter-spacing: 0.1em;
+  font-size: 9px;
+  color: #8b6030;
+  letter-spacing: 0.1em;
 }
 
 .score-sep {
-width: 1px;
-height: 28px;
-background: rgba(107,69,32,0.5);
+  width: 1px;
+  height: 28px;
+  background: rgba(107, 69, 32, 0.5);
 }
 
 /* ----------------------------------------
  なでしこ3 状態表示
 ---------------------------------------- */
 #nako-output {
-position: fixed;
-bottom: 10px;
-left: 10px;
-background: rgba(20,10,3,0.85);
-border: 1px solid #6B4520;
-border-radius: 6px;
-padding: 6px 12px;
-font-size: 11px;
-color: #E8C97A;
-font-family: 'Noto Sans JP', sans-serif;
-pointer-events: none;
-min-width: 180px;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(20, 10, 3, 0.85);
+  border: 1px solid #6b4520;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  color: #e8c97a;
+  font-family: "Noto Sans JP", sans-serif;
+  pointer-events: none;
+  min-width: 180px;
 }
 
 /* 待機室の合言葉（中央寄せ） */
@@ -895,7 +1003,7 @@ min-width: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   font-size: 1.5rem;
   font-weight: bold;
   color: #c0392b; /* 赤色 */
@@ -929,16 +1037,15 @@ min-width: 180px;
 }
 
 #btn-start.disabled {
-  /* opacity: 0.5; */  /* 半透明を解除 */
+  /* opacity: 0.5; */ /* 半透明を解除 */
   cursor: not-allowed;
   /* filter: grayscale(100%); */ /* グレースケールを解除 */
- /* 少しだけ暗くする程度にしておく？あるいは完全にそのままでもOK */
+  /* 少しだけ暗くする程度にしておく？あるいは完全にそのままでもOK */
 }
 
 #btn-start:hover:not(.disabled) {
   transform: scale(1.05);
 }
-
 
 #player-list {
   margin: 1.5rem 0;
@@ -1060,7 +1167,9 @@ min-width: 180px;
   background: #ffc0cb; /* 基本色：ピンク */
   border-radius: 150% 0 150% 0;
   opacity: 0.8;
-  animation: fall linear forwards, sway ease-in-out infinite alternate;
+  animation:
+    fall linear forwards,
+    sway ease-in-out infinite alternate;
 }
 
 .sakura-petal:nth-child(2n) {
@@ -1093,24 +1202,32 @@ min-width: 180px;
   }
 }
 
-
 /* animationのプロパティを分離して定義（上書き回避） */
 .sakura-petal {
-    position: absolute;
-    top: -20px;
-    background: #ffc0cb;
-    border-radius: 150% 0 150% 0;
-    opacity: 0.8;
-    /* animationは個別に設定するのでここでは一括指定しない */
+  position: absolute;
+  top: -20px;
+  background: #ffc0cb;
+  border-radius: 150% 0 150% 0;
+  opacity: 0.8;
+  /* animationは個別に設定するのでここでは一括指定しない */
 }
 
 @keyframes fall {
-  0% { top: -10%; transform: rotate(0deg); }
-  100% { top: 110%; transform: rotate(360deg); }
+  0% {
+    top: -10%;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: 110%;
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes sway {
-  0% { margin-left: -20px; }
-  100% { margin-left: 20px; }
+  0% {
+    margin-left: -20px;
+  }
+  100% {
+    margin-left: 20px;
+  }
 }
-

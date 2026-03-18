@@ -147,7 +147,6 @@
   G["bonusTarget"]=""
   G["lapTriggerIndex"]=-1
   G["lapRemaining"]=0
-  G["deck"]=[]
   G["discard"]=[]
 
   G["players"]を反復
@@ -202,44 +201,6 @@
 		G["deck"]の0を配列切取してカードに代入。
 		G["players"][PID]["hand"]にカードを配列追加。
 	ここまで。
-	Gを戻す。
-ここまで。
-
-
-●(GとPIDと回数の)山札ドロー繰返しとは
-	I=0
-	I<回数の間
-		GとPIDの山札手札補充をGに代入。
-		I=I+1
-	ここまで。
-	Gを戻す。
-ここまで。
-
-●(GとPIDと枚数の)手札捨てとは
-	P=G["players"][PID]
-	I=0
-	I<枚数の間
-		手札数=P["hand"]の要素数
-		もし手札数<=0ならば
-			Gを戻す。
-		ここまで。
-		P["hand"]の0を配列切取して捨てカードに代入。
-		G["discard"]に捨てカードを配列追加。
-		I=I+1
-	ここまで。
-	Gを戻す。
-ここまで。
-
-●(GとPIDの)手札全捨てとは
-	P=G["players"][PID]
-	手札数=P["hand"]の要素数
-	I=0
-	I<手札数の間
-		P["hand"]の0を配列切取して捨てカードに代入。
-		G["discard"]に捨てカードを配列追加。
-		I=I+1
-	ここまで。
-	P["hand"]=[]
 	Gを戻す。
 ここまで。
 
@@ -976,70 +937,76 @@
 
 ●(Gとプレイヤー一覧で)ゲーム初期化とは
 	カードデータ＝カードデータ読み込み。
-	G["カード"] = {}
-	G["カード"]["芸者"] = カードデータ[「maiko」]。
-	G["カード"]["客"] = カードデータ[「clients」]。
+	G["カード"]＝{}。
+	G["カード"]["芸者"]＝カードデータ[「maiko」]。
+	G["カード"]["客"]＝カードデータ[「clients」]。
 
-	G["round"] = 1
-	G["turnIndex"] = 0
-	G["startPlayerIndex"] = 0
-	G["phase"] = "reservation"
-	G["endedBy"] = ""
-	G["endMode"] = ""
-	G["bonusTarget"] = ""
-	G["lapTriggerIndex"] = -1
-	G["lapRemaining"] = 0
-	G["deck"] = []
-	G["discard"] = []
-	G["players"] = []
-	G["winnerIds"] = []
+	G["round"]＝1。
+	G["turnIndex"]＝0。
+	G["startPlayerIndex"]＝0。
+	G["phase"]＝「reservation」。
+	G["endedBy"]＝「」。
+	G["endMode"]＝「」。
+	G["bonusTarget"]＝「」。
+	G["lapTriggerIndex"]＝-1。
+	G["lapRemaining"]＝0。
+	G["deck"]＝[]。
+	G["discard"]＝[]。
+	G["players"]＝[]。
+	G["winnerIds"]＝[]。
 
 	# 芸者カードをシャッフル
-	芸者リスト = G["カード"]["芸者"]
+	芸者リスト＝G["カード"]["芸者"]。
 	芸者リストを配列シャッフル。
 
 	# プレイヤー初期化
-	I = 0
+	I＝0。
 	プレイヤー一覧を反復
-		もし対象=「」ならば、続ける。
-		PID = I
-		名前 = 対象
+		もし対象＝「」ならば、続ける。
+		PID＝I。
+		名前＝対象。
 		PIDと名前のプレイヤー状態作成をPに代入。
-		P["geishaId"] = 芸者リスト[I]["id"]
+		P["geishaId"]＝芸者リスト[I]["id"]。
 		P["reputation"]＝{
 		  「red」: 芸者リスト[I]["reputation"]["red"],
 		  「blue」: 芸者リスト[I]["reputation"]["blue"],
 		  「green」: 芸者リスト[I]["reputation"]["green"]
 		}。
-		P["usedGeishaSkill"] = 0
+		P["usedGeishaSkill"]＝0。
 		G["players"]にPを配列追加。
-		I = I + 1
+		I＝I+1。
 	ここまで。
 
-	# 山札初期化
-	G["deck"] = G["カード"]["客"]
+	# 山札初期化（ラウンド開始準備より先に作る）
+	CLIENTSJSON＝G["カード"]["客"]をJSONエンコード。
+	G["deck"]＝CLIENTSJSONをJSONデコード。
 	G["deck"]を配列シャッフル。
 
-  # ラウンド開始準備を呼ぶ（reputationも正しくセットされる）
-  1をRへ代入
-  GとRのラウンド開始準備してGに代入。
+	# ラウンド開始準備（reputationをセット・フラグ初期化）
+	# ※ラウンド開始準備内でG["deck"]=[]されるので直後に山札を再作成
+	R＝1。
+	GとRのラウンド開始準備してGに代入。
 
-  # 初期手札を配る（ラウンド開始準備後に配布）
-  I=0
-  プレイヤー一覧を反復
-    もし対象=「」ならば、続ける。
-    PID=I
-    P=G["players"][PID]
-    ボーナス=Pの初期手札ボーナス取得。
-    枚数=5+ボーナス
-    枚数回
-      GとPIDの山札手札補充をGに代入。
-    ここまで。
-    I=I+1
-  ここまで。
-  Gを戻す。
+	# 山札を再作成（ラウンド開始準備でdeck=[]になるため）
+	CLIENTSJSON＝G["カード"]["客"]をJSONエンコード。
+	G["deck"]＝CLIENTSJSONをJSONデコード。
+	G["deck"]を配列シャッフル。
+
+	# 初期手札を配る
+	I＝0。
+	プレイヤー一覧を反復
+		もし対象＝「」ならば、続ける。
+		PID＝I。
+		P＝G["players"][PID]。
+		ボーナス＝Pの初期手札ボーナス取得。
+		枚数＝5+ボーナス。
+		枚数回
+			GとPIDの山札手札補充をGに代入。
+		ここまで。
+		I＝I+1。
+	ここまで。
+	Gを戻す。
 ここまで。
-
 ●（GとPIDで）個別state作成とは
   state＝{}。
   state[「round」]＝G[「round」]。
@@ -1073,13 +1040,15 @@
     pstate[「tokenTotal」]＝P[「tokenTotal」]。
     pstate[「handCount」]＝P[「hand」]の要素数。
     pstate[「closed」]＝P[「closed」]。
-    もし P[「id」]＝PID ならば
-      pstate[「hand」]＝P[「hand」]。
-      pstate[「reservation」]＝P[「reservation」]。
-    違えば
-      pstate[「hand」]＝[]。
-      pstate[「reservation」]＝{}。
-    ここまで。
+もし P[「id」]＝PID ならば
+  HANDCOUNT＝P[「hand」]の要素数。
+  「PID:{PID} hand枚数:{HANDCOUNT}」と表示。
+  pstate[「hand」]＝P[「hand」]。
+  pstate[「reservation」]＝P[「reservation」]。
+違えば
+  pstate[「hand」]＝[]。
+  pstate[「reservation」]＝{}。
+ここまで。
     playersにpstateを追加。
   ここまで。
   state[「players」]＝players。
