@@ -28,6 +28,9 @@
             <img id="btn-join" src="assets/search.png" alt="部屋に入る" />
           </div>
 
+          <!-- ホーム画面右上に表示される画像（初期は非表示） -->
+          <img id="homeimg" src="assets/homeimg.png" alt="ホーム画像" style="display:none;" />
+
           <!-- 入室用パスワード入力（入室ボタン押したら表示） -->
           <div id="join-form" style="display: none">
             <div class="form-group password-group">
@@ -41,7 +44,7 @@
                 />
               </div>
             </div>
-            <button id="btn-join-confirm">入室する</button>
+            <img id="btn-join-confirm" src="assets/in.png" alt="入室する" />
           </div>
 
           <div id="error-message" style="color: red"></div>
@@ -77,8 +80,8 @@
           <div id="title-text">舞　星</div>
           <div id="phase-badge">宣伝フェーズ</div>
           <div id="round-info">
-            第<span id="round-num">3</span>局・<span id="turn-num">4</span>巡目<br>
-            残り時間 <span id="timer">1:42</span>
+            第<span id="round-num">1</span>局・<span id="turn-num">1</span>巡目<br>
+            残り時間 <span id="timer">1:30</span>
           </div>
         </div>
        
@@ -93,7 +96,6 @@
        
               <div class="geisha-card active" id="geisha-0">
                 <div class="geisha-header">
-                  <div class="avatar">🌸</div>
                   <div>
                     <div class="geisha-name">紅葉</div>
                     <div class="geisha-score" id="score-0">点数: 24点</div>
@@ -105,7 +107,6 @@
        
               <div class="geisha-card" id="geisha-1">
                 <div class="geisha-header">
-                  <div class="avatar">🏮</div>
                   <div>
                     <div class="geisha-name">雪月</div>
                     <div class="geisha-score" id="score-1">点数: 18点</div>
@@ -117,7 +118,6 @@
        
               <div class="geisha-card" id="geisha-2">
                 <div class="geisha-header">
-                  <div class="avatar">🎋</div>
                   <div>
                     <div class="geisha-name">花音</div>
                     <div class="geisha-score" id="score-2">点数: 31点</div>
@@ -155,12 +155,10 @@
             <!-- アクションボタン -->
             <div id="actions">
               <div class="section-title">◆ アクション</div>
-              <button class="action-btn primary" onclick="jsActionClick('座敷に出す')">座敷に出す</button>
-              <button class="action-btn"         onclick="jsActionClick('宣伝する')">宣伝する</button>
-              <button class="action-btn"         onclick="jsActionClick('芸者を招く')">芸者を招く</button>
-              <button class="action-btn"         onclick="jsActionClick('場を換える')">場を換える</button>
-              <div class="divider"></div>
-              <button class="action-btn danger"  onclick="jsActionClick('パス')">パス</button>
+              <img src="assets/kyaku.png" class="action-img-btn" onclick="jsActionClick('客を出す')" alt="客を出す" />
+              <img src="assets/api.png"   class="action-img-btn" onclick="jsActionClick('宣伝する')"   alt="宣伝する" />
+              <img src="assets/syokai.png"      class="action-img-btn" onclick="jsActionClick('場を換える')"   alt="場を換える" />
+              <img src="assets/yoyakukyaku.png" class="action-img-btn" onclick="jsActionClick('予約客を出す')" alt="予約客を出す" />
             </div>
        
             <!-- 行動記録ログ -->
@@ -173,16 +171,11 @@
             <div id="score-bar">
               <div class="score-item">
                 <span class="score-val" id="my-score">42</span>
-                <span class="score-label">あなた</span>
+                <span class="score-label">あなたの小判</span>
               </div>
               <div class="score-sep"></div>
               <div class="score-item">
-                <span class="score-val" id="top-score">31</span>
-                <span class="score-label">最高点</span>
-              </div>
-              <div class="score-sep"></div>
-              <div class="score-item">
-                <span class="score-val" id="game-progress">3/6</span>
+                <span class="score-val" id="game-progress">1/3</span>
                 <span class="score-label">局数</span>
               </div>
             </div>
@@ -218,8 +211,9 @@
           const selected = document.querySelectorAll('#my-cards .card-face.selected');
           const output   = document.getElementById('nako-output');
        
-          // 座敷に出す／宣伝するはカード選択必須
-          if ((action === '座敷に出す' || action === '宣伝する') && selected.length === 0) {
+          // 客を出す／宣伝するはカード選択必須チェックを一時的に無効化（UI動作確認用）
+          /*
+          if ((action === '客を出す' || action === '宣伝する') && selected.length === 0) {
             output.textContent = '⚠ カードを選択してください';
             output.style.color = '#e87060';
             setTimeout(() => {
@@ -228,6 +222,7 @@
             }, 2000);
             return;
           }
+          */
        
           // 選択カード名を取得
           let cardName = '';
@@ -243,7 +238,12 @@
           const entry = document.createElement('div');
           entry.className = 'log-entry';
        
-          if (cardName) {
+          if (action === '場を換える') {
+            entry.innerHTML =
+              `<span class="log-time">${timer}</span>` +
+              `<span class="log-actor">あなた</span>` +
+              `<span class="log-action">が山札からカードを2枚引く</span>`;
+          } else if (cardName) {
             entry.innerHTML =
               `<span class="log-time">${timer}</span>` +
               `<span class="log-actor">あなた</span>` +
@@ -265,6 +265,36 @@
        
           output.textContent = '▶ ' + action + ' を実行';
           output.style.color = '#E8C97A';
+        }
+
+        /**
+         * ゲーム中のタイマー開始
+         */
+        let timerInterval;
+        function startGameTimer(duration) {
+            let timer = duration;
+            const timerEl = document.getElementById('timer');
+            
+            // 既存タイマーのクリア
+            if (timerInterval) clearInterval(timerInterval);
+
+            // 初回表示更新
+            const updateDisplay = () => {
+                const minutes = Math.floor(timer / 60);
+                const seconds = timer % 60;
+                timerEl.textContent = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+            };
+            updateDisplay();
+
+            timerInterval = setInterval(() => {
+                timer--;
+                updateDisplay();
+
+                if (timer < 0) {
+                    clearInterval(timerInterval);
+                    timerEl.textContent = "0:00";
+                }
+            }, 1000);
         }
       </script>
     </div>
@@ -342,6 +372,7 @@
       socket.on("ゲーム開始", (data) => {
         sessionStorage.setItem("currentScreen", "game");
         window.__nakoData = data;
+        startGameTimer(90); // 1分30秒
         nakoRun("ゲーム開始受信");
       });
 
