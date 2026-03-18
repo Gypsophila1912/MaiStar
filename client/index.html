@@ -174,24 +174,28 @@
           </div><!-- /center-area -->
        
           <!-- 自分の手札エリア -->
-<div id="hand-area">
-  <div id="hand-label">
-    <span style="color:#8B5E2A">◈</span>
-    あなたの手札（自分のみ表示）
-    <span id="selected-count" style="font-size:9px;color:#9a6a40;margin-left:auto">
-      選択中: 0枚
-    </span>
-  </div>
-  <div id="hand-row">
-    <div id="my-cards"></div>
-    <div id="reservation-area">
-      <div id="reservation-label">◇ 予約客</div>
-      <div id="reservation-slot" class="empty">
-        <div id="reservation-card"></div>
-      </div>
-    </div>
-  </div>
-</div>
+        <div id="hand-area">
+          <div id="my-maiko-area" style="display:none;">
+            <img id="my-maiko-img" src="" alt="My Maiko" />
+            <div id="my-maiko-stats"></div>
+          </div>
+          <div id="hand-label">
+            <span style="color:#8B5E2A">◈</span>
+            あなたの手札（自分のみ表示）
+            <span id="selected-count" style="font-size:9px;color:#9a6a40;margin-left:auto">
+              選択中: 0枚
+            </span>
+          </div>
+          <div id="hand-row">
+            <div id="my-cards"></div>
+            <div id="reservation-area">
+              <div id="reservation-label">◇ 予約客</div>
+              <div id="reservation-slot" class="empty">
+                <div id="reservation-card"></div>
+              </div>
+            </div>
+          </div>
+        </div>
        
           <!-- サイドバー -->
           <div id="sidebar">
