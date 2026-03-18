@@ -43,8 +43,11 @@ myNickname＝「」。
 ここまで。
 
 ●ゲーム開始受信とは
+  データ＝「window.__nakoData」をJS実行。
   『sessionStorage.setItem("currentScreen", "game")』をJS実行。
   「game」で画面切替。
+  # 画面切替後にゲーム画面を初期化
+  データでゲーム画面初期化。
 ここまで。
 
 ●再接続完了受信とは

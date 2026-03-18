@@ -1,0 +1,60 @@
+●（stateで）ゲーム画面初期化とは
+  players＝state[「players」]。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  myP＝players[myPID]。
+
+  # ヘッダー情報
+  ラウンド数＝state[「round」]。
+  EL＝「#round-num」のDOM要素取得。
+  ELへラウンド数をテキスト設定。
+
+  # 自分の手札表示
+  myP[「hand」]で手札表示。
+
+  # 相手プレイヤー表示
+  playersとmyPIDで相手プレイヤー表示。
+
+  # スコア表示
+  SCORE＝myP[「tokenTotal」]。
+  SEL＝「#my-score」のDOM要素取得。
+  SELへSCOREをテキスト設定。
+ここまで。
+
+●（handで）手札表示とは
+  HTML＝「」。
+  hand を反復して
+    card＝対象。
+    NAME＝card[「name」]。
+    INC＝card[「income」]。
+    COL＝card[「color」]。
+    HTML＝HTML＆「<div class='card-face color-」＆COL＆「' onclick='jsCardClick(this)'>」。
+    HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
+    HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
+    HTML＝HTML＆「</div>」。
+  ここまで。
+  EL＝「#my-cards」のDOM要素取得。
+  ELへHTMLをHTML設定。
+ここまで。
+
+●（playersとmyPIDで）相手プレイヤー表示とは
+  IDX＝0。
+  players を反復して
+    P＝対象。
+    もし P[「id」]＝myPID ならば
+      IDX＝IDX+1。
+      続ける。
+    ここまで。
+    HCOUNT＝P[「handCount」]。
+    BACKS＝「」。
+    J＝0。
+    J<HCOUNTの間
+      BACKS＝BACKS＆「<div class='card-back'></div>」。
+      J＝J+1。
+    ここまで。
+    EL＝「#hand-」＆IDXのDOM要素取得。
+    ELへBACKSをHTML設定。
+    SEL＝「#score-」＆IDXのDOM要素取得。
+    SELへ「点数: 」＆P[「tokenTotal」]＆「点」をテキスト設定。
+    IDX＝IDX+1。
+  ここまで。
+ここまで。

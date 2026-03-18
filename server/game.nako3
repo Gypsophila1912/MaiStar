@@ -921,8 +921,8 @@
 ●(Gとプレイヤー一覧で)ゲーム初期化とは
 	カードデータ＝カードデータ読み込み。
 	G["カード"] = {}
-	G["カード"]["芸者"] = カードデータ[「clients」]。
-	G["カード"]["客"] = カードデータ[「maiko」]。
+	G["カード"]["芸者"] = カードデータ[「maiko」]。
+	G["カード"]["客"] = カードデータ[「clients」]。
 
 	G["round"] = 1
 	G["turnIndex"] = 0
@@ -981,4 +981,42 @@
 		I = I + 1
 	ここまで。
 	Gを戻す。
+ここまで。
+
+●（GとPIDで）個別state作成とは
+  state＝{}。
+  state[「round」]＝G[「round」]。
+  state[「phase」]＝G[「phase」]。
+  state[「turnIndex」]＝G[「turnIndex」]。
+  state[「deckCount」]＝G[「deck」]の要素数。
+  state[「isFinalLap」]＝0。
+  もし G[「endMode」]＝「lastlap」 ならば
+    state[「isFinalLap」]＝1。
+  ここまで。
+
+  players＝[]。
+  G[「players」]を反復して
+    P＝対象。
+    pstate＝{}。
+    pstate[「id」]＝P[「id」]。
+    pstate[「name」]＝P[「name」]。
+    pstate[「geishaId」]＝P[「geishaId」]。
+    pstate[「reputation」]＝P[「reputation」]。
+    pstate[「zashiki」]＝P[「zashiki」]。
+    pstate[「ad」]＝P[「ad」]。
+    pstate[「hasReservation」]＝P[「hasReservation」]。
+    pstate[「tokenTotal」]＝P[「tokenTotal」]。
+    pstate[「handCount」]＝P[「hand」]の要素数。
+    pstate[「closed」]＝P[「closed」]。
+    もし P[「id」]＝PID ならば
+      pstate[「hand」]＝P[「hand」]。
+      pstate[「reservation」]＝P[「reservation」]。
+    違えば
+      pstate[「hand」]＝[]。
+      pstate[「reservation」]＝{}。
+    ここまで。
+    playersにpstateを追加。
+  ここまで。
+  state[「players」]＝players。
+  stateを戻す。
 ここまで。
