@@ -1,7 +1,8 @@
-# DOM取得
+﻿# DOM取得
 作成ボタンDOM＝「#btn-create」のDOM要素取得。
 入室ボタンDOM＝「#btn-join」のDOM要素取得。
 入室確定ボタンDOM＝「#btn-join-confirm」のDOM要素取得。
+ホーム画像DOM＝「#homeimg」のDOM要素取得。
 
 # イベント設定
 作成ボタンDOMをクリックした時には
@@ -14,6 +15,10 @@
 
 入室確定ボタンDOMをクリックした時には
   入室確定押下。
+ここまで。
+
+ホーム画像DOMをクリックした時には
+  ホーム画面復帰。
 ここまで。
 
 
@@ -37,6 +42,10 @@
   # 誤操作防止のためボタン群を隠す
   BTNGROUP＝「.button-group」のDOM要素取得。
   BTNGROUPの「display」へ「none」をDOMスタイル設定。
+  
+  # 右上に画像を表示
+  HOMEIMG＝「#homeimg」のDOM要素取得。
+  HOMEIMGの「display」へ「block」をDOMスタイル設定。
 ここまで。
 
 ●入室確定押下とは
@@ -59,4 +68,22 @@
   送信JSON＝{「nickname」:myNickname,「password」:myPW}をJSONエンコード。
   JS文＝「emit('入室', 」＆送信JSON＆「)」。
   JS文をJS実行。
+ここまで。
+
+●ホーム画面復帰とは
+  # フォームを隠す
+  JOINFORM＝「#join-form」のDOM要素取得。
+  JOINFORMの「display」へ「none」をDOMスタイル設定。
+  
+  # ボタン群再表示
+  BTNGROUP＝「.button-group」のDOM要素取得。
+  BTNGROUPの「display」へ「flex」をDOMスタイル設定。
+  
+  # 画像非表示
+  HOMEIMG＝「#homeimg」のDOM要素取得。
+  HOMEIMGの「display」へ「none」をDOMスタイル設定。
+  
+  # エラーメッセージクリア
+  ERR＝「#error-message」のDOM要素取得。
+  ERRへ「」をテキスト設定。
 ここまで。
