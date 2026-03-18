@@ -44,6 +44,8 @@ myNickname＝「」。
 
 ●ゲーム開始受信とは
   データ＝「window.__nakoData」をJS実行。
+#HANDJSON＝データをJSONエンコード。
+#「データ中身:{HANDJSON}」と言う。
   『sessionStorage.setItem("currentScreen", "game")』をJS実行。
   「game」で画面切替。
   # 画面切替後にゲーム画面を初期化

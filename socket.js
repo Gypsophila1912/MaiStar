@@ -128,6 +128,26 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("アクション", async (data) => {
+    try {
+      const result = await callAPI("/api/game/action", {
+        ...data,
+        socketId: socket.id,
+      });
+      if (result.error) {
+        socket.emit("エラー", result);
+        return;
+      }
+      result.states.forEach(({ socketId, state }) => {
+        const stateObj = typeof state === "string" ? JSON.parse(state) : state;
+        io.to(socketId).emit("ゲーム状態更新", stateObj);
+      });
+    } catch (e) {
+      console.error("アクションエラー:", e.message);
+      socket.emit("エラー", { message: "サーバーエラーが発生しました" });
+    }
+  });
+
   socket.on("再接続", async (data) => {
     try {
       const result = await callAPI("/api/room/rejoin", {

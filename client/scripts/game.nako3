@@ -18,6 +18,7 @@ yoyakuBtn＝空。
 
   # 自分の手札表示
   myP[「hand」]で手札表示。
+  playersで座敷表示。
 
   # 自分のスコア表示
   SCORE＝myP[「tokenTotal」]。
@@ -73,42 +74,46 @@ yoyakuBtn＝空。
     NAME＝card[「name」]。
     INC＝card[「income」]。
     COL＝card[「color」]。
-    HTML＝HTML＆「<div class='card-face color-」＆COL＆「' onclick='jsCardClick(this)'>」。
+    COND＝card[「condition」]。
+    PROMO＝card[「promo」]。
+    CARDNO＝card[「cardNo」]。
+
+    # conditionTypeがanyかチェック
+    COND_LABEL＝COL＆「/」＆COND。
+    もし COL＝「none」 ならば
+      COND_LABEL＝「任/」＆COND。
+    ここまで。
+
+    HTML＝HTML＆「<div class='card-face color-」＆COL＆「' data-cardno='」＆CARDNO＆「' onclick='jsCardClick(this)'>」。
+    HTML＝HTML＆「<div class='card-cost'>」＆COND_LABEL＆「</div>」。
     HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
     HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
+    HTML＝HTML＆「<div class='card-promo'>宣」＆PROMO＆「</div>」。
     HTML＝HTML＆「</div>」。
   ここまで。
   EL＝「#my-cards」のDOM要素取得。
   ELへHTMLをHTML設定。
 ここまで。
 
-●アクションボタン初期化とは
-  zasikiBtn＝「#zasiki」のDOM要素取得。
-  sendenBtn＝「#senden」のDOM要素取得。
-  syoukaiBtn＝「#syoukai」のDOM要素取得。
-  yoyakuBtn＝「#yoyaku」のDOM要素取得。
-    『
-    document.getElementById("zasiki").disabled = true;
-    document.getElementById("senden").disabled = true;
-    document.getElementById("syoukai").disabled = true;
-    document.getElementById("yoyaku").disabled = true;
-  』をJS実行。
-ここまで。
 
 ●（フラグで）アクションボタン有効設定とは
   もし フラグ＝1 ならば
     『
-      document.getElementById("zasiki").disabled = false;
-      document.getElementById("senden").disabled = false;
-      document.getElementById("syoukai").disabled = false;
-      document.getElementById("yoyaku").disabled = false;
+      ["zasiki","senden","syoukai","yoyaku"].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove("btn-disabled");
+        el.style.pointerEvents = "auto";
+        el.style.opacity = "1";
+      });
     』をJS実行。
   違えば
     『
-      document.getElementById("zasiki").disabled = true;
-      document.getElementById("senden").disabled = true;
-      document.getElementById("syoukai").disabled = true;
-      document.getElementById("yoyaku").disabled = true;
+      ["zasiki","senden","syoukai","yoyaku"].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.add("btn-disabled");
+        el.style.pointerEvents = "none";
+        el.style.opacity = "0.3";
+      });
     』をJS実行。
   ここまで。
 ここまで。
@@ -130,16 +135,79 @@ yoyakuBtn＝空。
 ここまで
 
 ●座敷処理とは
-  「座敷ボタンが押されました」と表示。
-  # TODO: 選択中のカードをサーバーに送信
+  IDX＝「window.__cardIdx」をJS実行。
+  もし IDX＝-1 ならば
+    「カードを選択してください」と言う。
+    戻る。
+  ここまで。
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  送信JSON＝{「action」:「座敷」,「roomId」:RID,「playerId」:myPID,「cardIndex」:IDX}をJSONエンコード。
+  JS文＝「emit('アクション', 」＆送信JSON＆「)」。
+  JS文をJS実行。
 ここまで。
 
+●（playersで）座敷表示とは
+  players を反復して
+    P＝対象。
+    PID＝P[「id」]。
+    zashiki＝P[「zashiki」]。
+    HTML＝「」。
+    zashiki を反復して
+      card＝対象。
+      NAME＝card[「name」]。
+      COL＝card[「color」]。
+      INC＝card[「income」]。
+      HTML＝HTML＆「<div class='card-face color-」＆COL＆「'>」。
+      HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
+      HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
+      HTML＝HTML＆「</div>」。
+    ここまで。
+    EL＝「#client-」＆PIDのDOM要素取得。
+    もし EL＝空 ならば、続ける。ここまで。
+    ELへHTMLをHTML設定。
+  ここまで。
+
 ●宣伝処理とは
-  「宣伝ボタンが押されました」と表示。
+  IDX＝「window.__cardIdx」をJS実行。
+  もし IDX＝-1 ならば
+    「カードを選択してください」と言う。
+    戻る。
+  ここまで。
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  送信JSON＝{「action」:「宣伝」,「roomId」:RID,「playerId」:myPID,「cardIndex」:IDX}をJSONエンコード。
+  JS文＝「emit('アクション', 」＆送信JSON＆「)」。
+  JS文をJS実行。
 ここまで。
 
 ●紹介処理とは
-  「紹介ボタンが押されました」と表示。
+  『window.__cardIdxs = []』をJS実行。
+  『
+    const cards = document.querySelectorAll("#my-cards .card-face");
+    const idxs = [];
+    for (let i = 0; i < cards.length; i++) {
+      if (cards[i].classList.contains("selected")) {
+        idxs.push(i);
+      }
+    }
+    window.__cardIdxs = idxs;
+  』をJS実行。
+  IDXS＝「window.__cardIdxs」をJS実行。
+  NUM＝IDXSの要素数。
+  もし NUM＝0 ならば
+    「カードを1〜2枚選択してください」と言う。
+    戻る。
+  ここまで。
+  もし NUM>2 ならば
+    「紹介は1〜2枚まで選択できます」と言う。
+    戻る。
+  ここまで。
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  送信JSON＝{「action」:「紹介」,「roomId」:RID,「playerId」:myPID,「cardIndexes」:IDXS}をJSONエンコード。
+  JS文＝「emit('アクション', 」＆送信JSON＆「)」。
+  JS文をJS実行。
 ここまで。
 
 ●予約客処理とは
