@@ -73,42 +73,46 @@ yoyakuBtn＝空。
     NAME＝card[「name」]。
     INC＝card[「income」]。
     COL＝card[「color」]。
-    HTML＝HTML＆「<div class='card-face color-」＆COL＆「' onclick='jsCardClick(this)'>」。
+    COND＝card[「condition」]。
+    PROMO＝card[「promo」]。
+    CARDNO＝card[「cardNo」]。
+
+    # conditionTypeがanyかチェック
+    COND_LABEL＝COL＆「/」＆COND。
+    もし COL＝「none」 ならば
+      COND_LABEL＝「任/」＆COND。
+    ここまで。
+
+    HTML＝HTML＆「<div class='card-face color-」＆COL＆「' data-cardno='」＆CARDNO＆「' onclick='jsCardClick(this)'>」。
+    HTML＝HTML＆「<div class='card-cost'>」＆COND_LABEL＆「</div>」。
     HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
     HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
+    HTML＝HTML＆「<div class='card-promo'>宣」＆PROMO＆「</div>」。
     HTML＝HTML＆「</div>」。
   ここまで。
   EL＝「#my-cards」のDOM要素取得。
   ELへHTMLをHTML設定。
 ここまで。
 
-●アクションボタン初期化とは
-  zasikiBtn＝「#zasiki」のDOM要素取得。
-  sendenBtn＝「#senden」のDOM要素取得。
-  syoukaiBtn＝「#syoukai」のDOM要素取得。
-  yoyakuBtn＝「#yoyaku」のDOM要素取得。
-    『
-    document.getElementById("zasiki").disabled = true;
-    document.getElementById("senden").disabled = true;
-    document.getElementById("syoukai").disabled = true;
-    document.getElementById("yoyaku").disabled = true;
-  』をJS実行。
-ここまで。
 
 ●（フラグで）アクションボタン有効設定とは
   もし フラグ＝1 ならば
     『
-      document.getElementById("zasiki").disabled = false;
-      document.getElementById("senden").disabled = false;
-      document.getElementById("syoukai").disabled = false;
-      document.getElementById("yoyaku").disabled = false;
+      ["zasiki","senden","syoukai","yoyaku"].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove("btn-disabled");
+        el.style.pointerEvents = "auto";
+        el.style.opacity = "1";
+      });
     』をJS実行。
   違えば
     『
-      document.getElementById("zasiki").disabled = true;
-      document.getElementById("senden").disabled = true;
-      document.getElementById("syoukai").disabled = true;
-      document.getElementById("yoyaku").disabled = true;
+      ["zasiki","senden","syoukai","yoyaku"].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.add("btn-disabled");
+        el.style.pointerEvents = "none";
+        el.style.opacity = "0.3";
+      });
     』をJS実行。
   ここまで。
 ここまで。
