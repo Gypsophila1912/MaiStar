@@ -378,9 +378,9 @@
 	I=0
 	I<人数の間
 		他P=G["players"][I]
-		他PとP["reputation"]と4と"red"の評判加算を他P["reputation"]に代入。
-		他PとP["reputation"]と4と"blue"の評判加算を他P["reputation"]に代入。
-		他PとP["reputation"]と4と"green"の評判加算を他P["reputation"]に代入。
+		他P["reputation"]["red"]=他P["reputation"]["red"]+4
+		他P["reputation"]["blue"]=他P["reputation"]["blue"]+4
+		他P["reputation"]["green"]=他P["reputation"]["green"]+4
 		I=I+1
 	ここまで。
 	Gを戻す。
