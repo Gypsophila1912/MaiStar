@@ -560,6 +560,69 @@ yoyakuBtn＝空。
     ここまで。
   ここまで。
 ここまで。
+
+●（GAMEOVERSTATEで）ゲームオーバー画面表示とは
+  players＝GAMEOVERSTATE["players"]。
+  winners＝GAMEOVERSTATE["winnerIds"]。
+
+  HTML＝「<div class='gameover-container'>」。
+  HTML＝HTML＆「<div class='gameover-title'>― 結果発表 ―</div>」。
+  HTML＝HTML＆「<div class='gameover-winners'>」。
+  winners を反復して
+    WID＝対象。
+    WP＝players[WID]。
+    WNAME＝WP["geisha"]["name"]。
+    HTML＝HTML＆「<div class='winner-name'>🏆 」＆WNAME＆「</div>」。
+  ここまで。
+  HTML＝HTML＆「</div>」。
+  HTML＝HTML＆「<div class='gameover-scores'>」。
+  players を反復して
+    P＝対象。
+    PNAME＝P["geisha"]["name"]。
+    TOTAL＝P["tokenTotal"]。
+    SC＝P["scoreByRound"]。
+    S0＝SC[0]。
+    S1＝SC[1]。
+    S2＝SC[2]。
+    HTML＝HTML＆「<div class='score-row'>」。
+    HTML＝HTML＆「<span class='score-pname'>」＆PNAME＆「</span>」。
+    HTML＝HTML＆「<span class='score-rounds'>」＆S0＆「/」＆S1＆「/」＆S2＆「</span>」。
+    HTML＝HTML＆「<span class='score-total'>計」＆TOTAL＆「点</span>」。
+    HTML＝HTML＆「</div>」。
+  ここまで。
+  HTML＝HTML＆「</div></div>」。
+  ROOT＝「#game-root」のDOM要素取得。
+  もし ROOT≠空 ならば
+    ROOTへHTMLをHTML設定。
+  ここまで。
+ここまで。
+
+●（ROUNDENDSTATEで）ラウンドエンド画面表示とは
+  players＝ROUNDENDSTATE["players"]。
+  R＝ROUNDENDSTATE["round"]。
+  HTML＝「<div class='roundend-container'>」。
+  HTML＝HTML＆「<div class='roundend-title'>第」＆R＆「局 終了</div>」。
+  HTML＝HTML＆「<div class='roundend-scores'>」。
+  players を反復して
+    P＝対象。
+    PNAME＝P["geisha"]["name"]。
+    TOTAL＝P["tokenTotal"]。
+    SC＝P["scoreByRound"]。
+    RI＝R-1。
+    RSCORE＝SC[RI]。
+    HTML＝HTML＆「<div class='score-row'>」。
+    HTML＝HTML＆「<span class='score-pname'>」＆PNAME＆「</span>」。
+    HTML＝HTML＆「<span class='score-round-pts'>今局:」＆RSCORE＆「点</span>」。
+    HTML＝HTML＆「<span class='score-total'>累計:」＆TOTAL＆「点</span>」。
+    HTML＝HTML＆「</div>」。
+  ここまで。
+  HTML＝HTML＆「</div></div>」。
+  ROOT＝「#game-root」のDOM要素取得。
+  もし ROOT≠空 ならば
+    ROOTへHTMLをHTML設定。
+  ここまで。
+ここまで。
+
 # ─── アクション実行はサブ関数の後に定義 ───────────────
 
 ●アクション実行とは

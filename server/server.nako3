@@ -7,6 +7,9 @@
   RID＝データ["roomId"]。
   PID＝データ["playerId"]。
   ACTION＝データ["action"]。
+  JS文＝「sys.__pid_num = parseInt(」＆PID＆「)」。
+  JS文をJS実行。
+  PID＝「sys.__pid_num」をJS実行。
   「アクション受信: RID={RID} PID={PID} ACTION={ACTION}」と表示。
   JS文＝「sys.__nako3game = JSON.stringify(sys.__nako_rooms['」＆RID＆「'].game)」。
   JS文をJS実行。
@@ -16,30 +19,32 @@
   前予約＝G["players"][PID]["hasReservation"]。
   もし ACTION＝「座敷」 ならば
     手札番号＝データ["cardIndex"]。
-    GとPIDと手札番号の座敷実行してGに代入。
+    GとPIDと手札番号の座敷実行をGに代入。
   ここまで。
   もし ACTION＝「宣伝」 ならば
     手札番号＝データ["cardIndex"]。
-    GとPIDと手札番号の宣伝実行してGに代入。
+    GとPIDと手札番号の宣伝実行をGに代入。
   ここまで。
   もし ACTION＝「紹介」 ならば
     番号リスト＝データ["cardIndexes"]。
-    GとPIDと番号リストの紹介実行してGに代入。
+    GとPIDと番号リストの紹介実行をGに代入。
   ここまで。
   もし ACTION＝「予約客」 ならば
-    GとPIDの予約客使用実行してGに代入。
+    GとPIDの予約客使用実行をGに代入。
   ここまで。
   もし ACTION＝「予約客セット」 ならば
     手札番号＝データ["cardIndex"]。
-    GとPIDと手札番号の予約客セット実行してGに代入。
+    GとPIDと手札番号の予約客セット実行をGに代入。
   ここまで。
-
   後状態＝G["players"][PID]["usedBaseAction"]。
   後予約＝G["players"][PID]["hasReservation"]。
   成功フラグ＝0。
-
   もし ACTION＝「予約客」 ならば
-    成功フラグ＝1。
+    もし 前予約＝1 ならば
+      もし 後予約＝0 ならば
+        成功フラグ＝1。
+      ここまで。
+    ここまで。
   ここまで。
   もし ACTION＝「予約客セット」 ならば
     もし 前予約＝0 ならば
@@ -63,11 +68,33 @@
   違えば
     Gのラウンド終了チェックをGに代入。
     Gの残り巡確認をGに代入。
-    # 予約客・予約客セットは手番を消費しない
     もし ACTION≠「予約客」 ならば
       もし ACTION≠「予約客セット」 ならば
         もし G["phase"]≠「scoring」 ならば
           Gの手番進行をGに代入。
+        ここまで。
+      ここまで。
+    ここまで。
+    もし G["phase"]＝「scoring」 ならば
+      Gのラウンド精算をGに代入。
+      Gのゲーム終了判定を終了判定に代入。
+      もし 終了判定＝1 ならば
+        Gの最終勝敗判定をGに代入。
+      違えば
+        Gの次ラウンド準備をGに代入。
+        CLIENTSJSON＝G["カード"]["客"]をJSONエンコード。
+        G["deck"]＝CLIENTSJSONをJSONデコード。
+        G["deck"]を配列シャッフル。
+        G["players"]を反復して
+          NPID＝対象["id"]。
+          R＝G["round"]。
+          Rの初期手札枚数取得を枚数に代入。
+          NP＝G["players"][NPID]。
+          ボーナス＝NPの初期手札ボーナス取得。
+          枚数＝枚数+ボーナス。
+          枚数回
+            GとNPIDの山札手札補充をGに代入。
+          ここまで。
         ここまで。
       ここまで。
     ここまで。
@@ -87,8 +114,8 @@
     ここまで。
     {"success":真,"states":states}をJSONエンコードしてWEBサーバ出力。
   ここまで。
-  ここまで。
-  
+ここまで。
+    
 ●ゲーム開始処理とは
   データ＝POSTデータ。
   RID＝データ["roomId"]。

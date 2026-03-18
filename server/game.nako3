@@ -841,14 +841,14 @@
 ここまで。
 
 ●(Gの)終了条件A判定とは
-	G["players"]を反復
-		P=対象
-		手札数=P["hand"]の要素数
-		もし手札数=0かつP["hasReservation"]=0ならば
-			P["id"]を戻す。
-		ここまで。
-	ここまで。
-	-1を戻す。
+  G["players"]を反復
+    P=対象
+    手札数=P["hand"]の要素数
+    もし手札数=0ならば
+      P["id"]を戻す。
+    ここまで。
+  ここまで。
+  -1を戻す。
 ここまで。
 
 ●(Gの)終了条件B枚数取得とは
@@ -966,13 +966,38 @@
 	Gを戻す。
 ここまで。
 
+●(Gの)予約客精算とは
+  G["players"]を反復
+    P=対象
+    もしP["hasReservation"]=1ならば
+      予約カード=P["reservation"]
+      名前あり=予約カードの"name"が辞書キー存在。
+      もし名前あり=1ならば
+        予約カードとP["reputation"]の座敷条件判定をOKに代入。
+        もしOK=1ならば
+          P["zashiki"]に予約カードを配列追加。
+        ここまで。
+        # 条件を満たさない場合は破棄（捨て札へ）
+        もしOK=0ならば
+          G["discard"]に予約カードを配列追加。
+        ここまで。
+      ここまで。
+      P["reservation"]={}
+      P["hasReservation"]=0
+    ここまで。
+  ここまで。
+  Gを戻す。
+ここまで。
+
 ●(Gの)ラウンド精算とは
-	G["players"]を反復
-		P=対象
-		GとPのプレイヤー精算をGに代入。
-	ここまで。
-	G["phase"]="roundend"
-	Gを戻す。
+  # まず予約客を精算
+  Gの予約客精算をGに代入。
+  G["players"]を反復
+    P=対象
+    GとPのプレイヤー精算をGに代入。
+  ここまで。
+  G["phase"]="roundend"
+  Gを戻す。
 ここまで。
 
 ●(Gの)次ラウンド準備とは
@@ -1112,6 +1137,8 @@
 	state["phase"]=G["phase"]
 	state["turnIndex"]=G["turnIndex"]
 	state["deckCount"]=G["deck"]の要素数
+	state["endMode"]=G["endMode"]
+	state["lapRemaining"]=G["lapRemaining"]
 	state["isFinalLap"]=0
 	もしG["endMode"]="lastlap"ならば
 		state["isFinalLap"]=1
@@ -1138,6 +1165,7 @@
 		pstate["handCount"]=P["hand"]の要素数
 		pstate["closed"]=P["closed"]
 		pstate["turnCount"]=P["turnCount"]
+		pstate["scoreByRound"]=P["scoreByRound"]
 		もしP["id"]=PIDならば
 			pstate["hand"]=P["hand"]
 			pstate["reservation"]=P["reservation"]
