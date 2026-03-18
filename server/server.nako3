@@ -1,5 +1,7 @@
 !「../node_modules/nadesiko3-server/nadesiko3-server.mjs」を取り込む。
 !「room.nako3」を取り込む。
+!「game.nako3」を取り込む。
+
 
 WEBサーバ起動成功時には
   「APIサーバー起動: 3001」と表示。
@@ -22,15 +24,6 @@ WEBサーバ起動成功時には
     result＝データで再接続処理。
     resultをJSONエンコードしてWEBサーバ出力。
   ここまで。
-
-「/api/game/start」へWEBサーバPOST時には
-  データ＝POSTデータ。
-  RID＝データ[「roomId」]。
-  「ゲーム開始: {RID}」と表示。
-  JS文＝「if(sys.__nako_rooms['」＆RID＆「']) sys.__nako_rooms['」＆RID＆「'].status = 'playing'」。
-  JS文をJS実行。
-  {「success」:真,「roomId」:RID}をJSONエンコードしてWEBサーバ出力。
-ここまで。
 
   「/api/room/leave」へWEBサーバPOST時には
     データ＝POSTデータ。
@@ -67,6 +60,17 @@ WEBサーバ起動成功時には
   データ＝POSTデータ。
   result＝データでホスト判定処理。
   resultをJSONエンコードしてWEBサーバ出力。
+ここまで。
+
+#以下ゲーム処理
+
+「/api/game/start」へWEBサーバPOST時には
+  データ＝POSTデータ。
+  RID＝データ[「roomId」]。
+  「ゲーム開始: {RID}」と表示。
+  JS文＝「if(sys.__nako_rooms['」＆RID＆「']) sys.__nako_rooms['」＆RID＆「'].status = 'playing'」。
+  JS文をJS実行。
+  {「success」:真,「roomId」:RID}をJSONエンコードしてWEBサーバ出力。
 ここまで。
 
 ここまで。
