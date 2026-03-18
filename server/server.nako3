@@ -60,7 +60,7 @@ WEBサーバ起動成功時には
     resultをJSONエンコードしてWEBサーバ出力。
   ここまで。
 
-  「/api/game/start」へWEBサーバPOST時には
+「/api/game/start」へWEBサーバPOST時には
     データ＝POSTデータ。
     RID＝データ[「roomId」]。
     「ゲーム開始: {RID}」と表示。
@@ -73,9 +73,9 @@ WEBサーバ起動成功時には
 
     G＝{}。
     Gとnamesでゲーム初期化してGに代入。
-
+    # ゲーム状態を部屋に保存（文字列連結で直接埋め込む）
     GJSON＝GをJSONエンコード。
-    JS文＝「sys.__nako_rooms['」＆RID＆「'].game = JSON.parse(sys.__getSysVar('GJSON')); sys.__nako_rooms['」＆RID＆「'].status = 'playing'」。
+    JS文＝「sys.__nako_rooms['」＆RID＆「'].game = 」＆GJSON＆「; sys.__nako_rooms['」＆RID＆「'].status = 'playing';」。
     JS文をJS実行。
 
     states＝[]。
@@ -89,7 +89,6 @@ WEBサーバ起動成功時には
 
     {「success」:真,「roomId」:RID,「states」:states}をJSONエンコードしてWEBサーバ出力。
   ここまで。
-
 ここまで。
 
 3001でWEBサーバ起動。

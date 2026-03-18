@@ -95,7 +95,7 @@
                 <div class="geisha-header">
                   <div class="avatar">🌸</div>
                   <div>
-                    <div class="geisha-name">紅葉</div>
+                    <div class="geisha-name" id="maiko-name-0">紅葉</div>
                     <div class="geisha-score" id="score-0">点数: 24点</div>
                   </div>
                 </div>
@@ -107,7 +107,7 @@
                 <div class="geisha-header">
                   <div class="avatar">🏮</div>
                   <div>
-                    <div class="geisha-name">雪月</div>
+                    <div class="geisha-name" id="maiko-name-1">雪月</div>
                     <div class="geisha-score" id="score-1">点数: 18点</div>
                   </div>
                 </div>
@@ -119,7 +119,7 @@
                 <div class="geisha-header">
                   <div class="avatar">🎋</div>
                   <div>
-                    <div class="geisha-name">花音</div>
+                    <div class="geisha-name" id="maiko-name-2">花音</div>
                     <div class="geisha-score" id="score-2">点数: 31点</div>
                   </div>
                 </div>
@@ -132,7 +132,18 @@
             <!-- 座敷の場 -->
             <div id="table-area">
               <div class="area-label">◆ 座敷の場</div>
-              <div id="table-cards"></div>
+              <div id="table-0">
+                <div id="client-0"></div>
+                <div id="ad-0"></div>
+              </div>
+              <div id="table-1">
+                <div id="client-0"></div>
+                <div id="ad-0"></div>
+              </div>
+              <div id="table-2">
+                <div id="client-0"></div>
+                <div id="ad-0"></div>
+              </div>
             </div>
        
           </div><!-- /center-area -->
@@ -155,10 +166,10 @@
             <!-- アクションボタン -->
             <div id="actions">
               <div class="section-title">◆ アクション</div>
-              <button class="action-btn primary" onclick="jsActionClick('座敷に出す')">座敷に出す</button>
-              <button class="action-btn"         onclick="jsActionClick('宣伝する')">宣伝する</button>
-              <button class="action-btn"         onclick="jsActionClick('芸者を招く')">芸者を招く</button>
-              <button class="action-btn"         onclick="jsActionClick('場を換える')">場を換える</button>
+              <button class="action-btn primary" id=zasiki onclick="jsActionClick('座敷')">座敷</button>
+              <button class="action-btn"         id=senden onclick="jsActionClick('宣伝')">宣伝</button>
+              <button class="action-btn"         id=syoukai onclick="jsActionClick('紹介')">紹介</button>
+              <button class="action-btn"         id=yoyaku onclick="jsActionClick('予約客')">予約客</button>
               <div class="divider"></div>
               <button class="action-btn danger"  onclick="jsActionClick('パス')">パス</button>
             </div>
@@ -215,6 +226,8 @@
          * HTML側ボタンのonclickから呼ばれ、ログ追記などを行う
          */
         function jsActionClick(action) {
+          window.__actionType = action;
+          navigator.nako3.run('アクション実行。');
           const selected = document.querySelectorAll('#my-cards .card-face.selected');
           const output   = document.getElementById('nako-output');
        
@@ -343,6 +356,11 @@
         sessionStorage.setItem("currentScreen", "game");
         window.__nakoData = data;
         nakoRun("ゲーム開始受信");
+      });
+
+      socket.on('ゲーム状態更新', (data) => {
+        window.__nakoData = data;
+        nakoRun('ゲーム状態更新受信');
       });
 
       socket.on("エラー", (data) => {

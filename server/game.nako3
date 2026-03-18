@@ -138,36 +138,54 @@
 ここまで。
 
 ●(GとRの)ラウンド開始準備とは
-	Rの初期手札枚数取得を手札枚数に代入。
-	G["round"]=R
-	G["phase"]="reservation"
-	G["turnIndex"]=G["startPlayerIndex"]
-	G["endedBy"]=""
-	G["endMode"]=""
-	G["bonusTarget"]=""
-	G["lapTriggerIndex"]=-1
-	G["lapRemaining"]=0
-	G["deck"]=[]
-	G["discard"]=[]
+  Rの初期手札枚数取得を手札枚数に代入。
+  G["round"]=R
+  G["phase"]="reservation"
+  G["turnIndex"]=G["startPlayerIndex"]
+  G["endedBy"]=""
+  G["endMode"]=""
+  G["bonusTarget"]=""
+  G["lapTriggerIndex"]=-1
+  G["lapRemaining"]=0
+  G["deck"]=[]
+  G["discard"]=[]
 
-	G["players"]を反復
-		P=対象
-		P["hand"]=[]
-		P["reservation"]={}
-		P["hasReservation"]=0
-		P["zashiki"]=[]
-		P["ad"]=[]
-		P["closed"]=0
-		P["effectFlags"]=Pの効果フラグ初期化。
-		P["extraTurnCount"]=0
-		P["usedBaseAction"]=0
-		P["usedGeishaSkill"]=0
-		P["reputation"]=0
-		Pの初期手札ボーナス取得をボーナスに代入。
-		P["drawCountAtRoundStart"]=手札枚数+ボーナス
-		Pのターンフラグ準備をPに代入。
-	ここまで。
-	Gを戻す。
+  G["players"]を反復
+    P=対象
+
+    # 芸者の初期評判を取得してreputationにセット
+    geishaId=P["geishaId"]
+    geishaInfo=空。
+    G["カード"]["芸者"]を反復して
+      もし対象["id"]=geishaIdならば
+        geishaInfo=対象。
+      ここまで。
+    ここまで。
+    もしgeishaInfo≠空ならば
+      P["reputation"]={
+        "red":geishaInfo["reputation"]["red"],
+        "blue":geishaInfo["reputation"]["blue"],
+        "green":geishaInfo["reputation"]["green"]
+      }
+    違えば
+      P["reputation"]={"red":0,"blue":0,"green":0}
+    ここまで。
+
+    P["hand"]=[]
+    P["reservation"]={}
+    P["hasReservation"]=0
+    P["zashiki"]=[]
+    P["ad"]=[]
+    P["closed"]=0
+    P["effectFlags"]=Pの効果フラグ初期化。
+    P["extraTurnCount"]=0
+    P["usedBaseAction"]=0
+    P["usedGeishaSkill"]=0
+    Pの初期手札ボーナス取得をボーナスに代入。
+    P["drawCountAtRoundStart"]=手札枚数+ボーナス
+    Pのターンフラグ準備をPに代入。
+  ここまで。
+  Gを戻す。
 ここまで。
 
 ●(カードの)カード効果ID取得とは
@@ -964,23 +982,24 @@
 	G["deck"] = G["カード"]["客"]
 	G["deck"]を配列シャッフル。
 
-	# 初期手札を配る
-	I = 0
-	プレイヤー一覧を反復
-		もし対象=「」ならば、続ける。
-		PID = I
-		R = G["round"]
-		基本枚数 = Rの初期手札枚数取得。
-		P = G["players"][PID]
-		ボーナス = Pの初期手札ボーナス取得。
-		枚数 = 基本枚数 + ボーナス
-		
-		枚数回
-			GとPIDの山札手札補充をGに代入。
-		ここまで。
-		I = I + 1
-	ここまで。
-	Gを戻す。
+  # ラウンド開始準備を呼ぶ（reputationも正しくセットされる）
+  1をRへ代入
+  GとRのラウンド開始準備してGに代入。
+
+  # 初期手札を配る（ラウンド開始準備後に配布）
+  I=0
+  プレイヤー一覧を反復
+    もし対象=「」ならば、続ける。
+    PID=I
+    P=G["players"][PID]
+    ボーナス=Pの初期手札ボーナス取得。
+    枚数=5+ボーナス
+    枚数回
+      GとPIDの山札手札補充をGに代入。
+    ここまで。
+    I=I+1
+  ここまで。
+  Gを戻す。
 ここまで。
 
 ●（GとPIDで）個別state作成とは
@@ -1001,6 +1020,14 @@
     pstate[「id」]＝P[「id」]。
     pstate[「name」]＝P[「name」]。
     pstate[「geishaId」]＝P[「geishaId」]。
+    geishaInfo＝空。
+    G[「カード」][「芸者」]を反復して
+      もし 対象[「id」]＝P[「geishaId」] ならば
+        geishaInfo＝対象。
+      ここまで。
+    ここまで。
+    pstate[「geisha」]＝geishaInfo。
+
     pstate[「reputation」]＝P[「reputation」]。
     pstate[「zashiki」]＝P[「zashiki」]。
     pstate[「ad」]＝P[「ad」]。
