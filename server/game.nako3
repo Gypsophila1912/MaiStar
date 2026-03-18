@@ -1,4 +1,3 @@
-# 舞星(MAISTAR) ゲーム状態モデル
 !「./effects/clients.nako3」を取り込む。
 !「./effects/maiko.nako3」を取り込む。
 
@@ -12,7 +11,7 @@
 		hasReservation:0,
 		zashiki:[],
 		ad:[],
-		reputation:{},
+		reputation:{"red":0,"blue":0,"green":0},
 		closed:0,
 		effectFlags:Pの効果フラグ初期化。
 		extraTurnCount:0,
@@ -20,7 +19,8 @@
 		scoreByRound:[0,0,0],
 		tokenTotal:0,
 		usedGeishaSkill:0,
-		drawCountAtRoundStart:0
+		drawCountAtRoundStart:0,
+		turnCount:0
 	}
 	Pを戻す。
 ここまで。
@@ -38,7 +38,8 @@
 		copyExtraBlueUsed:0,
 		copyRedDoubleUsed:0,
 		copyPromoEffectUsed:0,
-		copyExtraM06Used:0
+		copyExtraM06Used:0,
+		conditionMinus2:0
 	}
 	フラグを戻す。
 ここまで。
@@ -56,6 +57,7 @@
 	P["effectFlags"]["copyRedDoubleUsed"]=0
 	P["effectFlags"]["copyPromoEffectUsed"]=0
 	P["effectFlags"]["copyExtraM06Used"]=0
+	P["effectFlags"]["conditionMinus2"]=0
 	Pを戻す。
 ここまで。
 
@@ -93,7 +95,6 @@
 		lapRemaining:0,
 		winnerIds:[]
 	}
-
 	I=0
 	I<人数の間
 		名前=("Player"&(I+1))
@@ -120,12 +121,12 @@
 		もしOK=1ならば
 			P["hand"]のIを配列切取して追加カードに代入。
 			P["zashiki"]に追加カードを配列追加。
-			GとPIDと追加カードと"zashiki"の客カード効果適用をGに代入。
+			GとPIDと追加カードと"zashiki"と{}の客カード効果適用をGに代入。
 			G["discard"]に追加カードを配列追加。
 			P["effectFlags"]["extraReservationUsed"]=1
 			手札数=P["hand"]の要素数
 			I=手札数
-			ここまで。
+		ここまで。
 		I=I+1
 	ここまで。
 	Gを戻す。
@@ -138,53 +139,51 @@
 ここまで。
 
 ●(GとRの)ラウンド開始準備とは
-  Rの初期手札枚数取得を手札枚数に代入。
-  G["round"]=R
-  G["phase"]="reservation"
-  G["turnIndex"]=G["startPlayerIndex"]
-  G["endedBy"]=""
-  G["endMode"]=""
-  G["bonusTarget"]=""
-  G["lapTriggerIndex"]=-1
-  G["lapRemaining"]=0
-  G["discard"]=[]
+	Rの初期手札枚数取得を手札枚数に代入。
+	G["round"]=R
+	G["phase"]="reservation"
+	G["turnIndex"]=G["startPlayerIndex"]
+	G["endedBy"]=""
+	G["endMode"]=""
+	G["bonusTarget"]=""
+	G["lapTriggerIndex"]=-1
+	G["lapRemaining"]=0
+	G["discard"]=[]
 
-  G["players"]を反復
-    P=対象
-
-    # 芸者の初期評判を取得してreputationにセット
-    geishaId=P["geishaId"]
-    geishaInfo=空。
-    G["カード"]["芸者"]を反復して
-      もし対象["id"]=geishaIdならば
-        geishaInfo=対象。
-      ここまで。
-    ここまで。
-    もしgeishaInfo≠空ならば
-      P["reputation"]={
-        "red":geishaInfo["reputation"]["red"],
-        "blue":geishaInfo["reputation"]["blue"],
-        "green":geishaInfo["reputation"]["green"]
-      }
-    違えば
-      P["reputation"]={"red":0,"blue":0,"green":0}
-    ここまで。
-
-    P["hand"]=[]
-    P["reservation"]={}
-    P["hasReservation"]=0
-    P["zashiki"]=[]
-    P["ad"]=[]
-    P["closed"]=0
-    P["effectFlags"]=Pの効果フラグ初期化。
-    P["extraTurnCount"]=0
-    P["usedBaseAction"]=0
-    P["usedGeishaSkill"]=0
-    Pの初期手札ボーナス取得をボーナスに代入。
-    P["drawCountAtRoundStart"]=手札枚数+ボーナス
-    Pのターンフラグ準備をPに代入。
-  ここまで。
-  Gを戻す。
+	G["players"]を反復
+		P=対象
+		geishaId=P["geishaId"]
+		geishaInfo=空。
+		G["カード"]["芸者"]を反復して
+			もし対象["id"]=geishaIdならば
+				geishaInfo=対象。
+			ここまで。
+		ここまで。
+		もしgeishaInfo≠空ならば
+			P["reputation"]={
+				"red":geishaInfo["reputation"]["red"],
+				"blue":geishaInfo["reputation"]["blue"],
+				"green":geishaInfo["reputation"]["green"]
+			}
+		違えば
+			P["reputation"]={"red":0,"blue":0,"green":0}
+		ここまで。
+		P["hand"]=[]
+		P["reservation"]={}
+		P["hasReservation"]=0
+		P["zashiki"]=[]
+		P["ad"]=[]
+		P["closed"]=0
+		P["effectFlags"]=Pの効果フラグ初期化。
+		P["extraTurnCount"]=0
+		P["usedBaseAction"]=0
+		P["usedGeishaSkill"]=0
+		P["turnCount"]=0
+		Pの初期手札ボーナス取得をボーナスに代入。
+		P["drawCountAtRoundStart"]=手札枚数+ボーナス
+		Pのターンフラグ準備をPに代入。
+	ここまで。
+	Gを戻す。
 ここまで。
 
 ●(カードの)カード効果ID取得とは
@@ -204,12 +203,139 @@
 	Gを戻す。
 ここまで。
 
-●(GとPIDとカードと起点の)客カード効果適用とは
+●(GとPIDと回数の)山札ドロー繰返しとは
+	I=0
+	I<回数の間
+		GとPIDの山札手札補充をGに代入。
+		I=I+1
+	ここまで。
+	Gを戻す。
+ここまで。
+
+●(GとPIDと枚数の)手札捨てとは
+	P=G["players"][PID]
+	I=0
+	I<枚数の間
+		手札数=P["hand"]の要素数
+		もし手札数<=0ならば
+			Gを戻す。
+		ここまで。
+		P["hand"]の0を配列切取して捨てカードに代入。
+		G["discard"]に捨てカードを配列追加。
+		I=I+1
+	ここまで。
+	Gを戻す。
+ここまで。
+
+●(GとPIDの)手札全捨てとは
+	P=G["players"][PID]
+	手札数=P["hand"]の要素数
+	I=0
+	I<手札数の間
+		P["hand"]の0を配列切取して捨てカードに代入。
+		G["discard"]に捨てカードを配列追加。
+		I=I+1
+	ここまで。
+	P["hand"]=[]
+	Gを戻す。
+ここまで。
+
+●(Pと評判オブジェクトと宣伝力と宣伝色の)評判加算とは
+	もし宣伝色="red"ならば
+		評判オブジェクト["red"]=評判オブジェクト["red"]+宣伝力
+	ここまで。
+	もし宣伝色="blue"ならば
+		評判オブジェクト["blue"]=評判オブジェクト["blue"]+宣伝力
+	ここまで。
+	もし宣伝色="green"ならば
+		評判オブジェクト["green"]=評判オブジェクト["green"]+宣伝力
+	ここまで。
+	もし宣伝色="all"ならば
+		評判オブジェクト["red"]=評判オブジェクト["red"]+宣伝力
+		評判オブジェクト["blue"]=評判オブジェクト["blue"]+宣伝力
+		評判オブジェクト["green"]=評判オブジェクト["green"]+宣伝力
+	ここまで。
+	評判オブジェクトを戻す。
+ここまで。
+
+●(カードと評判オブジェクトの)座敷条件判定とは
+	カードの"condition"が辞書キー存在を条件ありに代入。
+	もし条件あり=0ならば
+		1を戻す。
+	ここまで。
+	必要評判=カード["condition"]
+	もし必要評判=0ならば
+		1を戻す。
+	ここまで。
+
+	カードの"conditionType"が辞書キー存在をタイプありに代入。
+	condType=""
+	もしタイプあり=1ならば
+		condType=カード["conditionType"]
+	ここまで。
+
+	もしcondType="any"ならば
+		赤値=評判オブジェクト["red"]
+		青値=評判オブジェクト["blue"]
+		緑値=評判オブジェクト["green"]
+		最大値=赤値
+		もし青値>最大値ならば
+			最大値=青値
+		ここまで。
+		もし緑値>最大値ならば
+			最大値=緑値
+		ここまで。
+		もし必要評判<=最大値ならば
+			1を戻す。
+		ここまで。
+		0を戻す。
+	ここまで。
+
+	もしcondType="hand"ならば
+		0を戻す。
+	ここまで。
+
+	カード色=カード["color"]
+	評判値=0
+	もしカード色="red"ならば
+		評判値=評判オブジェクト["red"]
+	ここまで。
+	もしカード色="blue"ならば
+		評判値=評判オブジェクト["blue"]
+	ここまで。
+	もしカード色="green"ならば
+		評判値=評判オブジェクト["green"]
+	ここまで。
+	もし必要評判<=評判値ならば
+		1を戻す。
+	ここまで。
+	0を戻す。
+ここまで。
+
+●(カードと評判オブジェクトとマイナス補正の)座敷条件判定補正とは
+	カードの"condition"が辞書キー存在を条件ありに代入。
+	もし条件あり=0ならば
+		1を戻す。
+	ここまで。
+	必要評判=カード["condition"]
+	補正後=必要評判-マイナス補正
+	もし補正後<0ならば
+		補正後=0
+	ここまで。
+	補正カード={}
+	カードを反復して
+		補正カード[対象キー]=カード[対象キー]
+	ここまで。
+	補正カード["condition"]=補正後
+	補正カードと評判オブジェクトの座敷条件判定を戻す。
+ここまで。
+
+●(GとPIDとカードと起点と技情報の)客カード効果適用とは
 	カードのカード効果ID取得を効果IDに代入。
 	もし効果ID=""ならば
 		Gを戻す。
 	ここまで。
-	GとPIDとカードと起点の客カード効果実行をGに代入。
+	GとPIDとカードと起点と技情報の客カード効果実行をGに代入。
 	Gを戻す。
 ここまで。
 
@@ -228,7 +354,7 @@
 						もし可=1ならば
 							P["hand"]のIを配列切取して追加カードに代入。
 							P["zashiki"]に追加カードを配列追加。
-							GとPIDと追加カードと"zashiki"の客カード効果適用をGに代入。
+							GとPIDと追加カードと"zashiki"と{}の客カード効果適用をGに代入。
 							P["effectFlags"]["extraBlueUsed"]=1
 							手札数=P["hand"]の要素数
 							I=手札数
@@ -295,7 +421,6 @@
 	もしOK=0ならば
 		0を戻す。
 	ここまで。
-
 	P=G["players"][PID]
 	Pの実質閉業状態を閉業に代入。
 	もし行動名="座敷"ならば
@@ -304,7 +429,6 @@
 		ここまで。
 		1を戻す。
 	ここまで。
-
 	もし行動名="予約客使用"ならば
 		もし閉業=1ならば
 			0を戻す。
@@ -314,7 +438,6 @@
 		ここまで。
 		0を戻す。
 	ここまで。
-
 	もし行動名="宣伝"ならば
 		Pの宣伝許可判定を宣伝可に代入。
 		もし宣伝可=0ならば
@@ -325,7 +448,6 @@
 	もし行動名="紹介"ならば
 		1を戻す。
 	ここまで。
-
 	0を戻す。
 ここまで。
 
@@ -334,12 +456,10 @@
 	もし人数<3ならば
 		0を戻す。
 	ここまで。
-
 	GとG["turnIndex"]のプレイヤー番号妥当判定をOKに代入。
 	もしOK=0ならば
 		0を戻す。
 	ここまで。
-
 	1を戻す。
 ここまで。
 
@@ -348,7 +468,6 @@
 	もし人数<=0ならば
 		0を戻す。
 	ここまで。
-
 	次番号=PID+1
 	もし次番号>=人数ならば
 		0を戻す。
@@ -361,8 +480,8 @@
 	もしOK=0ならば
 		Gを戻す。
 	ここまで。
-
 	P=G["players"][PID]
+	P["turnCount"]=P["turnCount"]+1
 	P["closed"]=0
 	P["usedGeishaSkill"]=0
 	P["usedBaseAction"]=0
@@ -460,7 +579,11 @@
 	ここまで。
 	P["hand"]の手札番号を配列切取して捨てカードに代入。
 	G["discard"]に捨てカードを配列追加。
-	P["reputation"]=P["reputation"]+1
+	捨てカードの"promoColor"が辞書キー存在をあるに代入。
+	もしある=1ならば
+		捨て色=捨てカード["promoColor"]
+		PとP["reputation"]と1と捨て色の評判加算をP["reputation"]に代入。
+	ここまで。
 	P["effectFlags"]["handRepSwapUsed"]=1
 	Gを戻す。
 ここまで。
@@ -474,7 +597,8 @@
 		Gを戻す。
 	ここまで。
 	もし技情報["boostReputation"]=1ならば
-		P["reputation"]=P["reputation"]+3
+		強化色=技情報["boostColor"]
+		PとP["reputation"]と3と強化色の評判加算をP["reputation"]に代入。
 		P["effectFlags"]["reputationBoostUsed"]=1
 	ここまで。
 	Gを戻す。
@@ -491,19 +615,6 @@
 	1を戻す。
 ここまで。
 
-●(カードと評判値の)座敷条件判定とは
-	カードの"condition"が辞書キー存在を条件ありに代入。
-	もし条件あり=0ならば
-		1を戻す。
-	ここまで。
-
-	必要評判=カード["condition"]
-	もし必要評判<=評判値ならば
-		1を戻す。
-	ここまで。
-	0を戻す。
-ここまで。
-
 ●(GとPIDと手札番号の)座敷実行とは
 	GとPIDの手番判定を手番中に代入。
 	もし手番中=0ならば
@@ -513,47 +624,44 @@
 	もし基本OK=0ならば
 		Gを戻す。
 	ここまで。
-
 	GとPIDと"座敷"の行動可能判定を可能に代入。
 	もし可能=0ならば
 		Gを戻す。
 	ここまで。
-
 	P=G["players"][PID]
 	Pと手札番号の手札番号妥当判定をOKに代入。
 	もしOK=0ならば
 		Gを戻す。
 	ここまで。
-
 	カード=P["hand"][手札番号]
-	色=カード["color"]
-	カードとP["reputation"]の座敷条件判定をOKに代入。
+	カード色=カード["color"]
+	もしP["effectFlags"]["conditionMinus2"]=1ならば
+		カードとP["reputation"]と2の座敷条件判定補正をOKに代入。
+	違えば
+		カードとP["reputation"]の座敷条件判定をOKに代入。
+	ここまで。
 	もしOK=0ならば
 		Gを戻す。
 	ここまで。
-
 	P["hand"]の手札番号を配列切取してカードに代入。
 	P["zashiki"]にカードを配列追加。
-	GとPIDとカードと"zashiki"の客カード効果適用をGに代入。
+	GとPIDとカードと"zashiki"と{}の客カード効果適用をGに代入。
 	GとPIDとカードのM03追加青カードをGに代入。
-	もしP["geishaId"]="M04"かつ色="red"ならば
+	もしP["geishaId"]="M04"かつカード色="red"ならば
 		もしP["effectFlags"]["redDoubleUsed"]=0ならば
-			GとPIDとカードと"zashiki"の客カード効果適用をGに代入。
+			GとPIDとカードと"zashiki"と{}の客カード効果適用をGに代入。
 			P["effectFlags"]["redDoubleUsed"]=1
 		ここまで。
 	ここまで。
-
 	コピー対象=P["effectFlags"]["copiedGeishaId"]
 	もしコピー対象="M03"かつP["effectFlags"]["copyExtraBlueUsed"]=0ならば
 		GとPIDとカードのM03追加青カードをGに代入。
 		P["effectFlags"]["copyExtraBlueUsed"]=1
 	ここまで。
-
-	もしコピー対象="M04"かつ色="red"かつP["effectFlags"]["copyRedDoubleUsed"]=0ならば
-		GとPIDとカードと"zashiki"の客カード効果適用をGに代入。
+	もしコピー対象="M04"かつカード色="red"かつP["effectFlags"]["copyRedDoubleUsed"]=0ならば
+		GとPIDとカードと"zashiki"と{}の客カード効果適用をGに代入。
 		P["effectFlags"]["copyRedDoubleUsed"]=1
 	ここまで。
-
 	GとPIDの基本行動完了記録をGに代入。
 	G["phase"]="turn"
 	Gを戻す。
@@ -585,24 +693,20 @@
 			Gを戻す。
 		ここまで。
 	ここまで。
-
 	GとPIDと"宣伝"の行動可能判定を可能に代入。
 	もし可能=0ならば
 		Gを戻す。
 	ここまで。
-
 	山札枚数=G["deck"]の要素数
 	もし山札枚数>0ならば
 		G["deck"]の0を配列切取して引いたカードに代入。
 		G["players"][PID]["hand"]に引いたカードを配列追加。
 	ここまで。
-
 	P=G["players"][PID]
 	Pと手札番号の手札番号妥当判定をOKに代入。
 	もしOK=0ならば
 		Gを戻す。
 	ここまで。
-
 	カード=P["hand"][手札番号]
 	宣伝力=0
 	カードの"promo"が辞書キー存在をあるに代入。
@@ -616,15 +720,19 @@
 		宣伝力=宣伝力+1
 		P["effectFlags"]["copyExtraM06Used"]=1
 	ここまで。
-
+	宣伝色=""
+	カードの"promoColor"が辞書キー存在をあるに代入。
+	もしある=1ならば
+		宣伝色=カード["promoColor"]
+	ここまで。
 	P["hand"]の手札番号を配列切取してカードに代入。
 	P["ad"]にカードを配列追加。
-	P["reputation"]=P["reputation"]+宣伝力
+	PとP["reputation"]と宣伝力と宣伝色の評判加算をP["reputation"]に代入。
 	もしP["geishaId"]="M07"ならば
 		もしP["effectFlags"]["promoEffectUsed"]=0ならば
 			カードとP["reputation"]の座敷条件判定を可能に代入。
 			もし可能=1ならば
-				GとPIDとカードと"宣伝"の客カード効果適用をGに代入。
+				GとPIDとカードと"宣伝"と{}の客カード効果適用をGに代入。
 				P["effectFlags"]["promoEffectUsed"]=1
 			ここまで。
 		ここまで。
@@ -632,7 +740,7 @@
 	もしコピー対象="M07"かつP["effectFlags"]["copyPromoEffectUsed"]=0ならば
 		カードとP["reputation"]の座敷条件判定を可能に代入。
 		もし可能=1ならば
-			GとPIDとカードと"宣伝"の客カード効果適用をGに代入。
+			GとPIDとカードと"宣伝"と{}の客カード効果適用をGに代入。
 			P["effectFlags"]["copyPromoEffectUsed"]=1
 		ここまで。
 	ここまで。
@@ -650,18 +758,15 @@
 	もし基本OK=0ならば
 		Gを戻す。
 	ここまで。
-
 	GとPIDと"紹介"の行動可能判定を可能に代入。
 	もし可能=0ならば
 		Gを戻す。
 	ここまで。
-
 	P=G["players"][PID]
 	捨て枚数=捨てる番号リストの要素数
 	もし捨て枚数>2ならば
 		Gを戻す。
 	ここまで。
-
 	捨て番順=捨てる番号リストの配列逆順。
 	捨て番順を反復
 		番号=対象
@@ -671,7 +776,6 @@
 			G["discard"]に捨てカードを配列追加。
 		ここまで。
 	ここまで。
-
 	I=0
 	I<捨て枚数の間
 		山残=G["deck"]の要素数
@@ -681,7 +785,6 @@
 		ここまで。
 		I=I+1
 	ここまで。
-
 	GとPIDの基本行動完了記録をGに代入。
 	G["phase"]="turn"
 	Gを戻す。
@@ -692,13 +795,12 @@
 	もし可能=0ならば
 		Gを戻す。
 	ここまで。
-
 	P=G["players"][PID]
 	予約カード=P["reservation"]
 	予約カードとP["reputation"]の座敷条件判定をOKに代入。
 	もしOK=1ならば
 		P["zashiki"]に予約カードを配列追加。
-		GとPIDと予約カードと"reservation"の客カード効果適用をGに代入。
+		GとPIDと予約カードと"reservation"と{}の客カード効果適用をGに代入。
 		P["reservation"]={}
 		P["hasReservation"]=0
 	ここまで。
@@ -757,7 +859,6 @@
 	もしG["endMode"]="lastlap"ならば
 		Gを戻す。
 	ここまで。
-
 	Gの終了条件A判定を触れたPIDに代入。
 	もし触れたPID>=0ならば
 		G["endedBy"]=触れたPID
@@ -765,7 +866,6 @@
 		G["bonusTarget"]=触れたPID
 		Gを戻す。
 	ここまで。
-
 	Gの終了条件B判定を触れたPIDに代入。
 	もし触れたPID>=0ならば
 		G["endedBy"]=触れたPID
@@ -775,7 +875,6 @@
 		G["lapRemaining"]=人数
 		Gを戻す。
 	ここまで。
-
 	Gの終了条件C判定をCに代入。
 	もしC=1ならば
 		G["endedBy"]=G["turnIndex"]
@@ -784,7 +883,6 @@
 		G["lapTriggerIndex"]=G["turnIndex"]
 		G["lapRemaining"]=人数
 	ここまで。
-
 	Gを戻す。
 ここまで。
 
@@ -810,8 +908,8 @@
 		もしある=1ならば
 			収入=収入+カード["income"]
 		ここまで。
-		色=カード["color"]
-		もしP["geishaId"]="M06"かつ色="green"ならば
+		カード色=カード["color"]
+		もしP["geishaId"]="M06"かつカード色="green"ならば
 			収入=収入+2
 		ここまで。
 	ここまで。
@@ -828,22 +926,17 @@
 ●(GとPの)プレイヤー精算とは
 	R=G["round"]
 	Pの客収入合計計算を収入に代入。
-
 	手札数=P["hand"]の要素数
 	手札数の手札ペナルティ計算を減点に代入。
-
 	得点=収入-減点
 	もし得点<0ならば
 		得点=0
 	ここまで。
-
 	もしG["bonusTarget"]=P["id"]ならば
 		Rの条件Aボーナス取得をボーナスに代入。
 		得点=得点+ボーナス
 	ここまで。
-
 	Pと得点のM05得点半減を得点に代入。
-
 	RI=R-1
 	P["scoreByRound"][RI]=得点
 	P["tokenTotal"]=P["tokenTotal"]+得点
@@ -886,7 +979,6 @@
 			最大トークン=T
 		ここまで。
 	ここまで。
-
 	候補=[]
 	G["players"]を反復
 		P=対象
@@ -894,14 +986,12 @@
 			候補にP["id"]を配列追加。
 		ここまで。
 	ここまで。
-
 	候補枚数=候補の要素数
 	もし候補枚数=1ならば
 		G["winnerIds"]=候補
 		G["phase"]="gameover"
 		Gを戻す。
 	ここまで。
-
 	最小手札=99999
 	候補を反復
 		CID=対象
@@ -911,7 +1001,6 @@
 			最小手札=手数
 		ここまで。
 	ここまで。
-
 	勝者=[]
 	候補を反復
 		CID=対象
@@ -921,136 +1010,119 @@
 			勝者にCIDを配列追加。
 		ここまで。
 	ここまで。
-
 	G["winnerIds"]=勝者
 	G["phase"]="gameover"
 	Gを戻す。
 ここまで。
 
 ●カードデータ読み込みとは
-  「server/data/maiko.json」を開いて舞妓JSONに代入。
-  「server/data/clients.json」を開いて客JSONに代入。
-  舞妓データ＝舞妓JSONをJSONデコード。
-  客データ＝客JSONをJSONデコード。
-  {「maiko」:舞妓データ,「clients」:客データ[「cardInstances」]}を戻す。
+	「server/data/maiko.json」を開いて舞妓JSONに代入。
+	「server/data/clients.json」を開いて客JSONに代入。
+	舞妓データ=舞妓JSONをJSONデコード。
+	客データ=客JSONをJSONデコード。
+	{"maiko":舞妓データ,"clients":客データ["cardInstances"]}を戻す。
 ここまで。
 
 ●(Gとプレイヤー一覧で)ゲーム初期化とは
-	カードデータ＝カードデータ読み込み。
-	G["カード"]＝{}。
-	G["カード"]["芸者"]＝カードデータ[「maiko」]。
-	G["カード"]["客"]＝カードデータ[「clients」]。
-
-	G["round"]＝1。
-	G["turnIndex"]＝0。
-	G["startPlayerIndex"]＝0。
-	G["phase"]＝「reservation」。
-	G["endedBy"]＝「」。
-	G["endMode"]＝「」。
-	G["bonusTarget"]＝「」。
-	G["lapTriggerIndex"]＝-1。
-	G["lapRemaining"]＝0。
-	G["deck"]＝[]。
-	G["discard"]＝[]。
-	G["players"]＝[]。
-	G["winnerIds"]＝[]。
-
-	# 芸者カードをシャッフル
-	芸者リスト＝G["カード"]["芸者"]。
+	カードデータ=カードデータ読み込み。
+	G["カード"]={}
+	G["カード"]["芸者"]=カードデータ["maiko"]
+	G["カード"]["客"]=カードデータ["clients"]
+	G["round"]=1
+	G["turnIndex"]=0
+	G["startPlayerIndex"]=0
+	G["phase"]="reservation"
+	G["endedBy"]=""
+	G["endMode"]=""
+	G["bonusTarget"]=""
+	G["lapTriggerIndex"]=-1
+	G["lapRemaining"]=0
+	G["deck"]=[]
+	G["discard"]=[]
+	G["players"]=[]
+	G["winnerIds"]=[]
+	芸者リスト=G["カード"]["芸者"]
 	芸者リストを配列シャッフル。
-
-	# プレイヤー初期化
-	I＝0。
+	I=0
 	プレイヤー一覧を反復
-		もし対象＝「」ならば、続ける。
-		PID＝I。
-		名前＝対象。
+		もし対象=""ならば、続ける。
+		PID=I
+		名前=対象
 		PIDと名前のプレイヤー状態作成をPに代入。
-		P["geishaId"]＝芸者リスト[I]["id"]。
-		P["reputation"]＝{
-		  「red」: 芸者リスト[I]["reputation"]["red"],
-		  「blue」: 芸者リスト[I]["reputation"]["blue"],
-		  「green」: 芸者リスト[I]["reputation"]["green"]
-		}。
-		P["usedGeishaSkill"]＝0。
+		P["geishaId"]=芸者リスト[I]["id"]
+		P["reputation"]={
+			"red":芸者リスト[I]["reputation"]["red"],
+			"blue":芸者リスト[I]["reputation"]["blue"],
+			"green":芸者リスト[I]["reputation"]["green"]
+		}
+		P["usedGeishaSkill"]=0
 		G["players"]にPを配列追加。
-		I＝I+1。
+		I=I+1
 	ここまで。
-
-	# 山札初期化（ラウンド開始準備より先に作る）
-	CLIENTSJSON＝G["カード"]["客"]をJSONエンコード。
-	G["deck"]＝CLIENTSJSONをJSONデコード。
+	CLIENTSJSON=G["カード"]["客"]をJSONエンコード。
+	G["deck"]=CLIENTSJSONをJSONデコード。
 	G["deck"]を配列シャッフル。
-
-	# ラウンド開始準備（reputationをセット・フラグ初期化）
-	# ※ラウンド開始準備内でG["deck"]=[]されるので直後に山札を再作成
-	R＝1。
-	GとRのラウンド開始準備してGに代入。
-
-	# 山札を再作成（ラウンド開始準備でdeck=[]になるため）
-	CLIENTSJSON＝G["カード"]["客"]をJSONエンコード。
-	G["deck"]＝CLIENTSJSONをJSONデコード。
+	R=1
+	GとRのラウンド開始準備をGに代入。
+	CLIENTSJSON=G["カード"]["客"]をJSONエンコード。
+	G["deck"]=CLIENTSJSONをJSONデコード。
 	G["deck"]を配列シャッフル。
-
-	# 初期手札を配る
-	I＝0。
+	I=0
 	プレイヤー一覧を反復
-		もし対象＝「」ならば、続ける。
-		PID＝I。
-		P＝G["players"][PID]。
-		ボーナス＝Pの初期手札ボーナス取得。
-		枚数＝5+ボーナス。
+		もし対象=""ならば、続ける。
+		PID=I
+		P=G["players"][PID]
+		ボーナス=Pの初期手札ボーナス取得。
+		枚数=5+ボーナス
 		枚数回
 			GとPIDの山札手札補充をGに代入。
 		ここまで。
-		I＝I+1。
+		I=I+1
 	ここまで。
 	Gを戻す。
 ここまで。
-●（GとPIDで）個別state作成とは
-  state＝{}。
-  state[「round」]＝G[「round」]。
-  state[「phase」]＝G[「phase」]。
-  state[「turnIndex」]＝G[「turnIndex」]。
-  state[「deckCount」]＝G[「deck」]の要素数。
-  state[「isFinalLap」]＝0。
-  もし G[「endMode」]＝「lastlap」 ならば
-    state[「isFinalLap」]＝1。
-  ここまで。
 
-  players＝[]。
-  G[「players」]を反復して
-    P＝対象。
-    pstate＝{}。
-    pstate[「id」]＝P[「id」]。
-    pstate[「name」]＝P[「name」]。
-    pstate[「geishaId」]＝P[「geishaId」]。
-    geishaInfo＝空。
-    G[「カード」][「芸者」]を反復して
-      もし 対象[「id」]＝P[「geishaId」] ならば
-        geishaInfo＝対象。
-      ここまで。
-    ここまで。
-    pstate[「geisha」]＝geishaInfo。
-
-    pstate[「reputation」]＝P[「reputation」]。
-    pstate[「zashiki」]＝P[「zashiki」]。
-    pstate[「ad」]＝P[「ad」]。
-    pstate[「hasReservation」]＝P[「hasReservation」]。
-    pstate[「tokenTotal」]＝P[「tokenTotal」]。
-    pstate[「handCount」]＝P[「hand」]の要素数。
-    pstate[「closed」]＝P[「closed」]。
-もし P[「id」]＝PID ならば
-  HANDCOUNT＝P[「hand」]の要素数。
-  「PID:{PID} hand枚数:{HANDCOUNT}」と表示。
-  pstate[「hand」]＝P[「hand」]。
-  pstate[「reservation」]＝P[「reservation」]。
-違えば
-  pstate[「hand」]＝[]。
-  pstate[「reservation」]＝{}。
-ここまで。
-    playersにpstateを追加。
-  ここまで。
-  state[「players」]＝players。
-  stateを戻す。
+●(GとPIDで)個別state作成とは
+	state={}
+	state["round"]=G["round"]
+	state["phase"]=G["phase"]
+	state["turnIndex"]=G["turnIndex"]
+	state["deckCount"]=G["deck"]の要素数
+	state["isFinalLap"]=0
+	もしG["endMode"]="lastlap"ならば
+		state["isFinalLap"]=1
+	ここまで。
+	players=[]
+	G["players"]を反復
+		P=対象
+		pstate={}
+		pstate["id"]=P["id"]
+		pstate["name"]=P["name"]
+		pstate["geishaId"]=P["geishaId"]
+		geishaInfo=空。
+		G["カード"]["芸者"]を反復して
+			もし対象["id"]=P["geishaId"]ならば
+				geishaInfo=対象。
+			ここまで。
+		ここまで。
+		pstate["geisha"]=geishaInfo
+		pstate["reputation"]=P["reputation"]
+		pstate["zashiki"]=P["zashiki"]
+		pstate["ad"]=P["ad"]
+		pstate["hasReservation"]=P["hasReservation"]
+		pstate["tokenTotal"]=P["tokenTotal"]
+		pstate["handCount"]=P["hand"]の要素数
+		pstate["closed"]=P["closed"]
+		pstate["turnCount"]=P["turnCount"]
+		もしP["id"]=PIDならば
+			pstate["hand"]=P["hand"]
+			pstate["reservation"]=P["reservation"]
+		違えば
+			pstate["hand"]=[]
+			pstate["reservation"]={}
+		ここまで。
+		playersにpstateを配列追加。
+	ここまで。
+	state["players"]=players
+	stateを戻す。
 ここまで。
