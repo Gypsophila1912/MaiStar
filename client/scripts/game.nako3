@@ -1,0 +1,147 @@
+zasikiBtn＝空。
+sendenBtn＝空。
+syoukaiBtn＝空。
+yoyakuBtn＝空。
+
+●（stateで）ゲーム画面初期化とは
+  players＝state[「players」]。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  myP＝players[myPID]。
+
+  # ラウンド数表示
+  ラウンド数＝state[「round」]。
+  EL＝「#round-num」のDOM要素取得。
+  ELへラウンド数をテキスト設定。
+
+  # 全プレイヤー表示
+  playersでプレイヤー表示。
+
+  # 自分の手札表示
+  myP[「hand」]で手札表示。
+
+  # 自分のスコア表示
+  SCORE＝myP[「tokenTotal」]。
+  SEL＝「#my-score」のDOM要素取得。
+  SELへSCOREをテキスト設定。
+
+  # 手番チェック（ボタン有効・無効）
+  turnIdx＝state[「turnIndex」]。
+  もし turnIdx＝myPID ならば
+    1でアクションボタン有効設定。
+  違えば
+    0でアクションボタン有効設定。
+  ここまで。
+ここまで。
+
+●（playersで）プレイヤー表示とは
+  players を反復して
+    P＝対象。
+    IDX＝P[「id」]。
+
+    # 芸者名表示
+    gName＝P[「geisha」][「name」]。
+    GNEL＝「#maiko-name-」＆IDXのDOM要素取得。
+    GNELへgNameをテキスト設定。
+
+    # スコア表示
+    SEL＝「#score-」＆IDXのDOM要素取得。
+    SELへ「点数: 」＆P[「tokenTotal」]＆「点」をテキスト設定。
+
+    # 手札表示
+    もし P[「id」]＝myPID ならば
+      # 自分は表札（手札枚数）
+      HCOUNT＝P[「hand」]の要素数。
+    違えば
+      # 他人は裏向き
+      HCOUNT＝P[「handCount」]。
+    ここまで。
+    BACKS＝「」。
+    J＝0。
+    J<HCOUNTの間
+      BACKS＝BACKS＆「<div class='card-back'></div>」。
+      J＝J+1。
+    ここまで。
+    EL＝「#hand-」＆IDXのDOM要素取得。
+    ELへBACKSをHTML設定。
+  ここまで。
+ここまで。
+
+●（handで）手札表示とは
+  HTML＝「」。
+  hand を反復して
+    card＝対象。
+    NAME＝card[「name」]。
+    INC＝card[「income」]。
+    COL＝card[「color」]。
+    HTML＝HTML＆「<div class='card-face color-」＆COL＆「' onclick='jsCardClick(this)'>」。
+    HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
+    HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
+    HTML＝HTML＆「</div>」。
+  ここまで。
+  EL＝「#my-cards」のDOM要素取得。
+  ELへHTMLをHTML設定。
+ここまで。
+
+●アクションボタン初期化とは
+  zasikiBtn＝「#zasiki」のDOM要素取得。
+  sendenBtn＝「#senden」のDOM要素取得。
+  syoukaiBtn＝「#syoukai」のDOM要素取得。
+  yoyakuBtn＝「#yoyaku」のDOM要素取得。
+    『
+    document.getElementById("zasiki").disabled = true;
+    document.getElementById("senden").disabled = true;
+    document.getElementById("syoukai").disabled = true;
+    document.getElementById("yoyaku").disabled = true;
+  』をJS実行。
+ここまで。
+
+●（フラグで）アクションボタン有効設定とは
+  もし フラグ＝1 ならば
+    『
+      document.getElementById("zasiki").disabled = false;
+      document.getElementById("senden").disabled = false;
+      document.getElementById("syoukai").disabled = false;
+      document.getElementById("yoyaku").disabled = false;
+    』をJS実行。
+  違えば
+    『
+      document.getElementById("zasiki").disabled = true;
+      document.getElementById("senden").disabled = true;
+      document.getElementById("syoukai").disabled = true;
+      document.getElementById("yoyaku").disabled = true;
+    』をJS実行。
+  ここまで。
+ここまで。
+
+●アクション実行とは
+  action＝「window.__actionType」をJS実行。
+  もし action＝「座敷」 ならば
+    座敷処理。
+  ここまで。
+  もし action＝「宣伝」 ならば
+    宣伝処理。
+  ここまで。
+  もし action＝「紹介」 ならば
+    紹介処理。
+  ここまで。
+  もし action＝「予約客」 ならば
+    予約客処理。
+  ここまで。
+ここまで
+
+●座敷処理とは
+  「座敷ボタンが押されました」と表示。
+  # TODO: 選択中のカードをサーバーに送信
+ここまで。
+
+●宣伝処理とは
+  「宣伝ボタンが押されました」と表示。
+ここまで。
+
+●紹介処理とは
+  「紹介ボタンが押されました」と表示。
+ここまで。
+
+●予約客処理とは
+  「予約客ボタンが押されました」と表示。
+ここまで。

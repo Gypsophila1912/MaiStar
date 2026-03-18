@@ -116,8 +116,12 @@ io.on("connection", (socket) => {
         socket.emit("エラー", result);
         return;
       }
-      // 部屋全員をゲーム画面に遷移させる
-      io.to(data.roomId).emit("ゲーム開始", result);
+
+      // 各プレイヤーに個別のstateを送信
+      result.states.forEach(({ socketId, state }) => {
+        const stateObj = typeof state === "string" ? JSON.parse(state) : state;
+        io.to(socketId).emit("ゲーム開始", stateObj);
+      });
     } catch (e) {
       console.error("ゲーム開始エラー:", e.message);
       socket.emit("エラー", { message: "サーバーエラーが発生しました" });

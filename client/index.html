@@ -97,7 +97,7 @@
               <div class="geisha-card active" id="geisha-0">
                 <div class="geisha-header">
                   <div>
-                    <div class="geisha-name">紅葉</div>
+                    <div class="geisha-name" id="maiko-name-0">紅葉</div>
                     <div class="geisha-score" id="score-0">点数: 24点</div>
                   </div>
                 </div>
@@ -108,7 +108,7 @@
               <div class="geisha-card" id="geisha-1">
                 <div class="geisha-header">
                   <div>
-                    <div class="geisha-name">雪月</div>
+                    <div class="geisha-name" id="maiko-name-1">雪月</div>
                     <div class="geisha-score" id="score-1">点数: 18点</div>
                   </div>
                 </div>
@@ -119,7 +119,7 @@
               <div class="geisha-card" id="geisha-2">
                 <div class="geisha-header">
                   <div>
-                    <div class="geisha-name">花音</div>
+                    <div class="geisha-name" id="maiko-name-2">花音</div>
                     <div class="geisha-score" id="score-2">点数: 31点</div>
                   </div>
                 </div>
@@ -132,7 +132,18 @@
             <!-- 座敷の場 -->
             <div id="table-area">
               <div class="area-label">◆ 座敷の場</div>
-              <div id="table-cards"></div>
+              <div id="table-0">
+                <div id="client-0"></div>
+                <div id="ad-0"></div>
+              </div>
+              <div id="table-1">
+                <div id="client-0"></div>
+                <div id="ad-0"></div>
+              </div>
+              <div id="table-2">
+                <div id="client-0"></div>
+                <div id="ad-0"></div>
+              </div>
             </div>
        
           </div><!-- /center-area -->
@@ -155,10 +166,10 @@
             <!-- アクションボタン -->
             <div id="actions">
               <div class="section-title">◆ アクション</div>
-              <img src="assets/kyaku.png" class="action-img-btn" onclick="jsActionClick('客を出す')" alt="客を出す" />
-              <img src="assets/api.png"   class="action-img-btn" onclick="jsActionClick('宣伝する')"   alt="宣伝する" />
-              <img src="assets/syokai.png"      class="action-img-btn" onclick="jsActionClick('場を換える')"   alt="場を換える" />
-              <img src="assets/yoyakukyaku.png" class="action-img-btn" onclick="jsActionClick('予約客を出す')" alt="予約客を出す" />
+              <img src="assets/kyaku.png" class="action-img-btn" id=zasiki onclick="jsActionClick('客を出す')" alt="客を出す" />
+              <img src="assets/api.png"   class="action-img-btn" id=senden onclick="jsActionClick('宣伝する')"   alt="宣伝する" />
+              <img src="assets/syokai.png"      class="action-img-btn" id=syoukai onclick="jsActionClick('場を換える')"   alt="場を換える" />
+              <img src="assets/yoyakukyaku.png" class="action-img-btn" id=yoyaku onclick="jsActionClick('予約客を出す')" alt="予約客を出す" />
             </div>
        
             <!-- 行動記録ログ -->
@@ -208,6 +219,8 @@
          * HTML側ボタンのonclickから呼ばれ、ログ追記などを行う
          */
         function jsActionClick(action) {
+          window.__actionType = action;
+          navigator.nako3.run('アクション実行。');
           const selected = document.querySelectorAll('#my-cards .card-face.selected');
           const output   = document.getElementById('nako-output');
        
@@ -374,6 +387,11 @@
         window.__nakoData = data;
         startGameTimer(90); // 1分30秒
         nakoRun("ゲーム開始受信");
+      });
+
+      socket.on('ゲーム状態更新', (data) => {
+        window.__nakoData = data;
+        nakoRun('ゲーム状態更新受信');
       });
 
       socket.on("エラー", (data) => {

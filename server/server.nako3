@@ -1,5 +1,6 @@
 !「../node_modules/nadesiko3-server/nadesiko3-server.mjs」を取り込む。
 !「room.nako3」を取り込む。
+!「game.nako3」を取り込む。
 
 WEBサーバ起動成功時には
   「APIサーバー起動: 3001」と表示。
@@ -16,59 +17,78 @@ WEBサーバ起動成功時には
     resultをJSONエンコードしてWEBサーバ出力。
   ここまで。
 
-  # ← これを追加
   「/api/room/rejoin」へWEBサーバPOST時には
     データ＝POSTデータ。
     result＝データで再接続処理。
     resultをJSONエンコードしてWEBサーバ出力。
   ここまで。
 
-「/api/game/start」へWEBサーバPOST時には
-  データ＝POSTデータ。
-  RID＝データ[「roomId」]。
-  「ゲーム開始: {RID}」と表示。
-  JS文＝「if(sys.__nako_rooms['」＆RID＆「']) sys.__nako_rooms['」＆RID＆「'].status = 'playing'」。
-  JS文をJS実行。
-  {「success」:真,「roomId」:RID}をJSONエンコードしてWEBサーバ出力。
-ここまで。
-
   「/api/room/leave」へWEBサーバPOST時には
     データ＝POSTデータ。
     データで退室処理。
     {「success」:真}をJSONエンコードしてWEBサーバ出力。
   ここまで。
-  
+
   「/api/room/remove」へWEBサーバPOST時には
     データ＝POSTデータ。
     データで完全退室処理。
     {「success」:真}をJSONエンコードしてWEBサーバ出力。
   ここまで。
-  
-「/api/room/get-by-socket」へWEBサーバPOST時には
-  データ＝POSTデータ。
-  result＝データでsocket部屋取得。
-  resultをJSONエンコードしてWEBサーバ出力。
-ここまで。
 
-「/api/room/get」へWEBサーバPOST時には
-  データ＝POSTデータ。
-  RID＝データ[「roomId」]。
-  result＝RIDで部屋情報取得。
-  resultをJSONエンコードしてWEBサーバ出力。
+  「/api/room/get-by-socket」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    result＝データでsocket部屋取得。
+    resultをJSONエンコードしてWEBサーバ出力。
   ここまで。
-  
+
+  「/api/room/get」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    RID＝データ[「roomId」]。
+    result＝RIDで部屋情報取得。
+    resultをJSONエンコードしてWEBサーバ出力。
+  ここまで。
+
   「/api/room/delete」へWEBサーバPOST時には
-  データ＝POSTデータ。
-  データで部屋削除処理。
-  {「success」:真}をJSONエンコードしてWEBサーバ出力。
-ここまで。
+    データ＝POSTデータ。
+    データで部屋削除処理。
+    {「success」:真}をJSONエンコードしてWEBサーバ出力。
+  ここまで。
 
-「/api/room/is-host」へWEBサーバPOST時には
-  データ＝POSTデータ。
-  result＝データでホスト判定処理。
-  resultをJSONエンコードしてWEBサーバ出力。
-ここまで。
+  「/api/room/is-host」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    result＝データでホスト判定処理。
+    resultをJSONエンコードしてWEBサーバ出力。
+  ここまで。
 
+「/api/game/start」へWEBサーバPOST時には
+    データ＝POSTデータ。
+    RID＝データ[「roomId」]。
+    「ゲーム開始: {RID}」と表示。
+
+    部屋＝RIDで部屋情報取得。
+    names＝[]。
+    部屋[「players」]を反復して
+      namesに対象[「nickname」]を追加。
+    ここまで。
+
+    G＝{}。
+    Gとnamesでゲーム初期化してGに代入。
+    # ゲーム状態を部屋に保存（文字列連結で直接埋め込む）
+    GJSON＝GをJSONエンコード。
+    JS文＝「sys.__nako_rooms['」＆RID＆「'].game = 」＆GJSON＆「; sys.__nako_rooms['」＆RID＆「'].status = 'playing';」。
+    JS文をJS実行。
+
+    states＝[]。
+    部屋[「players」]を反復して
+      SID＝対象[「socketId」]。
+      PID＝対象[「id」]。
+      state＝GとPIDで個別state作成。
+      stateJSON＝stateをJSONエンコード。
+      statesに{「socketId」:SID,「state」:stateJSON}を追加。
+    ここまで。
+
+    {「success」:真,「roomId」:RID,「states」:states}をJSONエンコードしてWEBサーバ出力。
+  ここまで。
 ここまで。
 
 3001でWEBサーバ起動。
