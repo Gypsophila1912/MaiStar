@@ -12,7 +12,7 @@
 		hasReservation:0,
 		zashiki:[],
 		ad:[],
-		reputation:0,
+		reputation:{},
 		closed:0,
 		effectFlags:Pの効果フラグ初期化。
 		extraTurnCount:0,
@@ -848,8 +848,8 @@
 	もし次先手<0ならば
 		次先手=0
 	ここまで。
-	GとNextRの開始プレイヤー設定をGに代入。
-	GとNextRのラウンド開始準備をGに代入。
+	Gと次Rの開始プレイヤー設定をGに代入。
+	Gと次Rのラウンド開始準備をGに代入。
 	Gを戻す。
 ここまで。
 
@@ -910,11 +910,19 @@
 	Gを戻す。
 ここまで。
 
+●カードデータ読み込みとは
+  「server/data/maiko.json」を開いて舞妓JSONに代入。
+  「server/data/clients.json」を開いて客JSONに代入。
+  舞妓データ＝舞妓JSONをJSONデコード。
+  客データ＝客JSONをJSONデコード。
+  {「maiko」:舞妓データ,「clients」:客データ[「cardInstances」]}を戻す。
+ここまで。
+
 ●(Gとプレイヤー一覧で)ゲーム初期化とは
-	# カード情報読み込み
+	カードデータ＝カードデータ読み込み。
 	G["カード"] = {}
-	G["カード"]["芸者"] = 「server/data/maiko.json」をJSONデコード。
-	G["カード"]["客"] = 「server/data/clients.json」をJSONデコード。
+	G["カード"]["芸者"] = カードデータ[「clients」]。
+	G["カード"]["客"] = カードデータ[「maiko」]。
 
 	G["round"] = 1
 	G["turnIndex"] = 0
@@ -942,6 +950,11 @@
 		名前 = 対象
 		PIDと名前のプレイヤー状態作成をPに代入。
 		P["geishaId"] = 芸者リスト[I]["id"]
+		P["reputation"]＝{
+		  「red」: 芸者リスト[I]["reputation"]["red"],
+		  「blue」: 芸者リスト[I]["reputation"]["blue"],
+		  「green」: 芸者リスト[I]["reputation"]["green"]
+		}。
 		P["usedGeishaSkill"] = 0
 		G["players"]にPを配列追加。
 		I = I + 1
