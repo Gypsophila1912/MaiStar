@@ -817,9 +817,9 @@ body {
 }
 
 #my-maiko-stats {
-  height: 90%;          /* ほぼ全高を使う */
-  margin-bottom: 0;     /* 下寄せ解除 */
-  margin-left: 2px;     /* 重ならないように右へ少しずらす */
+  height: 90%; /* ほぼ全高を使う */
+  margin-bottom: 0; /* 下寄せ解除 */
+  margin-left: 2px; /* 重ならないように右へ少しずらす */
   display: flex;
   flex-direction: column;
   justify-content: space-evenly; /* 縦方向に均等配置 */
@@ -847,11 +847,17 @@ body {
   width: 10px;
   height: 10px;
   margin-right: 4px;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
-.stat-box.red { background-color: #d32f2f; }
-.stat-box.blue { background-color: #1976d2; }
-.stat-box.green { background-color: #388e3c; }
+.stat-box.red {
+  background-color: #d32f2f;
+}
+.stat-box.blue {
+  background-color: #1976d2;
+}
+.stat-box.green {
+  background-color: #388e3c;
+}
 
 #hand-label {
   font-size: 10px;
@@ -861,6 +867,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding-left: 150px;
 }
 
 #my-cards {
@@ -1573,4 +1580,85 @@ body {
 #reservation-slot.has-card {
   border: 2px solid rgba(139, 94, 42, 0.8);
   background: rgba(200, 185, 150, 0.5);
+}
+
+.status-closed {
+  background: rgba(80, 80, 80, 0.2);
+  border: 1px solid rgba(100, 100, 100, 0.4);
+  color: #888;
+}
+
+/* 休業中の芸者カードを暗くする */
+.geisha-card.closed {
+  opacity: 0.5;
+  filter: grayscale(60%);
+}
+
+#effect-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#effect-modal-inner {
+  background: rgba(45, 28, 10, 0.97);
+  border: 2px solid #8b5e2a;
+  border-radius: 10px;
+  padding: 20px 24px;
+  min-width: 280px;
+  max-width: 400px;
+  color: #f5efe0;
+}
+
+#effect-modal-title {
+  font-size: 13px;
+  color: #e8c97a;
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+#effect-modal-body {
+  margin-bottom: 12px;
+}
+
+.effect-target-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #6b4520;
+  background: rgba(60, 35, 10, 0.7);
+  color: #d4b48a;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.effect-target-btn:hover {
+  background: rgba(100, 60, 20, 0.8);
+  border-color: #a07040;
+  color: #e8c97a;
+}
+
+#effect-cancel-btn {
+  display: block;
+  width: 100%;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #6b4520;
+  background: rgba(40, 20, 5, 0.6);
+  color: #8b6030;
+  font-size: 11px;
+  cursor: pointer;
+  margin-top: 8px;
 }

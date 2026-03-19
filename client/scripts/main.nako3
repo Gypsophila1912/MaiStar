@@ -52,7 +52,6 @@ myNickname＝「」。
 ●ゲーム状態更新受信とは
   データ＝「window.__nakoData」をJS実行。
   PHASE＝データ["phase"]。
-  R＝データ["round"]。
   『console.log("[状態更新] phase:", window.__nakoData.phase, "round:", window.__nakoData.round)』をJS実行。
   もし PHASE＝「gameover」 ならば
     GAMEOVERSTATEはデータ。
@@ -60,9 +59,27 @@ myNickname＝「」。
   ここまで。
   もし PHASE≠「gameover」 ならば
     データでゲーム画面初期化。
+
+    # 捨てカード待ち状態のチェック
+    HASWAITING＝『(window.__waitingDiscard && typeof window.__waitingDiscard === "object") ? 1 : 0』をJS実行。
+    もし HASWAITING＝1 ならば
+      WAITING＝「window.__waitingDiscard」をJS実行。
+      WCOUNT＝WAITING["count"]。
+      WCOUNTで捨てカード選択UI表示。
+      『window.__waitingDiscard = null』をJS実行。
+      戻る。
+    ここまで。
+
+    # 効果UIチェック
+    HASEFFECT＝『(window.__lastEffectCard && typeof window.__lastEffectCard === "object") ? 1 : 0』をJS実行。
+    もし HASEFFECT＝1 ならば
+      LASTCARD＝「window.__lastEffectCard」をJS実行。
+      SOURCE＝「window.__lastEffectSource || 'zashiki'」をJS実行。
+      LASTCARDとSOURCEでカード効果UI表示。
+      『window.__lastEffectCard = null』をJS実行。
+    ここまで。
   ここまで。
 ここまで。
-
 ●次ラウンド開始とは
   データ＝「window.__nakoData」をJS実行。
   データでゲーム画面初期化。
