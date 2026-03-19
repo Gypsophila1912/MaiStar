@@ -8,30 +8,6 @@ yoyakuBtn＝空。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
   myP＝players[myPID]。
 
-  # 芸者画像設定
-  geisha＝myP[「geisha」]。
-  gImg＝geisha[「image」]。
-  もし gImg ならば
-    JS文＝「document.getElementById('my-maiko-img').src = '」＆gImg＆「'; document.getElementById('my-maiko-area').style.display = 'flex';」。
-    JS文をJS実行。
-
-    # ステータス（評判）表示
-    rep＝geisha[「reputation」]。
-    rR＝rep[「red」]。
-    rB＝rep[「blue」]。
-    rG＝rep[「green」]。
-
-    HTML＝「」。
-    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box red'></div>」＆rR＆「</div>」。
-    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box blue'></div>」＆rB＆「</div>」。
-    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box green'></div>」＆rG＆「</div>」。
-
-    EL＝「#my-maiko-stats」のDOM要素取得。
-    ELへHTMLをHTML設定。
-  違えば
-    「document.getElementById('my-maiko-area').style.display = 'none';」をJS実行。
-  ここまで。
-
   # ラウンド数表示
   ラウンド数＝state[「round」]。
   EL＝「#round-num」のDOM要素取得。
@@ -164,33 +140,20 @@ yoyakuBtn＝空。
     「カードを選択してください」と言う。
     戻る。
   ここまで。
+
+  # 2枚以上選択されていたら弾く
+  選択数＝「document.querySelectorAll('#my-cards .card-face.selected').length」をJS実行。
+  もし 選択数>1 ならば
+    「座敷に出せるカードは1枚だけです」と言う。
+    戻る。
+  ここまで。
+
   RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  送信JSON＝{「action」:「座敷」,「roomId」:RID,「playerId」:myPID,「cardIndex」:IDX}をJSONエンコード。
+  送信JSON＝{"action":"座敷","roomId":RID,"playerId":myPID,"cardIndex":IDX}をJSONエンコード。
   JS文＝「emit('アクション', 」＆送信JSON＆「)」。
   JS文をJS実行。
 ここまで。
-
-●（playersで）座敷表示とは
-  players を反復して
-    P＝対象。
-    PID＝P[「id」]。
-    zashiki＝P[「zashiki」]。
-    HTML＝「」。
-    zashiki を反復して
-      card＝対象。
-      NAME＝card[「name」]。
-      COL＝card[「color」]。
-      INC＝card[「income」]。
-      HTML＝HTML＆「<div class='card-face color-」＆COL＆「'>」。
-      HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
-      HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
-      HTML＝HTML＆「</div>」。
-    ここまで。
-    EL＝「#client-」＆PIDのDOM要素取得。
-    もし EL＝空 ならば、続ける。ここまで。
-    ELへHTMLをHTML設定。
-  ここまで。
 
 ●宣伝処理とは
   IDX＝「window.__cardIdx」をJS実行。
@@ -200,7 +163,7 @@ yoyakuBtn＝空。
   ここまで。
   RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  送信JSON＝{「action」:「宣伝」,「roomId」:RID,「playerId」:myPID,「cardIndex」:IDX}をJSONエンコード。
+  送信JSON＝{"action":"宣伝","roomId":RID,"playerId":myPID,"cardIndex":IDX}をJSONエンコード。
   JS文＝「emit('アクション', 」＆送信JSON＆「)」。
   JS文をJS実行。
 ここまで。
@@ -229,13 +192,69 @@ yoyakuBtn＝空。
   ここまで。
   RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  送信JSON＝{「action」:「紹介」,「roomId」:RID,「playerId」:myPID,「cardIndexes」:IDXS}をJSONエンコード。
+  送信JSON＝{"action":"紹介","roomId":RID,"playerId":myPID,"cardIndexes":IDXS}をJSONエンコード。
   JS文＝「emit('アクション', 」＆送信JSON＆「)」。
   JS文をJS実行。
 ここまで。
 
-●予約客処理とは
+●予約客セットボタン初期化とは
+  SLOT＝「#reservation-slot」のDOM要素取得。
+  もし SLOT＝空 ならば
+    戻る。
+  ここまで。
+  SLOTをクリックした時には
+    CURPHASE＝「window.__currentPhase || ''」をJS実行。
+    もし CURPHASE＝「reservation」 ならば
+      予約客セット処理。
+    ここまで。
+  ここまで。
+ここまで。
 
+●予約客セット処理とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+
+  既存＝「window.__hasReservation || 0」をJS実行。
+  もし 既存＝1 ならば
+    「すでに予約客がセットされています」と言う。
+    戻る。
+  ここまで。
+
+  # 選択カードを直接DOMから取得
+  選択数＝「document.querySelectorAll('#my-cards .card-face.selected').length」をJS実行。
+  もし 選択数＝0 ならば
+    「予約客にするカードを1枚選択してください」と言う。
+    戻る。
+  ここまで。
+  もし 選択数>1 ならば
+    「予約客にセットできるカードは1枚だけです」と言う。
+    戻る。
+  ここまで。
+
+  # インデックスをDOMから直接計算
+  IDX＝『(function(){
+    var cards = document.querySelectorAll("#my-cards .card-face");
+    for(var i=0;i<cards.length;i++){
+      if(cards[i].classList.contains("selected")) return i;
+    }
+    return -1;
+  })()』をJS実行。
+
+  もし IDX＝-1 ならば
+    「カードを選択してください」と言う。
+    戻る。
+  ここまで。
+
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  送信JSON＝{"action":"予約客セット","roomId":RID,"playerId":myPID,"cardIndex":IDX}をJSONエンコード。
+  JS文＝「emit('アクション', 」＆送信JSON＆「)」。
+  JS文をJS実行。
+ここまで。
+
+●予約客セットボタン初期化とは
+  # スロットクリックはゲーム画面初期化内で設定するため、ここでは何もしない
+ここまで。
+
+●予約客処理とは
   # 予約客がセットされていなければ弾く
   HAS＝「window.__hasReservation || 0」をJS実行。
   もし HAS＝0 ならば
@@ -604,6 +623,50 @@ yoyakuBtn＝空。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
   myP＝players[myPID]。
   PHASE＝state["phase"]。
+
+  # 自分の芸者画像表示
+  geishaId＝myP["geishaId"]。
+  もし geishaId≠空 ならば
+    IMGURL＝「assets/maiko/cards/」＆geishaId＆「.png」。
+    REP＝myP["reputation"]。
+    赤＝REP["red"]。
+    青＝REP["blue"]。
+    緑＝REP["green"]。
+    HTML＝「」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box red'></div>」＆赤＆「</div>」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box blue'></div>」＆青＆「</div>」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box green'></div>」＆緑＆「</div>」。
+    『
+      const area = document.getElementById("my-maiko-area");
+      const img = document.getElementById("my-maiko-img");
+      const stats = document.getElementById("my-maiko-stats");
+      if (area && img) {
+        area.style.display = "flex";
+        area.style.position = "absolute";
+        area.style.left = "0";
+        area.style.bottom = "0";
+        area.style.width = "140px";
+        area.style.height = "100%";
+        area.style.zIndex = "10";
+        img.style.width = "auto";
+        img.style.height = "100%";
+        img.style.display = "block";
+      }
+    』をJS実行。
+    JS文＝「document.getElementById('my-maiko-img').src = '」＆IMGURL＆「';」。
+    JS文をJS実行。
+    STATS＝「#my-maiko-stats」のDOM要素取得。
+    STATSへHTMLをHTML設定。
+  違えば
+    『
+      const area = document.getElementById("my-maiko-area");
+      const img = document.getElementById("my-maiko-img");
+      const stats = document.getElementById("my-maiko-stats");
+      if (area) area.style.display = "none";
+      if (img) img.src = "";
+      if (stats) stats.innerHTML = "";
+    』をJS実行。
+  ここまで。
 
   # ラウンド数表示
   ラウンド数＝state["round"]。
