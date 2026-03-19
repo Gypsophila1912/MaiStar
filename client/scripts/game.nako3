@@ -59,26 +59,83 @@ yoyakuBtn＝空。
 ここまで。
 
 ●（playersで）プレイヤー表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
   players を反復して
     P＝対象。
-    IDX＝P[「id」]。
+    IDX＝P["id"]。
 
-    # 芸者名表示
-    gName＝P[「geisha」][「name」]。
-    GNEL＝「#maiko-name-」＆IDXのDOM要素取得。
-    GNELへgNameをテキスト設定。
-
-    # スコア表示
-    SEL＝「#score-」＆IDXのDOM要素取得。
-    SELへ「点数: 」＆P[「tokenTotal」]＆「点」をテキスト設定。
-
-    # 手札表示
-    もし P[「id」]＝myPID ならば
-      # 自分は表札（手札枚数）
-      HCOUNT＝P[「hand」]の要素数。
+    # 座敷エリアのプレイヤー名ラベルを更新
+    TLABEL＝「#table-label-」＆IDXのDOM要素取得。
+    もし TLABEL＝空 ならば
     違えば
-      # 他人は裏向き
-      HCOUNT＝P[「handCount」]。
+      TLABELへP["geisha"]["name"]をテキスト設定。
+    ここまで。
+
+    GNEL＝「#maiko-name-」＆IDXのDOM要素取得。
+    もし GNEL＝空 ならば
+    違えば
+      GNELへP["geisha"]["name"]をテキスト設定。
+    ここまで。
+
+    SEL＝「#score-」＆IDXのDOM要素取得。
+    もし SEL＝空 ならば
+    違えば
+      SELへ「点数: 」＆P["tokenTotal"]＆「点」をテキスト設定。
+    ここまで。
+
+    REP＝P["reputation"]。
+    赤＝REP["red"]。
+    青＝REP["blue"]。
+    緑＝REP["green"]。
+    REPEL＝「#reputation-」＆IDXのDOM要素取得。
+    もし REPEL＝空 ならば
+    違えば
+      REPELへ「評判: 赤」＆赤＆「 青」＆青＆「 緑」＆緑をテキスト設定。
+    ここまで。
+
+    # ★ 休業状態・手番状態のバッジ更新
+    BADGE＝「#geisha-」＆IDXのDOM要素取得。
+    SBADGE＝「」。
+    もし BADGE＝空 ならば
+    違えば
+      CLOSED＝P["closed"]。
+      もし CLOSED＝1 ならば
+        SBADGE＝「<div class='status-badge status-closed'>休業中</div>」。
+      ここまで。
+      もし CLOSED＝0 ならば
+        # turnIndexは親のstateから取れないのでwindowに保存した値を使う
+        TIDX＝「window.__currentTurnIndex || -1」をJS実行。
+        もし TIDX＝IDX ならば
+          SBADGE＝「<div class='status-badge status-seki'>手番中</div>」。
+        違えば
+          SBADGE＝「<div class='status-badge status-normal'>待機中</div>」。
+        ここまで。
+      ここまで。
+      # 既存バッジを置き換え
+      JS文＝『(function(){
+        var card = document.getElementById("geisha-』＆IDX＆『");
+        if(!card) return;
+        var old = card.querySelector(".status-badge");
+        if(old) old.outerHTML = "』＆SBADGE＆『";
+      })()』をJS実行。
+    ここまで。
+
+    # ★ 手番中プレイヤーのカードをハイライト
+    TIDX2＝「window.__currentTurnIndex || -1」をJS実行。
+    もし BADGE＝空 ならば
+    違えば
+      もし TIDX2＝IDX ならば
+        『document.getElementById("geisha-』＆IDX＆『").classList.add("active")』をJS実行。
+      違えば
+        『document.getElementById("geisha-』＆IDX＆『").classList.remove("active")』をJS実行。
+      ここまで。
+    ここまで。
+
+    # 手札裏面表示
+    もし P["id"]＝myPID ならば
+      HCOUNT＝P["hand"]の要素数。
+    違えば
+      HCOUNT＝P["handCount"]。
     ここまで。
     BACKS＝「」。
     J＝0。
@@ -86,8 +143,11 @@ yoyakuBtn＝空。
       BACKS＝BACKS＆「<div class='card-back'></div>」。
       J＝J+1。
     ここまで。
-    EL＝「#hand-」＆IDXのDOM要素取得。
-    ELへBACKSをHTML設定。
+    HEL＝「#hand-」＆IDXのDOM要素取得。
+    もし HEL＝空 ならば
+    違えば
+      HELへBACKSをHTML設定。
+    ここまで。
   ここまで。
 ここまで。
 
@@ -643,6 +703,10 @@ yoyakuBtn＝空。
 
 # ─── 画面初期化は最後に定義 ────────────────────────
 ●（stateで）ゲーム画面初期化とは
+# turnIndexをwindowに保存（プレイヤー表示内で参照するため）
+  TI＝state["turnIndex"]。
+  JS文＝「window.__currentTurnIndex = 」＆TI。
+  JS文をJS実行。
   players＝state["players"]。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
   myP＝players[myPID]。
@@ -717,6 +781,23 @@ yoyakuBtn＝空。
       myP["hand"]とmyP["reputation"]で出せるカードハイライト。
     違えば
       0でアクションボタン有効設定。
+    ここまで。
+  ここまで。
+   # 山札残枚数表示
+  DECK＝state["deckCount"]。
+  DEL＝「#deck-count-display」のDOM要素取得。
+  もし DEL≠空 ならば
+    DELへ「山札: 」＆DECK＆「枚」をテキスト設定。
+  ここまで。
+
+  # 最終巡バッジ
+  FINALLAP＝state["isFinalLap"]。
+  FBADGE＝「#final-lap-badge」のDOM要素取得。
+  もし FBADGE≠空 ならば
+    もし FINALLAP＝1 ならば
+      FBADGEの「display」へ「inline」をDOMスタイル設定。
+    違えば
+      FBADGEの「display」へ「none」をDOMスタイル設定。
     ここまで。
   ここまで。
 ここまで。

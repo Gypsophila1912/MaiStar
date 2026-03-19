@@ -489,16 +489,28 @@
 ここまで。
 
 ●(Gの)手番進行とは
-	現在手番=G["turnIndex"]
-	Gと現在手番の手番後片付けをGに代入。
-	Gと現在手番の次手番番号取得を次番号に代入。
-	G["turnIndex"]=次番号
-	次P=G["players"][次番号]
-	次P["usedGeishaSkill"]=0
-	次P["usedBaseAction"]=0
-	次Pのターンフラグ準備を次Pに代入。
-	G["phase"]="turn"
-	Gを戻す。
+  現在手番=G["turnIndex"]
+  Gと現在手番の手番後片付けをGに代入。
+
+  # 追加手番チェック
+  現在P=G["players"][現在手番]
+  もし現在P["extraTurnCount"]>0ならば
+    現在P["extraTurnCount"]=現在P["extraTurnCount"]-1
+    現在P["usedBaseAction"]=0
+    現在P["usedGeishaSkill"]=0
+    現在Pのターンフラグ準備を現在Pに代入。
+    G["phase"]="turn"
+    Gを戻す。
+  ここまで。
+
+  Gと現在手番の次手番番号取得を次番号に代入。
+  G["turnIndex"]=次番号
+  次P=G["players"][次番号]
+  次P["usedGeishaSkill"]=0
+  次P["usedBaseAction"]=0
+  次Pのターンフラグ準備を次Pに代入。
+  G["phase"]="turn"
+  Gを戻す。
 ここまで。
 
 ●(GとPIDの)基本行動前判定とは
