@@ -3,38 +3,6 @@ sendenBtn＝空。
 syoukaiBtn＝空。
 yoyakuBtn＝空。
 
-●（stateで）ゲーム画面初期化とは
-  players＝state[「players」]。
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  myP＝players[myPID]。
-
-  # ラウンド数表示
-  ラウンド数＝state[「round」]。
-  EL＝「#round-num」のDOM要素取得。
-  ELへラウンド数をテキスト設定。
-
-  # 全プレイヤー表示
-  playersでプレイヤー表示。
-
-  # 自分の手札表示
-  myP[「hand」]で手札表示。
-  playersで座敷表示。
-
-  # 自分のスコア表示
-  SCORE＝myP[「tokenTotal」]。
-  SEL＝「#my-score」のDOM要素取得。
-  SELへSCOREをテキスト設定。
-
-  # 手番チェック（ボタン有効・無効）
-  turnIdx＝state[「turnIndex」]。
-  もし turnIdx＝myPID ならば
-    1でアクションボタン有効設定。
-  違えば
-    0でアクションボタン有効設定。
-  ここまで。
-ここまで。
-
-
 ●（handで）手札表示とは
   HTML＝「」。
   hand を反復して
@@ -304,6 +272,210 @@ yoyakuBtn＝空。
   ここまで。
 ここまで。
 
+●遊女UI表示とは
+  HAND＝「window.__currentHand || []」をJS実行。
+  CARD＝「window.__effectCard」をJS実行。
+  COL＝CARD["color"]。
+  HTML＝「<div style='font-size:11px;color:#c0a06a;margin-bottom:8px'>同色(」＆COL＆「)の客カードを選んでください</div>」。
+  I＝0。
+  枚数＝HANDの要素数。
+  I<枚数の間
+    HC＝HAND[I]。
+    もし HC["color"]＝COL ならば
+      HNAME＝HC["name"]。
+      HCOND＝HC["condition"]。
+      IDX＝I。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:'カード効果確定',effectName:'遊女',handIndex:』＆IDX＆『};navigator.nako3.run('カード効果確定処理。');">』＆HNAME＆「(条件:」＆HCOND＆『)</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+    I＝I+1。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「遊女の効果：同色カードを客に出す」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●商人UI表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  HTML＝「」。
+
+  # 自分：2枚引いて1枚捨てる
+  BTN自分＝『<button class="effect-target-btn" onclick="
+    window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;商人&#39;,mode:&#39;self&#39;};
+    navigator.nako3.run(&#39;商人自分捨て選択。&#39;);
+  ">自分：2枚引いて1枚捨てる</button>』。
+  HTML＝HTML＆BTN自分。
+
+  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
+  プレイヤー一覧 を反復して
+    TP＝対象。
+    TPID＝TP["id"]。
+    もし TPID＝myPID ならば
+    違えば
+      TNAME＝TP["geisha"]["name"]。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;商人&#39;,mode:&#39;other&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『に2枚引かせる</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「商人の効果」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●商人自分捨て選択とは
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  CARDJSON＝「window.__effectCard」をJS実行。
+  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
+  DATA＝{}。
+  DATA["action"]＝「カード効果確定」。
+  DATA["effectName"]＝「商人」。
+  DATA["mode"]＝「self」。
+  DATA["drawOnly"]＝1。
+  DATA["roomId"]＝RID。
+  DATA["playerId"]＝myPID。
+  DATA["card"]＝CARDJSON。
+  DATA["source"]＝SOURCE。
+  DATAJSON＝DATAをJSONエンコード。
+  JS文＝「emit('アクション', 」＆DATAJSON＆「)」。
+  JS文をJS実行。
+  『window.__waitingDiscard = {effectName:"商人", count:1}』をJS実行。
+ここまで。
+
+●町人UI表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  HTML＝「」。
+  BTN自分＝『<button class="effect-target-btn" onclick="
+    window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;self&#39;};
+    navigator.nako3.run(&#39;町人自分捨て選択。&#39;);
+  ">自分：1枚引いて1枚捨てる</button>』。
+  HTML＝HTML＆BTN自分。
+  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
+  プレイヤー一覧 を反復して
+    TP＝対象。
+    TPID＝TP["id"]。
+    もし TPID＝myPID ならば
+    違えば
+      TNAME＝TP["geisha"]["name"]。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;other&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『に1枚引かせる</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「町人の効果」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●町人自分捨て選択とは
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  CARDJSON＝「window.__effectCard」をJS実行。
+  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
+  DATA＝{}。
+  DATA["action"]＝「カード効果確定」。
+  DATA["effectName"]＝「町人」。
+  DATA["mode"]＝「self」。
+  DATA["drawOnly"]＝1。
+  DATA["roomId"]＝RID。
+  DATA["playerId"]＝myPID。
+  DATA["card"]＝CARDJSON。
+  DATA["source"]＝SOURCE。
+  DATAJSON＝DATAをJSONエンコード。
+  JS文＝「emit('アクション', 」＆DATAJSON＆「)」。
+  JS文をJS実行。
+  『window.__waitingDiscard = {effectName:"町人", count:1}』をJS実行。
+ここまで。
+●対象選択UI表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  CARD＝「window.__effectCard」をJS実行。
+  NAME＝CARD["name"]。
+  HTML＝「」。
+  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
+  プレイヤー一覧 を反復して
+    TP＝対象。
+    TPID＝TP["id"]。
+    もし TPID＝myPID ならば
+    違えば
+      TNAME＝TP["geisha"]["name"]。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;』＆NAME＆『&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへNAME＆「の効果：対象を選んでください」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●カード効果確定処理とは
+  DATA＝「window.__effectData」をJS実行。
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  CARDJSON＝「window.__effectCard」をJS実行。
+  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
+  DATA["roomId"]＝RID。
+  DATA["playerId"]＝myPID。
+  DATA["card"]＝CARDJSON。
+  DATA["source"]＝SOURCE。
+  DATAJSON＝DATAをJSONエンコード。
+  JS文＝「jsCloseEffectModal(); emit('アクション', 」＆DATAJSON＆「)」。
+  JS文をJS実行。
+ここまで。
+
+●（枚数で）捨てカード選択UI表示とは
+  HAND＝「window.__currentHand || []」をJS実行。
+  HTML＝「<div style='font-size:11px;color:#c0a06a;margin-bottom:8px'>捨てるカードを」＆枚数＆「枚選んでください</div>」。
+  手札枚数＝HANDの要素数。
+  I＝0。
+  I<手札枚数の間
+    HC＝HAND[I]。
+    HNAME＝HC["name"]。
+    HCOL＝HC["color"]。
+    IDX＝I。
+    BTN＝『<button class="effect-target-btn" onclick="
+      if(!window.__discardIdxs) window.__discardIdxs=[];
+      var btn=this;
+      var idx=』＆IDX＆『;
+      var pos=window.__discardIdxs.indexOf(idx);
+      if(pos>=0){
+        window.__discardIdxs.splice(pos,1);
+        btn.style.borderColor=&#39;&#39;;
+        btn.style.background=&#39;&#39;;
+      } else {
+        window.__discardIdxs.push(idx);
+        btn.style.borderColor=&#39;#e8c97a&#39;;
+        btn.style.background=&#39;rgba(120,80,20,0.7)&#39;;
+      }
+    ">』＆HNAME＆「(」＆HCOL＆『)</button>』。
+    HTML＝HTML＆BTN。
+    I＝I+1。
+  ここまで。
+  HTML＝HTML＆『<button class="effect-target-btn" style="margin-top:8px;border-color:#e8c97a;" onclick="
+    var idxs = window.__discardIdxs || [];
+    if(idxs.length===0){alert(&#39;捨てるカードを選んでください&#39;);return;}
+    window.__effectData.discardIndexes = idxs;
+    window.__discardIdxs = [];
+    navigator.nako3.run(&#39;カード効果確定処理。&#39;);
+  ">確定</button>』。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「捨てるカードを選んでください」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
 ●（カードと起点で）カード効果UI表示とは
   # カードがnullの場合はスキップ
   もし カード＝空 ならば
@@ -391,207 +563,6 @@ yoyakuBtn＝空。
   ここまで。
 ここまで。
 
-●遊女UI表示とは
-  HAND＝「window.__currentHand || []」をJS実行。
-  CARD＝「window.__effectCard」をJS実行。
-  COL＝CARD["color"]。
-  HTML＝「<div style='font-size:11px;color:#c0a06a;margin-bottom:8px'>同色(」＆COL＆「)の客カードを選んでください</div>」。
-  I＝0。
-  枚数＝HANDの要素数。
-  I<枚数の間
-    HC＝HAND[I]。
-    もし HC["color"]＝COL ならば
-      HNAME＝HC["name"]。
-      HCOND＝HC["condition"]。
-      IDX＝I。
-      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:'カード効果確定',effectName:'遊女',handIndex:』＆IDX＆『};navigator.nako3.run('カード効果確定処理。');">』＆HNAME＆「(条件:」＆HCOND＆『)</button>』。
-      HTML＝HTML＆BTN。
-    ここまで。
-    I＝I+1。
-  ここまで。
-  MODAL＝「#effect-modal」のDOM要素取得。
-  BODY＝「#effect-modal-body」のDOM要素取得。
-  TITLE＝「#effect-modal-title」のDOM要素取得。
-  TITLEへ「遊女の効果：同色カードを客に出す」をテキスト設定。
-  BODYへHTMLをHTML設定。
-  MODALの「display」へ「flex」をDOMスタイル設定。
-ここまで。
-
-●商人UI表示とは
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  HTML＝「」。
-
-  # 自分：2枚引いて1枚捨てる
-  BTN自分＝『<button class="effect-target-btn" onclick="
-    window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;商人&#39;,mode:&#39;self&#39;};
-    navigator.nako3.run(&#39;商人自分捨て選択。&#39;);
-  ">自分：2枚引いて1枚捨てる</button>』。
-  HTML＝HTML＆BTN自分。
-
-  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
-  プレイヤー一覧 を反復して
-    TP＝対象。
-    TPID＝TP["id"]。
-    もし TPID＝myPID ならば
-    違えば
-      TNAME＝TP["geisha"]["name"]。
-      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;商人&#39;,mode:&#39;other&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『に2枚引かせる</button>』。
-      HTML＝HTML＆BTN。
-    ここまで。
-  ここまで。
-  MODAL＝「#effect-modal」のDOM要素取得。
-  BODY＝「#effect-modal-body」のDOM要素取得。
-  TITLE＝「#effect-modal-title」のDOM要素取得。
-  TITLEへ「商人の効果」をテキスト設定。
-  BODYへHTMLをHTML設定。
-  MODALの「display」へ「flex」をDOMスタイル設定。
-ここまで。
-
-●商人自分捨て選択とは
-  # まずサーバーに2枚引かせる（捨て前にドロー）
-  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  CARDJSON＝「window.__effectCard」をJS実行。
-  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
-  # ドローのみ先に実行
-  DATA＝{"action":"カード効果確定","effectName":"商人","mode":"self","drawOnly":1}。
-  DATA["roomId"]＝RID。
-  DATA["playerId"]＝myPID。
-  DATA["card"]＝CARDJSON。
-  DATA["source"]＝SOURCE。
-  DATAJSON＝DATAをJSONエンコード。
-  JS文＝「emit('アクション', 」＆DATAJSON＆「)」。
-  JS文をJS実行。
-  # モーダルは閉じない（ゲーム状態更新後に捨て選択UIを出す）
-  『window.__waitingDiscard = {effectName:"商人", count:1}』をJS実行。
-ここまで。
-
-●町人UI表示とは
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  HTML＝「」。
-
-  BTN自分＝『<button class="effect-target-btn" onclick="
-    window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;self&#39;};
-    navigator.nako3.run(&#39;町人自分捨て選択。&#39;);
-  ">自分：1枚引いて1枚捨てる</button>』。
-  HTML＝HTML＆BTN自分。
-
-  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
-  プレイヤー一覧 を反復して
-    TP＝対象。
-    TPID＝TP["id"]。
-    もし TPID＝myPID ならば
-    違えば
-      TNAME＝TP["geisha"]["name"]。
-      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;other&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『に1枚引かせる</button>』。
-      HTML＝HTML＆BTN。
-    ここまで。
-  ここまで。
-  MODAL＝「#effect-modal」のDOM要素取得。
-  BODY＝「#effect-modal-body」のDOM要素取得。
-  TITLE＝「#effect-modal-title」のDOM要素取得。
-  TITLEへ「町人の効果」をテキスト設定。
-  BODYへHTMLをHTML設定。
-  MODALの「display」へ「flex」をDOMスタイル設定。
-ここまで。
-
-●町人自分捨て選択とは
-  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  CARDJSON＝「window.__effectCard」をJS実行。
-  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
-  DATA＝{"action":"カード効果確定","effectName":"町人","mode":"self","drawOnly":1}。
-  DATA["roomId"]＝RID。
-  DATA["playerId"]＝myPID。
-  DATA["card"]＝CARDJSON。
-  DATA["source"]＝SOURCE。
-  DATAJSON＝DATAをJSONエンコード。
-  JS文＝「emit('アクション', 」＆DATAJSON＆「)」。
-  JS文をJS実行。
-  『window.__waitingDiscard = {effectName:"町人", count:1}』をJS実行。
-ここまで。
-
-●対象選択UI表示とは
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  CARD＝「window.__effectCard」をJS実行。
-  NAME＝CARD["name"]。
-  HTML＝「」。
-  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
-  プレイヤー一覧 を反復して
-    TP＝対象。
-    TPID＝TP["id"]。
-    もし TPID＝myPID ならば
-    違えば
-      TNAME＝TP["geisha"]["name"]。
-      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;』＆NAME＆『&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『</button>』。
-      HTML＝HTML＆BTN。
-    ここまで。
-  ここまで。
-  MODAL＝「#effect-modal」のDOM要素取得。
-  BODY＝「#effect-modal-body」のDOM要素取得。
-  TITLE＝「#effect-modal-title」のDOM要素取得。
-  TITLEへNAME＆「の効果：対象を選んでください」をテキスト設定。
-  BODYへHTMLをHTML設定。
-  MODALの「display」へ「flex」をDOMスタイル設定。
-ここまで。
-
-●カード効果確定処理とは
-  DATA＝「window.__effectData」をJS実行。
-  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  CARDJSON＝「window.__effectCard」をJS実行。
-  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
-  DATA["roomId"]＝RID。
-  DATA["playerId"]＝myPID。
-  DATA["card"]＝CARDJSON。
-  DATA["source"]＝SOURCE。
-  DATAJSON＝DATAをJSONエンコード。
-  JS文＝「jsCloseEffectModal(); emit('アクション', 」＆DATAJSON＆「)」。
-  JS文をJS実行。
-ここまで。
-
-●（枚数で）捨てカード選択UI表示とは
-  HAND＝「window.__currentHand || []」をJS実行。
-  HTML＝「<div style='font-size:11px;color:#c0a06a;margin-bottom:8px'>捨てるカードを」＆枚数＆「枚選んでください</div>」。
-  手札枚数＝HANDの要素数。
-  I＝0。
-  I<手札枚数の間
-    HC＝HAND[I]。
-    HNAME＝HC["name"]。
-    HCOL＝HC["color"]。
-    IDX＝I。
-    BTN＝『<button class="effect-target-btn" onclick="
-      if(!window.__discardIdxs) window.__discardIdxs=[];
-      var btn=this;
-      var idx=』＆IDX＆『;
-      var pos=window.__discardIdxs.indexOf(idx);
-      if(pos>=0){
-        window.__discardIdxs.splice(pos,1);
-        btn.style.borderColor=&#39;&#39;;
-        btn.style.background=&#39;&#39;;
-      } else {
-        window.__discardIdxs.push(idx);
-        btn.style.borderColor=&#39;#e8c97a&#39;;
-        btn.style.background=&#39;rgba(120,80,20,0.7)&#39;;
-      }
-    ">』＆HNAME＆「(」＆HCOL＆『)</button>』。
-    HTML＝HTML＆BTN。
-    I＝I+1。
-  ここまで。
-  HTML＝HTML＆『<button class="effect-target-btn" style="margin-top:8px;border-color:#e8c97a;" onclick="
-    var idxs = window.__discardIdxs || [];
-    if(idxs.length===0){alert(&#39;捨てるカードを選んでください&#39;);return;}
-    window.__effectData.discardIndexes = idxs;
-    window.__discardIdxs = [];
-    navigator.nako3.run(&#39;カード効果確定処理。&#39;);
-  ">確定</button>』。
-  MODAL＝「#effect-modal」のDOM要素取得。
-  BODY＝「#effect-modal-body」のDOM要素取得。
-  TITLE＝「#effect-modal-title」のDOM要素取得。
-  TITLEへ「捨てるカードを選んでください」をテキスト設定。
-  BODYへHTMLをHTML設定。
-  MODALの「display」へ「flex」をDOMスタイル設定。
-ここまで。
 
 ●（handと評判で）出せるカードハイライトとは
   枚数＝handの要素数。
