@@ -1178,6 +1178,8 @@
 		pstate["closed"]=P["closed"]
 		pstate["turnCount"]=P["turnCount"]
 		pstate["scoreByRound"]=P["scoreByRound"]
+		pstate["usedGeishaSkill"]=P["usedGeishaSkill"]
+		pstate["usedBaseAction"]=P["usedBaseAction"]
 		もしP["id"]=PIDならば
 			pstate["hand"]=P["hand"]
 			pstate["reservation"]=P["reservation"]
