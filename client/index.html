@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+      <audio id="bgm-main" loop preload="auto">
+        <source src="assets/title.mp3" type="audio/mpeg" />
+      </audio>
       <!-- ホーム画面 -->
     <div id="screen-home" class="screen active">        
       <div class="home-container">
@@ -251,6 +254,17 @@
            （カードクリック・ボタン処理）
       ======================================== -->
       <script>
+        function playMainBgm() {
+          const bgm = document.getElementById('bgm-main');
+          if (!bgm || window.__bgmStarted) return;
+          bgm.volume = 0.4;
+          const playPromise = bgm.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {});
+          }
+          window.__bgmStarted = true;
+        }
+
         /**
          * カードクリック
          * なでしこ3が生成したカードのonclickから呼ばれる
@@ -282,42 +296,6 @@
 
           window.__actionType = action;
           navigator.nako3.run('アクション実行。');
-
-          // ログ追記
-          const timer = document.getElementById('timer').textContent;
-          const log = document.getElementById('log-list');
-          const entry = document.createElement('div');
-          entry.className = 'log-entry';
-          let cardName = '';
-          if (selected.length > 0) {
-            const val = selected[0].querySelector('.card-value');
-            if (val) cardName = val.textContent;
-          }
-          if (action === '紹介') {
-            const names = Array.from(selected).map(c => {
-              const v = c.querySelector('.card-value');
-              return v ? v.textContent : '';
-            }).join('・');
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が</span>` +
-              `<span class="log-highlight">${names}</span>` +
-              `<span class="log-action">を紹介</span>`;
-          } else if (cardName) {
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が</span>` +
-              `<span class="log-highlight">${cardName}</span>` +
-              `<span class="log-action">を${action}</span>`;
-          } else {
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が${action}</span>`;
-          }
-          log.insertBefore(entry, log.firstChild);
 
           // 選択状態を解除
           selected.forEach(c => c.classList.remove('selected'));

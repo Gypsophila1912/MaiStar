@@ -712,6 +712,32 @@ yoyakuBtn＝空。
   ここまで。
 ここまで。
 
+●（logsで）行動ログ表示とは
+  LOGJSON＝logsをJSONエンコード。
+  JS文＝『
+    (() => {
+      const logs = 』＆LOGJSON＆『;
+      const el = document.getElementById("log-list");
+      if (!el) return;
+      const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[c]));
+      const items = Array.isArray(logs) ? logs.slice().reverse() : [];
+      el.innerHTML = items.map((log) =>
+        "<div class=\"log-entry\">" +
+          "<span class=\"log-actor\">" + esc(log.actor) + "</span>" +
+          "<span class=\"log-action\"> " + esc(log.text) + "</span>" +
+        "</div>"
+      ).join("");
+    })()
+  』。
+  JS文をJS実行。
+ここまで。
+
 ●（playersで）プレイヤー表示とは
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
   players を反復して
@@ -984,6 +1010,12 @@ yoyakuBtn＝空。
   # 座敷・宣伝表示
   playersで座敷表示。
   playersで宣伝表示。
+  # 行動ログ表示
+  もし stateの"actionLogs"が辞書キー存在 ならば
+    state["actionLogs"]で行動ログ表示。
+  違えば
+    []で行動ログ表示。
+  ここまで。
 
   # スコア表示
   SCORE＝myP["tokenTotal"]。

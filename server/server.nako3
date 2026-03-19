@@ -15,6 +15,7 @@
   JS文をJS実行。
   GJSON＝「sys.__nako3game」をJS実行。
   G＝GJSONをJSONデコード。
+  行動ログ＝GとPIDとACTIONとデータの行動ログ作成。
   前状態＝G["players"][PID]["usedBaseAction"]。
   前予約＝G["players"][PID]["hasReservation"]。
 もし ACTION＝「座敷」 ならば
@@ -89,6 +90,7 @@
     「アクション失敗: {ACTION}」と表示。
     {"success":偽,"message":"そのカードは出せません"}をJSONエンコードしてWEBサーバ出力。
   違えば
+    Gと行動ログの行動ログ追加をGに代入。
     Gのラウンド終了チェックをGに代入。
     Gの残り巡確認をGに代入。
    # 手番進行（予約客・予約客セット・カード効果確定は手番を消費しない）
