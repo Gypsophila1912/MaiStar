@@ -443,7 +443,15 @@ yoyakuBtn＝空。
 
 ●商人UI表示とは
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  HTML＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;商人&#39;,mode:&#39;self&#39;,discardIndex:0};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">自分：2枚引いて1枚捨てる</button>』。
+  HTML＝「」。
+
+  # 自分：2枚引いて1枚捨てる
+  BTN自分＝『<button class="effect-target-btn" onclick="
+    window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;商人&#39;,mode:&#39;self&#39;};
+    navigator.nako3.run(&#39;商人自分捨て選択。&#39;);
+  ">自分：2枚引いて1枚捨てる</button>』。
+  HTML＝HTML＆BTN自分。
+
   プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
   プレイヤー一覧 を反復して
     TP＝対象。
@@ -463,9 +471,35 @@ yoyakuBtn＝空。
   MODALの「display」へ「flex」をDOMスタイル設定。
 ここまで。
 
+●商人自分捨て選択とは
+  # まずサーバーに2枚引かせる（捨て前にドロー）
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  CARDJSON＝「window.__effectCard」をJS実行。
+  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
+  # ドローのみ先に実行
+  DATA＝{"action":"カード効果確定","effectName":"商人","mode":"self","drawOnly":1}。
+  DATA["roomId"]＝RID。
+  DATA["playerId"]＝myPID。
+  DATA["card"]＝CARDJSON。
+  DATA["source"]＝SOURCE。
+  DATAJSON＝DATAをJSONエンコード。
+  JS文＝「emit('アクション', 」＆DATAJSON＆「)」。
+  JS文をJS実行。
+  # モーダルは閉じない（ゲーム状態更新後に捨て選択UIを出す）
+  『window.__waitingDiscard = {effectName:"商人", count:1}』をJS実行。
+ここまで。
+
 ●町人UI表示とは
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  HTML＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;self&#39;,discardIndex:0};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">自分：1枚引いて1枚捨てる</button>』。
+  HTML＝「」。
+
+  BTN自分＝『<button class="effect-target-btn" onclick="
+    window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;self&#39;};
+    navigator.nako3.run(&#39;町人自分捨て選択。&#39;);
+  ">自分：1枚引いて1枚捨てる</button>』。
+  HTML＝HTML＆BTN自分。
+
   プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
   プレイヤー一覧 を反復して
     TP＝対象。
@@ -483,6 +517,22 @@ yoyakuBtn＝空。
   TITLEへ「町人の効果」をテキスト設定。
   BODYへHTMLをHTML設定。
   MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●町人自分捨て選択とは
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  CARDJSON＝「window.__effectCard」をJS実行。
+  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
+  DATA＝{"action":"カード効果確定","effectName":"町人","mode":"self","drawOnly":1}。
+  DATA["roomId"]＝RID。
+  DATA["playerId"]＝myPID。
+  DATA["card"]＝CARDJSON。
+  DATA["source"]＝SOURCE。
+  DATAJSON＝DATAをJSONエンコード。
+  JS文＝「emit('アクション', 」＆DATAJSON＆「)」。
+  JS文をJS実行。
+  『window.__waitingDiscard = {effectName:"町人", count:1}』をJS実行。
 ここまで。
 
 ●対象選択UI表示とは
@@ -522,6 +572,49 @@ yoyakuBtn＝空。
   DATAJSON＝DATAをJSONエンコード。
   JS文＝「jsCloseEffectModal(); emit('アクション', 」＆DATAJSON＆「)」。
   JS文をJS実行。
+ここまで。
+
+●（枚数で）捨てカード選択UI表示とは
+  HAND＝「window.__currentHand || []」をJS実行。
+  HTML＝「<div style='font-size:11px;color:#c0a06a;margin-bottom:8px'>捨てるカードを」＆枚数＆「枚選んでください</div>」。
+  手札枚数＝HANDの要素数。
+  I＝0。
+  I<手札枚数の間
+    HC＝HAND[I]。
+    HNAME＝HC["name"]。
+    HCOL＝HC["color"]。
+    IDX＝I。
+    BTN＝『<button class="effect-target-btn" onclick="
+      if(!window.__discardIdxs) window.__discardIdxs=[];
+      var btn=this;
+      var idx=』＆IDX＆『;
+      var pos=window.__discardIdxs.indexOf(idx);
+      if(pos>=0){
+        window.__discardIdxs.splice(pos,1);
+        btn.style.borderColor=&#39;&#39;;
+        btn.style.background=&#39;&#39;;
+      } else {
+        window.__discardIdxs.push(idx);
+        btn.style.borderColor=&#39;#e8c97a&#39;;
+        btn.style.background=&#39;rgba(120,80,20,0.7)&#39;;
+      }
+    ">』＆HNAME＆「(」＆HCOL＆『)</button>』。
+    HTML＝HTML＆BTN。
+    I＝I+1。
+  ここまで。
+  HTML＝HTML＆『<button class="effect-target-btn" style="margin-top:8px;border-color:#e8c97a;" onclick="
+    var idxs = window.__discardIdxs || [];
+    if(idxs.length===0){alert(&#39;捨てるカードを選んでください&#39;);return;}
+    window.__effectData.discardIndexes = idxs;
+    window.__discardIdxs = [];
+    navigator.nako3.run(&#39;カード効果確定処理。&#39;);
+  ">確定</button>』。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「捨てるカードを選んでください」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
 ここまで。
 
 ●（handと評判で）出せるカードハイライトとは
