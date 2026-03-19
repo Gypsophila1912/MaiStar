@@ -920,6 +920,50 @@ yoyakuBtn＝空。
 
   PHASE＝state["phase"]。
 
+  # 自分の芸者画像表示
+  geishaId＝myP["geishaId"]。
+  もし geishaId≠空 ならば
+    IMGURL＝「assets/maiko/cards/」＆geishaId＆「.png」。
+    REP＝myP["reputation"]。
+    赤＝REP["red"]。
+    青＝REP["blue"]。
+    緑＝REP["green"]。
+    HTML＝「」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box red'></div>」＆赤＆「</div>」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box blue'></div>」＆青＆「</div>」。
+    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box green'></div>」＆緑＆「</div>」。
+    『
+      const area = document.getElementById("my-maiko-area");
+      const img = document.getElementById("my-maiko-img");
+      const stats = document.getElementById("my-maiko-stats");
+      if (area && img) {
+        area.style.display = "flex";
+        area.style.position = "absolute";
+        area.style.left = "0";
+        area.style.bottom = "0";
+        area.style.width = "140px";
+        area.style.height = "100%";
+        area.style.zIndex = "10";
+        img.style.width = "auto";
+        img.style.height = "100%";
+        img.style.display = "block";
+      }
+    』をJS実行。
+    JS文＝「document.getElementById('my-maiko-img').src = '」＆IMGURL＆「';」。
+    JS文をJS実行。
+    STATS＝「#my-maiko-stats」のDOM要素取得。
+    STATSへHTMLをHTML設定。
+  違えば
+    『
+      const area = document.getElementById("my-maiko-area");
+      const img = document.getElementById("my-maiko-img");
+      const stats = document.getElementById("my-maiko-stats");
+      if (area) area.style.display = "none";
+      if (img) img.src = "";
+      if (stats) stats.innerHTML = "";
+    』をJS実行。
+  ここまで。
+
   # 効果選択UI用にwindowに保存
   HANDJSON＝myP["hand"]をJSONエンコード。
   JS文＝「window.__currentHand = 」＆HANDJSON。
@@ -999,7 +1043,7 @@ yoyakuBtn＝空。
       0でアクションボタン有効設定。
     ここまで。
   ここまで。
-   # 山札残枚数表示
+  # 山札残枚数表示
   DECK＝state["deckCount"]。
   DEL＝「#deck-count-display」のDOM要素取得。
   もし DEL≠空 ならば
