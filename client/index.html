@@ -283,42 +283,6 @@
           window.__actionType = action;
           navigator.nako3.run('アクション実行。');
 
-          // ログ追記
-          const timer = document.getElementById('timer').textContent;
-          const log = document.getElementById('log-list');
-          const entry = document.createElement('div');
-          entry.className = 'log-entry';
-          let cardName = '';
-          if (selected.length > 0) {
-            const val = selected[0].querySelector('.card-value');
-            if (val) cardName = val.textContent;
-          }
-          if (action === '紹介') {
-            const names = Array.from(selected).map(c => {
-              const v = c.querySelector('.card-value');
-              return v ? v.textContent : '';
-            }).join('・');
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が</span>` +
-              `<span class="log-highlight">${names}</span>` +
-              `<span class="log-action">を紹介</span>`;
-          } else if (cardName) {
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が</span>` +
-              `<span class="log-highlight">${cardName}</span>` +
-              `<span class="log-action">を${action}</span>`;
-          } else {
-            entry.innerHTML =
-              `<span class="log-time">${timer}</span>` +
-              `<span class="log-actor">あなた</span>` +
-              `<span class="log-action">が${action}</span>`;
-          }
-          log.insertBefore(entry, log.firstChild);
-
           // 選択状態を解除
           selected.forEach(c => c.classList.remove('selected'));
           document.getElementById('selected-count').textContent = '選択中: 0枚';

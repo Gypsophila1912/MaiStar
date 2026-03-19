@@ -93,7 +93,8 @@
 		bonusTarget:"",
 		lapTriggerIndex:-1,
 		lapRemaining:0,
-		winnerIds:[]
+		winnerIds:[],
+		actionLogs:[]
 	}
 	I=0
 	I<人数の間
@@ -101,6 +102,107 @@
 		Iと名前のプレイヤー状態作成をPに代入。
 		G["players"]にPを配列追加。
 		I=I+1
+	ここまで。
+	Gを戻す。
+ここまで。
+
+●(GとPIDとACTIONとデータの)行動ログ作成とは
+	P=G["players"][PID]
+	もしP=空ならば
+		空を戻す。
+	ここまで。
+	ログ情報={}
+	ログ情報["actor"]=P["name"]
+	TEXT=ACTION
+
+	もしACTION="座敷"ならば
+		IDX=データ["cardIndex"]
+		手札数=P["hand"]の要素数
+		もしIDX>=0かつIDX<手札数ならば
+			TEXT=P["hand"][IDX]["name"]&"を座敷に出した"
+		違えば
+			TEXT="座敷に出した"
+		ここまで。
+	ここまで。
+
+	もしACTION="宣伝"ならば
+		IDX=データ["cardIndex"]
+		手札数=P["hand"]の要素数
+		もしIDX>=0かつIDX<手札数ならば
+			TEXT=P["hand"][IDX]["name"]&"を宣伝に出した"
+		違えば
+			TEXT="宣伝した"
+		ここまで。
+	ここまで。
+
+	もしACTION="紹介"ならば
+		名前列=""
+		番号リスト=データ["cardIndexes"]
+		番号リストを反復
+			IDX=対象
+			手札数=P["hand"]の要素数
+			もしIDX>=0かつIDX<手札数ならば
+				もし名前列!=""ならば
+					名前列=名前列&"・"
+				ここまで。
+				名前列=名前列&P["hand"][IDX]["name"]
+			ここまで。
+		ここまで。
+		もし名前列=""ならば
+			TEXT="紹介した"
+		違えば
+			TEXT=名前列&"を紹介した"
+		ここまで。
+	ここまで。
+
+	もしACTION="予約客セット"ならば
+		IDX=データ["cardIndex"]
+		手札数=P["hand"]の要素数
+		もしIDX>=0かつIDX<手札数ならば
+			TEXT=P["hand"][IDX]["name"]&"を予約客にセットした"
+		違えば
+			TEXT="予約客をセットした"
+		ここまで。
+	ここまで。
+
+	もしACTION="予約客"ならば
+		予約カード=P["reservation"]
+		名前あり=予約カードの"name"が辞書キー存在。
+		もし名前あり=1ならば
+			TEXT=予約カード["name"]&"を予約客として出した"
+		違えば
+			TEXT="予約客を出した"
+		ここまで。
+	ここまで。
+
+	もしACTION="カード効果確定"ならば
+		もしデータの"effectName"が辞書キー存在ならば
+			TEXT=データ["effectName"]&"の効果を使った"
+		違えば
+			TEXT="カード効果を使った"
+		ここまで。
+	ここまで。
+
+	もしACTION="スキル"ならば
+		TEXT="芸者スキルを使った"
+	ここまで。
+
+	ログ情報["text"]=TEXT
+	ログ情報を戻す。
+ここまで。
+
+●(Gとログ情報の)行動ログ追加とは
+	もしログ情報=空ならば
+		Gを戻す。
+	ここまで。
+	ある=Gの"actionLogs"が辞書キー存在。
+	もしある=0ならば
+		G["actionLogs"]=[]
+	ここまで。
+	G["actionLogs"]にログ情報を配列追加。
+	件数=G["actionLogs"]の要素数
+	もし件数>20ならば
+		G["actionLogs"]の0を配列切取して捨てログに代入。
 	ここまで。
 	Gを戻す。
 ここまで。
@@ -1127,6 +1229,7 @@
 	G["discard"]=[]
 	G["players"]=[]
 	G["winnerIds"]=[]
+	G["actionLogs"]=[]
 	芸者リスト=G["カード"]["芸者"]
 	芸者リストを配列シャッフル。
 	I=0
@@ -1181,6 +1284,7 @@
 	もしG["endMode"]="lastlap"ならば
 		state["isFinalLap"]=1
 	ここまで。
+	state["actionLogs"]=G["actionLogs"]
 	players=[]
 	G["players"]を反復
 		P=対象
