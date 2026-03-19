@@ -74,6 +74,14 @@
     <!-- ゲーム画面 -->
     <div id="screen-game" class="screen" style="display: none">
       <div id="game-root">
+        <!-- カード効果選択モーダル -->
+        <div id="effect-modal" style="display:none">
+          <div id="effect-modal-inner">
+            <div id="effect-modal-title">効果の対象を選んでください</div>
+            <div id="effect-modal-body"></div>
+            <button onclick="jsEffectCancel()" id="effect-cancel-btn">キャンセル</button>
+          </div>
+        </div>
        
         <!-- ヘッダー -->
         <div id="header">
@@ -257,63 +265,74 @@
          * アクションボタンクリック
          * HTML側ボタンのonclickから呼ばれ、ログ追記などを行う
          */
-function jsActionClick(action) {
-  const selected = document.querySelectorAll('#my-cards .card-face.selected');
+        function jsActionClick(action) {
+          const selected = document.querySelectorAll('#my-cards .card-face.selected');
 
-  // 座敷・宣伝・予約客用：最初の選択カードのインデックス
-  window.__cardIdx = -1;
-  // 紹介用：全選択カードのインデックス
-  window.__cardIdxs = [];
-  const cards = document.querySelectorAll('#my-cards .card-face');
-  for (let i = 0; i < cards.length; i++) {
-    if (cards[i].classList.contains('selected')) {
-      if (window.__cardIdx === -1) window.__cardIdx = i;
-      window.__cardIdxs.push(i);
-    }
-  }
+          // 座敷・宣伝・予約客用：最初の選択カードのインデックス
+          window.__cardIdx = -1;
+          // 紹介用：全選択カードのインデックス
+          window.__cardIdxs = [];
+          const cards = document.querySelectorAll('#my-cards .card-face');
+          for (let i = 0; i < cards.length; i++) {
+            if (cards[i].classList.contains('selected')) {
+              if (window.__cardIdx === -1) window.__cardIdx = i;
+              window.__cardIdxs.push(i);
+            }
+          }
 
-  window.__actionType = action;
-  navigator.nako3.run('アクション実行。');
+          window.__actionType = action;
+          navigator.nako3.run('アクション実行。');
 
-  // ログ追記
-  const timer = document.getElementById('timer').textContent;
-  const log = document.getElementById('log-list');
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
-  let cardName = '';
-  if (selected.length > 0) {
-    const val = selected[0].querySelector('.card-value');
-    if (val) cardName = val.textContent;
-  }
-  if (action === '紹介') {
-    const names = Array.from(selected).map(c => {
-      const v = c.querySelector('.card-value');
-      return v ? v.textContent : '';
-    }).join('・');
-    entry.innerHTML =
-      `<span class="log-time">${timer}</span>` +
-      `<span class="log-actor">あなた</span>` +
-      `<span class="log-action">が</span>` +
-      `<span class="log-highlight">${names}</span>` +
-      `<span class="log-action">を紹介</span>`;
-  } else if (cardName) {
-    entry.innerHTML =
-      `<span class="log-time">${timer}</span>` +
-      `<span class="log-actor">あなた</span>` +
-      `<span class="log-action">が</span>` +
-      `<span class="log-highlight">${cardName}</span>` +
-      `<span class="log-action">を${action}</span>`;
-  } else {
-    entry.innerHTML =
-      `<span class="log-time">${timer}</span>` +
-      `<span class="log-actor">あなた</span>` +
-      `<span class="log-action">が${action}</span>`;
-  }
-  log.insertBefore(entry, log.firstChild);
+          // ログ追記
+          const timer = document.getElementById('timer').textContent;
+          const log = document.getElementById('log-list');
+          const entry = document.createElement('div');
+          entry.className = 'log-entry';
+          let cardName = '';
+          if (selected.length > 0) {
+            const val = selected[0].querySelector('.card-value');
+            if (val) cardName = val.textContent;
+          }
+          if (action === '紹介') {
+            const names = Array.from(selected).map(c => {
+              const v = c.querySelector('.card-value');
+              return v ? v.textContent : '';
+            }).join('・');
+            entry.innerHTML =
+              `<span class="log-time">${timer}</span>` +
+              `<span class="log-actor">あなた</span>` +
+              `<span class="log-action">が</span>` +
+              `<span class="log-highlight">${names}</span>` +
+              `<span class="log-action">を紹介</span>`;
+          } else if (cardName) {
+            entry.innerHTML =
+              `<span class="log-time">${timer}</span>` +
+              `<span class="log-actor">あなた</span>` +
+              `<span class="log-action">が</span>` +
+              `<span class="log-highlight">${cardName}</span>` +
+              `<span class="log-action">を${action}</span>`;
+          } else {
+            entry.innerHTML =
+              `<span class="log-time">${timer}</span>` +
+              `<span class="log-actor">あなた</span>` +
+              `<span class="log-action">が${action}</span>`;
+          }
+          log.insertBefore(entry, log.firstChild);
 
-  // 選択状態を解除
-  selected.forEach(c => c.classList.remove('selected'));
-  document.getElementById('selected-count').textContent = '選択中: 0枚';
+          // 選択状態を解除
+          selected.forEach(c => c.classList.remove('selected'));
+          document.getElementById('selected-count').textContent = '選択中: 0枚';
+        }
+
+        /*カード効果系の処理*/
+function jsEffectCancel() {
+  document.getElementById('effect-modal').style.display = 'none';
+  window.__lastEffectCard = null;
+}
+
+function jsCloseEffectModal() {
+  const modal = document.getElementById('effect-modal');
+  if(modal) modal.style.display = 'none';
 }
         /**
          * ゲーム中のタイマー開始

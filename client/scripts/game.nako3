@@ -58,98 +58,6 @@ yoyakuBtn＝空。
   ここまで。
 ここまで。
 
-●（playersで）プレイヤー表示とは
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  players を反復して
-    P＝対象。
-    IDX＝P["id"]。
-
-    # 座敷エリアのプレイヤー名ラベルを更新
-    TLABEL＝「#table-label-」＆IDXのDOM要素取得。
-    もし TLABEL＝空 ならば
-    違えば
-      TLABELへP["geisha"]["name"]をテキスト設定。
-    ここまで。
-
-    GNEL＝「#maiko-name-」＆IDXのDOM要素取得。
-    もし GNEL＝空 ならば
-    違えば
-      GNELへP["geisha"]["name"]をテキスト設定。
-    ここまで。
-
-    SEL＝「#score-」＆IDXのDOM要素取得。
-    もし SEL＝空 ならば
-    違えば
-      SELへ「点数: 」＆P["tokenTotal"]＆「点」をテキスト設定。
-    ここまで。
-
-    REP＝P["reputation"]。
-    赤＝REP["red"]。
-    青＝REP["blue"]。
-    緑＝REP["green"]。
-    REPEL＝「#reputation-」＆IDXのDOM要素取得。
-    もし REPEL＝空 ならば
-    違えば
-      REPELへ「評判: 赤」＆赤＆「 青」＆青＆「 緑」＆緑をテキスト設定。
-    ここまで。
-
-    # ★ 休業状態・手番状態のバッジ更新
-    BADGE＝「#geisha-」＆IDXのDOM要素取得。
-    SBADGE＝「」。
-    もし BADGE＝空 ならば
-    違えば
-      CLOSED＝P["closed"]。
-      もし CLOSED＝1 ならば
-        SBADGE＝「<div class='status-badge status-closed'>休業中</div>」。
-      ここまで。
-      もし CLOSED＝0 ならば
-        # turnIndexは親のstateから取れないのでwindowに保存した値を使う
-        TIDX＝「window.__currentTurnIndex || -1」をJS実行。
-        もし TIDX＝IDX ならば
-          SBADGE＝「<div class='status-badge status-seki'>手番中</div>」。
-        違えば
-          SBADGE＝「<div class='status-badge status-normal'>待機中</div>」。
-        ここまで。
-      ここまで。
-      # 既存バッジを置き換え
-      JS文＝『(function(){
-        var card = document.getElementById("geisha-』＆IDX＆『");
-        if(!card) return;
-        var old = card.querySelector(".status-badge");
-        if(old) old.outerHTML = "』＆SBADGE＆『";
-      })()』をJS実行。
-    ここまで。
-
-    # ★ 手番中プレイヤーのカードをハイライト
-    TIDX2＝「window.__currentTurnIndex || -1」をJS実行。
-    もし BADGE＝空 ならば
-    違えば
-      もし TIDX2＝IDX ならば
-        『document.getElementById("geisha-』＆IDX＆『").classList.add("active")』をJS実行。
-      違えば
-        『document.getElementById("geisha-』＆IDX＆『").classList.remove("active")』をJS実行。
-      ここまで。
-    ここまで。
-
-    # 手札裏面表示
-    もし P["id"]＝myPID ならば
-      HCOUNT＝P["hand"]の要素数。
-    違えば
-      HCOUNT＝P["handCount"]。
-    ここまで。
-    BACKS＝「」。
-    J＝0。
-    J<HCOUNTの間
-      BACKS＝BACKS＆「<div class='card-back'></div>」。
-      J＝J+1。
-    ここまで。
-    HEL＝「#hand-」＆IDXのDOM要素取得。
-    もし HEL＝空 ならば
-    違えば
-      HELへBACKSをHTML設定。
-    ここまで。
-  ここまで。
-ここまで。
 
 ●（handで）手札表示とは
   HTML＝「」。
@@ -224,21 +132,30 @@ yoyakuBtn＝空。
     「カードを選択してください」と言う。
     戻る。
   ここまで。
-
-  # 2枚以上選択されていたら弾く
   選択数＝「document.querySelectorAll('#my-cards .card-face.selected').length」をJS実行。
   もし 選択数>1 ならば
     「座敷に出せるカードは1枚だけです」と言う。
     戻る。
   ここまで。
-
   RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+
+  # ★ 出すカードを記憶（効果UI用）
+  手札＝「window.__currentHand || []」をJS実行。
+  手札枚数＝手札の要素数。
+  もし IDX>=0 ならば
+    もし IDX<手札枚数 ならば
+      出すカード＝手札[IDX]。
+      CJSON＝出すカードをJSONエンコード。
+      JS文＝「window.__lastEffectCard = 」＆CJSON＆「; window.__lastEffectSource = 'zashiki';」。
+      JS文をJS実行。
+    ここまで。
+  ここまで。
+
   送信JSON＝{"action":"座敷","roomId":RID,"playerId":myPID,"cardIndex":IDX}をJSONエンコード。
   JS文＝「emit('アクション', 」＆送信JSON＆「)」。
   JS文をJS実行。
 ここまで。
-
 ●宣伝処理とは
   IDX＝「window.__cardIdx」をJS実行。
   もし IDX＝-1 ならば
@@ -334,9 +251,6 @@ yoyakuBtn＝空。
   JS文をJS実行。
 ここまで。
 
-●予約客セットボタン初期化とは
-  # スロットクリックはゲーム画面初期化内で設定するため、ここでは何もしない
-ここまで。
 
 ●予約客処理とは
   # 予約客がセットされていなければ弾く
@@ -412,6 +326,202 @@ yoyakuBtn＝空。
       });
     』をJS実行。
   ここまで。
+ここまで。
+
+●（カードと起点で）カード効果UI表示とは
+  # カードがnullの場合はスキップ
+  もし カード＝空 ならば
+    戻る。
+  ここまで。
+  名前あり＝カードの「name」が辞書キー存在。
+  もし 名前あり＝0 ならば
+    戻る。
+  ここまで。
+
+  NAME＝カード["name"]。
+
+  もし NAME＝「役者」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「大名」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「花魁」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「用心棒」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「幇間」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「医師」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「学者」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「異人」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「将軍」 ならば
+    戻る。
+  ここまで。
+
+  CARDJSON＝カードをJSONエンコード。
+  JS文＝「window.__effectCard = 」＆CARDJSON＆「; window.__effectSource = '」＆起点＆「';」。
+  JS文をJS実行。
+
+  もし NAME＝「遊女」 ならば
+    遊女UI表示。
+    戻る。
+  ここまで。
+  もし NAME＝「商人」 ならば
+    商人UI表示。
+    戻る。
+  ここまで。
+  もし NAME＝「町人」 ならば
+    町人UI表示。
+    戻る。
+  ここまで。
+
+  対象判定＝0。
+  もし NAME＝「力士」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「侍」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「盗人」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「やくざ」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「忍者」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「横綱」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「くの一」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「奉行」 ならば
+    対象判定＝1。
+  ここまで。
+  もし 対象判定＝1 ならば
+    対象選択UI表示。
+  ここまで。
+ここまで。
+
+●遊女UI表示とは
+  HAND＝「window.__currentHand || []」をJS実行。
+  CARD＝「window.__effectCard」をJS実行。
+  COL＝CARD["color"]。
+  HTML＝「<div style='font-size:11px;color:#c0a06a;margin-bottom:8px'>同色(」＆COL＆「)の客カードを選んでください</div>」。
+  I＝0。
+  枚数＝HANDの要素数。
+  I<枚数の間
+    HC＝HAND[I]。
+    もし HC["color"]＝COL ならば
+      HNAME＝HC["name"]。
+      HCOND＝HC["condition"]。
+      IDX＝I。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:'カード効果確定',effectName:'遊女',handIndex:』＆IDX＆『};navigator.nako3.run('カード効果確定処理。');">』＆HNAME＆「(条件:」＆HCOND＆『)</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+    I＝I+1。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「遊女の効果：同色カードを客に出す」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●商人UI表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  HTML＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;商人&#39;,mode:&#39;self&#39;,discardIndex:0};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">自分：2枚引いて1枚捨てる</button>』。
+  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
+  プレイヤー一覧 を反復して
+    TP＝対象。
+    TPID＝TP["id"]。
+    もし TPID＝myPID ならば
+    違えば
+      TNAME＝TP["geisha"]["name"]。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;商人&#39;,mode:&#39;other&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『に2枚引かせる</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「商人の効果」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●町人UI表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  HTML＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;self&#39;,discardIndex:0};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">自分：1枚引いて1枚捨てる</button>』。
+  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
+  プレイヤー一覧 を反復して
+    TP＝対象。
+    TPID＝TP["id"]。
+    もし TPID＝myPID ならば
+    違えば
+      TNAME＝TP["geisha"]["name"]。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;other&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『に1枚引かせる</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「町人の効果」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●対象選択UI表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  CARD＝「window.__effectCard」をJS実行。
+  NAME＝CARD["name"]。
+  HTML＝「」。
+  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
+  プレイヤー一覧 を反復して
+    TP＝対象。
+    TPID＝TP["id"]。
+    もし TPID＝myPID ならば
+    違えば
+      TNAME＝TP["geisha"]["name"]。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;』＆NAME＆『&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへNAME＆「の効果：対象を選んでください」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
+ここまで。
+
+●カード効果確定処理とは
+  DATA＝「window.__effectData」をJS実行。
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  CARDJSON＝「window.__effectCard」をJS実行。
+  SOURCE＝「window.__effectSource || 'zashiki'」をJS実行。
+  DATA["roomId"]＝RID。
+  DATA["playerId"]＝myPID。
+  DATA["card"]＝CARDJSON。
+  DATA["source"]＝SOURCE。
+  DATAJSON＝DATAをJSONエンコード。
+  JS文＝「jsCloseEffectModal(); emit('アクション', 」＆DATAJSON＆「)」。
+  JS文をJS実行。
 ここまで。
 
 ●（handと評判で）出せるカードハイライトとは
@@ -568,29 +678,32 @@ yoyakuBtn＝空。
     P＝対象。
     IDX＝P["id"]。
 
+    # geishaがnullの場合はスキップ
+    GEISHA＝P["geisha"]。
+    もし GEISHA＝空 ならば
+      続ける。
+    ここまで。
+    GNAME＝GEISHA["name"]。
+
     # 座敷エリアのプレイヤー名ラベルを更新
     TLABEL＝「#table-label-」＆IDXのDOM要素取得。
     もし TLABEL＝空 ならば
     違えば
-      gName＝P["geisha"]["name"]。
-      TLABELへgNameをテキスト設定。
+      TLABELへGNAMEをテキスト設定。
     ここまで。
 
-    # 芸者名表示（上部カード）
     GNEL＝「#maiko-name-」＆IDXのDOM要素取得。
     もし GNEL＝空 ならば
     違えば
-      GNELへP["geisha"]["name"]をテキスト設定。
+      GNELへGNAMEをテキスト設定。
     ここまで。
 
-    # スコア表示
     SEL＝「#score-」＆IDXのDOM要素取得。
     もし SEL＝空 ならば
     違えば
       SELへ「点数: 」＆P["tokenTotal"]＆「点」をテキスト設定。
     ここまで。
 
-    # 評判表示
     REP＝P["reputation"]。
     赤＝REP["red"]。
     青＝REP["blue"]。
@@ -599,6 +712,39 @@ yoyakuBtn＝空。
     もし REPEL＝空 ならば
     違えば
       REPELへ「評判: 赤」＆赤＆「 青」＆青＆「 緑」＆緑をテキスト設定。
+    ここまで。
+
+    # 休業状態・手番バッジ更新
+    BADGE＝「#geisha-」＆IDXのDOM要素取得。
+    もし BADGE＝空 ならば
+    違えば
+      CLOSED＝P["closed"]。
+      SBADGE＝「」。
+      もし CLOSED＝1 ならば
+        SBADGE＝「<div class='status-badge status-closed'>休業中</div>」。
+      ここまで。
+      もし CLOSED＝0 ならば
+        TIDX＝「window.__currentTurnIndex || -1」をJS実行。
+        もし TIDX＝IDX ならば
+          SBADGE＝「<div class='status-badge status-seki'>手番中</div>」。
+        違えば
+          SBADGE＝「<div class='status-badge status-normal'>待機中</div>」。
+        ここまで。
+      ここまで。
+      JS文＝『(function(){
+        var card = document.getElementById("geisha-』＆IDX＆『");
+        if(!card) return;
+        var old = card.querySelector(".status-badge");
+        if(old) old.outerHTML = "』＆SBADGE＆『";
+      })()』をJS実行。
+
+      # 手番中プレイヤーをハイライト
+      TIDX2＝「window.__currentTurnIndex || -1」をJS実行。
+      もし TIDX2＝IDX ならば
+        『document.getElementById("geisha-』＆IDX＆『").classList.add("active")』をJS実行。
+      違えば
+        『document.getElementById("geisha-』＆IDX＆『").classList.remove("active")』をJS実行。
+      ここまで。
     ここまで。
 
     # 手札裏面表示
@@ -620,7 +766,6 @@ yoyakuBtn＝空。
     ここまで。
   ここまで。
 ここまで。
-
 ●（GAMEOVERSTATEで）ゲームオーバー画面表示とは
   players＝GAMEOVERSTATE["players"]。
   winners＝GAMEOVERSTATE["winnerIds"]。
@@ -631,14 +776,22 @@ yoyakuBtn＝空。
   winners を反復して
     WID＝対象。
     WP＝players[WID]。
-    WNAME＝WP["geisha"]["name"]。
+    WGEISHA＝WP["geisha"]。
+    もし WGEISHA＝空 ならば
+      続ける。
+    ここまで。
+    WNAME＝WGEISHA["name"]。
     HTML＝HTML＆「<div class='winner-name'>🏆 」＆WNAME＆「</div>」。
   ここまで。
   HTML＝HTML＆「</div>」。
   HTML＝HTML＆「<div class='gameover-scores'>」。
   players を反復して
     P＝対象。
-    PNAME＝P["geisha"]["name"]。
+    PGEISHA＝P["geisha"]。
+    もし PGEISHA＝空 ならば
+      続ける。
+    ここまで。
+    PNAME＝PGEISHA["name"]。
     TOTAL＝P["tokenTotal"]。
     SC＝P["scoreByRound"]。
     S0＝SC[0]。
@@ -665,7 +818,11 @@ yoyakuBtn＝空。
   HTML＝HTML＆「<div class='roundend-scores'>」。
   players を反復して
     P＝対象。
-    PNAME＝P["geisha"]["name"]。
+    PGEISHA＝P["geisha"]。
+    もし PGEISHA＝空 ならば
+      続ける。
+    ここまで。
+    PNAME＝PGEISHA["name"]。
     TOTAL＝P["tokenTotal"]。
     SC＝P["scoreByRound"]。
     RI＝R-1。
@@ -682,7 +839,6 @@ yoyakuBtn＝空。
     ROOTへHTMLをHTML設定。
   ここまで。
 ここまで。
-
 # ─── アクション実行はサブ関数の後に定義 ───────────────
 
 ●アクション実行とは
@@ -703,14 +859,34 @@ yoyakuBtn＝空。
 
 # ─── 画面初期化は最後に定義 ────────────────────────
 ●（stateで）ゲーム画面初期化とは
-# turnIndexをwindowに保存（プレイヤー表示内で参照するため）
+  # turnIndexをwindowに保存
   TI＝state["turnIndex"]。
   JS文＝「window.__currentTurnIndex = 」＆TI。
   JS文をJS実行。
+
   players＝state["players"]。
   myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  myP＝players[myPID]。
+
+  # myPIDに一致するプレイヤーを検索
+  myP＝空。
+  players を反復して
+    もし 対象["id"]＝myPID ならば
+      myP＝対象。
+    ここまで。
+  ここまで。
+  もし myP＝空 ならば
+    戻る。
+  ここまで。
+
   PHASE＝state["phase"]。
+
+  # 効果選択UI用にwindowに保存
+  HANDJSON＝myP["hand"]をJSONエンコード。
+  JS文＝「window.__currentHand = 」＆HANDJSON。
+  JS文をJS実行。
+  PLAYERSJSON＝playersをJSONエンコード。
+  JS文＝「window.__currentPlayers = 」＆PLAYERSJSON。
+  JS文をJS実行。
 
   # ラウンド数表示
   ラウンド数＝state["round"]。
@@ -738,6 +914,7 @@ yoyakuBtn＝空。
   # 予約客スロット表示
   予約カード＝myP["reservation"]。
   予約カードで予約客スロット表示。
+
   # hasReservationフラグ同期
   HAS＝myP["hasReservation"]。
   JS文＝「window.__hasReservation = 」＆HAS。
@@ -746,7 +923,6 @@ yoyakuBtn＝空。
   # イベント初期化（1回だけ）
   既存フラグ＝「window.__reservationBtnInit || 0」をJS実行。
   もし 既存フラグ＝0 ならば
-    予約客セットボタン初期化。
     『window.__reservationBtnInit = 1』をJS実行。
   ここまで。
   # フェーズ別UI制御

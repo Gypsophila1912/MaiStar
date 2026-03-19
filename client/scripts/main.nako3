@@ -58,8 +58,15 @@ myNickname＝「」。
     GAMEOVERSTATEはデータ。
     GAMEOVERSTATEでゲームオーバー画面表示。
   ここまで。
-  もし PHASE≠「gameover」 ならば
+もし PHASE≠「gameover」 ならば
     データでゲーム画面初期化。
+    HASEFFECT＝『(window.__lastEffectCard && typeof window.__lastEffectCard === "object") ? 1 : 0』をJS実行。
+    もし HASEFFECT＝1 ならば
+      LASTCARD＝「window.__lastEffectCard」をJS実行。
+      SOURCE＝「window.__lastEffectSource || 'zashiki'」をJS実行。
+      LASTCARDとSOURCEでカード効果UI表示。
+      『window.__lastEffectCard = null』をJS実行。
+    ここまで。
   ここまで。
 ここまで。
 

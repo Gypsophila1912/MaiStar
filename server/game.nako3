@@ -504,6 +504,23 @@
   ここまで。
 
   Gと現在手番の次手番番号取得を次番号に代入。
+
+  # 休業状態のプレイヤーをスキップ（最大人数分ループして無限ループ防止）
+  人数=G["players"]の要素数。
+  スキップ回数=0。
+  スキップ回数<人数の間
+    次P=G["players"][次番号]
+    次Pの実質閉業状態を次閉業に代入。
+    もし次閉業=0ならば
+      スキップ回数=人数。
+    違えば
+      # 休業状態なのでスキップ・閉業フラグをリセット
+      次P["closed"]=0
+      Gと次番号の次手番番号取得を次番号に代入。
+      スキップ回数=スキップ回数+1
+    ここまで。
+  ここまで。
+
   G["turnIndex"]=次番号
   次P=G["players"][次番号]
   次P["usedGeishaSkill"]=0
@@ -512,7 +529,6 @@
   G["phase"]="turn"
   Gを戻す。
 ここまで。
-
 ●(GとPIDの)基本行動前判定とは
 	P=G["players"][PID]
 	もしP["usedBaseAction"]=0ならば
@@ -1168,7 +1184,11 @@
 				geishaInfo=対象。
 			ここまで。
 		ここまで。
-		pstate["geisha"]=geishaInfo
+				もしgeishaInfo=空ならば
+			pstate["geisha"]={"id":"","name":"不明","image":"","reputation":{"red":0,"blue":0,"green":0}}
+		違えば
+			pstate["geisha"]=geishaInfo
+		ここまで。
 		pstate["reputation"]=P["reputation"]
 		pstate["zashiki"]=P["zashiki"]
 		pstate["ad"]=P["ad"]
