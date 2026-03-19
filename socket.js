@@ -134,12 +134,26 @@ io.on("connection", (socket) => {
         ...data,
         socketId: socket.id,
       });
-      if (!result.success) {
-        // 失敗はアクション送信者にだけエラーを返す
+      if (!result || !result.success) {
         socket.emit("アクション失敗", {
-          message: result.message || "アクション失敗",
+          message: result?.message || "アクション失敗",
         });
         return;
+      }
+      // ★ phaseとendModeをログ出力
+      if (result.states && result.states.length > 0) {
+        const firstState =
+          typeof result.states[0].state === "string"
+            ? JSON.parse(result.states[0].state)
+            : result.states[0].state;
+        console.log(
+          "アクション後state: phase=",
+          firstState.phase,
+          "endMode=",
+          firstState.endMode,
+          "lapRemaining=",
+          firstState.lapRemaining,
+        );
       }
       result.states.forEach(({ socketId, state }) => {
         const stateObj = typeof state === "string" ? JSON.parse(state) : state;

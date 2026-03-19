@@ -235,5 +235,445 @@ yoyakuBtn＝空。
 ここまで。
 
 ●予約客処理とは
-  「予約客ボタンが押されました」と表示。
+
+  # 予約客がセットされていなければ弾く
+  HAS＝「window.__hasReservation || 0」をJS実行。
+  もし HAS＝0 ならば
+    「予約客がセットされていません」と言う。
+    戻る。
+  ここまで。
+
+  RID＝「sessionStorage.getItem('myRoomId')」をJS実行。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  送信JSON＝{"action":"予約客","roomId":RID,"playerId":myPID}をJSONエンコード。
+  JS文＝「emit('アクション', 」＆送信JSON＆「)」。
+  JS文をJS実行。
+ここまで。
+
+●（予約カードで）予約客スロット表示とは
+  SLOT＝「#reservation-slot」のDOM要素取得。
+  CARD＝「#reservation-card」のDOM要素取得。
+  もし SLOT＝空 ならば
+    戻る。
+  ここまで。
+  もし CARD＝空 ならば
+    戻る。
+  ここまで。
+
+  # 予約カードにnameキーがあるか判定
+  名前あり＝予約カードの「name」が辞書キー存在。
+  NAME＝「」。
+  もし 名前あり＝1 ならば
+    NAME＝予約カード["name"]。
+  ここまで。
+
+  もし NAME＝「」 ならば
+    CARDへ「」をHTML設定。
+    『document.getElementById("reservation-slot").classList.add("empty")』をJS実行。
+    『document.getElementById("reservation-slot").classList.remove("has-card")』をJS実行。
+  違えば
+    COL＝予約カード["color"]。
+    INC＝予約カード["income"]。
+    COND＝予約カード["condition"]。
+    PROMO＝予約カード["promo"]。
+    COND_LABEL＝COL＆「/」＆COND。
+    もし COL＝「none」 ならば
+      COND_LABEL＝「任/」＆COND。
+    ここまで。
+    HTML＝「<div class='card-face color-」＆COL＆「'>」。
+    HTML＝HTML＆「<div class='card-cost'>」＆COND_LABEL＆「</div>」。
+    HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
+    HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
+    HTML＝HTML＆「<div class='card-promo'>宣」＆PROMO＆「</div>」。
+    HTML＝HTML＆「</div>」。
+    CARDへHTMLをHTML設定。
+    『document.getElementById("reservation-slot").classList.remove("empty")』をJS実行。
+    『document.getElementById("reservation-slot").classList.add("has-card")』をJS実行。
+    『window.__hasReservation = 1』をJS実行。
+  ここまで。
+ここまで。
+
+●（フラグで）アクションボタン有効設定とは
+  もし フラグ＝1 ならば
+    『
+      ["zasiki","senden","syoukai","yoyaku"].forEach(id => {
+        const el = document.getElementById(id);
+        if(el){ el.classList.remove("btn-disabled"); el.style.pointerEvents="auto"; el.style.opacity="1"; }
+      });
+    』をJS実行。
+  違えば
+    『
+      ["zasiki","senden","syoukai","yoyaku"].forEach(id => {
+        const el = document.getElementById(id);
+        if(el){ el.classList.add("btn-disabled"); el.style.pointerEvents="none"; el.style.opacity="0.3"; }
+      });
+    』をJS実行。
+  ここまで。
+ここまで。
+
+●（handと評判で）出せるカードハイライトとは
+  枚数＝handの要素数。
+  I＝0。
+  I<枚数の間
+    card＝hand[I]。
+    COL＝card["color"]。
+    COND＝card["condition"]。
+    TYPE＝「」。
+    もし cardの「conditionType」が辞書キー存在 ならば
+      TYPE＝card["conditionType"]。
+    ここまで。
+    赤＝評判["red"]。
+    青＝評判["blue"]。
+    緑＝評判["green"]。
+    出せる＝0。
+
+    もし TYPE＝「any」 ならば
+      最大＝赤。
+      もし 青>最大 ならば
+        最大＝青。
+      ここまで。
+      もし 緑>最大 ならば
+        最大＝緑。
+      ここまで。
+      もし 最大>=COND ならば
+        出せる＝1。
+      ここまで。
+    ここまで。
+
+    もし TYPE＝「」 ならば
+      もし COL＝「red」 ならば
+        もし 赤>=COND ならば
+          出せる＝1。
+        ここまで。
+      ここまで。
+      もし COL＝「blue」 ならば
+        もし 青>=COND ならば
+          出せる＝1。
+        ここまで。
+      ここまで。
+      もし COL＝「green」 ならば
+        もし 緑>=COND ならば
+          出せる＝1。
+        ここまで。
+      ここまで。
+      もし COL＝「none」 ならば
+        最大＝赤。
+        もし 青>最大 ならば
+          最大＝青。
+        ここまで。
+        もし 緑>最大 ならば
+          最大＝緑。
+        ここまで。
+        もし 最大>=COND ならば
+          出せる＝1。
+        ここまで。
+      ここまで。
+    ここまで。
+
+    IDX＝I。
+    もし 出せる＝1 ならば
+      JS文＝『(function(){ var el=document.querySelectorAll("#my-cards .card-face")[』＆IDX＆『]; if(el){ el.classList.add("can-play"); el.classList.remove("cannot-play"); }})()』。
+    違えば
+      JS文＝『(function(){ var el=document.querySelectorAll("#my-cards .card-face")[』＆IDX＆『]; if(el){ el.classList.add("cannot-play"); el.classList.remove("can-play"); }})()』。
+    ここまで。
+    JS文をJS実行。
+    I＝I+1。
+  ここまで。
+ここまで。
+●（handで）手札表示とは
+  HTML＝「」。
+  hand を反復して
+    card＝対象。
+    NAME＝card["name"]。
+    INC＝card["income"]。
+    COL＝card["color"]。
+    COND＝card["condition"]。
+    PROMO＝card["promo"]。
+    CARDNO＝card["cardNo"]。
+    COND_LABEL＝COL＆「/」＆COND。
+    もし COL＝「none」 ならば
+      COND_LABEL＝「任/」＆COND。
+    ここまで。
+    HTML＝HTML＆「<div class='card-face color-」＆COL＆「' data-cardno='」＆CARDNO＆「' onclick='jsCardClick(this)'>」。
+    HTML＝HTML＆「<div class='card-cost'>」＆COND_LABEL＆「</div>」。
+    HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
+    HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
+    HTML＝HTML＆「<div class='card-promo'>宣」＆PROMO＆「</div>」。
+    HTML＝HTML＆「</div>」。
+  ここまで。
+  EL＝「#my-cards」のDOM要素取得。
+  ELへHTMLをHTML設定。
+ここまで。
+
+●（playersで）座敷表示とは
+  players を反復して
+    P＝対象。
+    PID＝P["id"]。
+    zashiki＝P["zashiki"]。
+    EL＝「#client-」＆PIDのDOM要素取得。
+    もし EL＝空 ならば
+    違えば
+      HTML＝「」。
+      zashiki を反復して
+        card＝対象。
+        NAME＝card["name"]。
+        COL＝card["color"]。
+        INC＝card["income"]。
+        COND＝card["condition"]。
+        COND_LABEL＝COL＆「/」＆COND。
+        もし COL＝「none」 ならば
+          COND_LABEL＝「任/」＆COND。
+        ここまで。
+        HTML＝HTML＆「<div class='card-face color-」＆COL＆「'>」。
+        HTML＝HTML＆「<div class='card-cost'>」＆COND_LABEL＆「</div>」。
+        HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
+        HTML＝HTML＆「<div class='card-pts'>収入」＆INC＆「</div>」。
+        HTML＝HTML＆「</div>」。
+      ここまで。
+      ELへHTMLをHTML設定。
+    ここまで。
+  ここまで。
+ここまで。
+
+●（playersで）宣伝表示とは
+  players を反復して
+    P＝対象。
+    PID＝P["id"]。
+    ad＝P["ad"]。
+    EL＝「#ad-」＆PIDのDOM要素取得。
+    もし EL＝空 ならば
+    違えば
+      HTML＝「」。
+      ad を反復して
+        card＝対象。
+        NAME＝card["name"]。
+        COL＝card["color"]。
+        PROMO＝card["promo"]。
+        HTML＝HTML＆「<div class='card-face color-」＆COL＆「' style='opacity:0.7'>」。
+        HTML＝HTML＆「<div class='card-value'>」＆NAME＆「</div>」。
+        HTML＝HTML＆「<div class='card-promo'>宣」＆PROMO＆「</div>」。
+        HTML＝HTML＆「</div>」。
+      ここまで。
+      ELへHTMLをHTML設定。
+    ここまで。
+  ここまで。
+ここまで。
+
+●（playersで）プレイヤー表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  players を反復して
+    P＝対象。
+    IDX＝P["id"]。
+
+    # 座敷エリアのプレイヤー名ラベルを更新
+    TLABEL＝「#table-label-」＆IDXのDOM要素取得。
+    もし TLABEL＝空 ならば
+    違えば
+      gName＝P["geisha"]["name"]。
+      TLABELへgNameをテキスト設定。
+    ここまで。
+
+    # 芸者名表示（上部カード）
+    GNEL＝「#maiko-name-」＆IDXのDOM要素取得。
+    もし GNEL＝空 ならば
+    違えば
+      GNELへP["geisha"]["name"]をテキスト設定。
+    ここまで。
+
+    # スコア表示
+    SEL＝「#score-」＆IDXのDOM要素取得。
+    もし SEL＝空 ならば
+    違えば
+      SELへ「点数: 」＆P["tokenTotal"]＆「点」をテキスト設定。
+    ここまで。
+
+    # 評判表示
+    REP＝P["reputation"]。
+    赤＝REP["red"]。
+    青＝REP["blue"]。
+    緑＝REP["green"]。
+    REPEL＝「#reputation-」＆IDXのDOM要素取得。
+    もし REPEL＝空 ならば
+    違えば
+      REPELへ「評判: 赤」＆赤＆「 青」＆青＆「 緑」＆緑をテキスト設定。
+    ここまで。
+
+    # 手札裏面表示
+    もし P["id"]＝myPID ならば
+      HCOUNT＝P["hand"]の要素数。
+    違えば
+      HCOUNT＝P["handCount"]。
+    ここまで。
+    BACKS＝「」。
+    J＝0。
+    J<HCOUNTの間
+      BACKS＝BACKS＆「<div class='card-back'></div>」。
+      J＝J+1。
+    ここまで。
+    HEL＝「#hand-」＆IDXのDOM要素取得。
+    もし HEL＝空 ならば
+    違えば
+      HELへBACKSをHTML設定。
+    ここまで。
+  ここまで。
+ここまで。
+
+●（GAMEOVERSTATEで）ゲームオーバー画面表示とは
+  players＝GAMEOVERSTATE["players"]。
+  winners＝GAMEOVERSTATE["winnerIds"]。
+
+  HTML＝「<div class='gameover-container'>」。
+  HTML＝HTML＆「<div class='gameover-title'>― 結果発表 ―</div>」。
+  HTML＝HTML＆「<div class='gameover-winners'>」。
+  winners を反復して
+    WID＝対象。
+    WP＝players[WID]。
+    WNAME＝WP["geisha"]["name"]。
+    HTML＝HTML＆「<div class='winner-name'>🏆 」＆WNAME＆「</div>」。
+  ここまで。
+  HTML＝HTML＆「</div>」。
+  HTML＝HTML＆「<div class='gameover-scores'>」。
+  players を反復して
+    P＝対象。
+    PNAME＝P["geisha"]["name"]。
+    TOTAL＝P["tokenTotal"]。
+    SC＝P["scoreByRound"]。
+    S0＝SC[0]。
+    S1＝SC[1]。
+    S2＝SC[2]。
+    HTML＝HTML＆「<div class='score-row'>」。
+    HTML＝HTML＆「<span class='score-pname'>」＆PNAME＆「</span>」。
+    HTML＝HTML＆「<span class='score-rounds'>」＆S0＆「/」＆S1＆「/」＆S2＆「</span>」。
+    HTML＝HTML＆「<span class='score-total'>計」＆TOTAL＆「点</span>」。
+    HTML＝HTML＆「</div>」。
+  ここまで。
+  HTML＝HTML＆「</div></div>」。
+  ROOT＝「#game-root」のDOM要素取得。
+  もし ROOT≠空 ならば
+    ROOTへHTMLをHTML設定。
+  ここまで。
+ここまで。
+
+●（ROUNDENDSTATEで）ラウンドエンド画面表示とは
+  players＝ROUNDENDSTATE["players"]。
+  R＝ROUNDENDSTATE["round"]。
+  HTML＝「<div class='roundend-container'>」。
+  HTML＝HTML＆「<div class='roundend-title'>第」＆R＆「局 終了</div>」。
+  HTML＝HTML＆「<div class='roundend-scores'>」。
+  players を反復して
+    P＝対象。
+    PNAME＝P["geisha"]["name"]。
+    TOTAL＝P["tokenTotal"]。
+    SC＝P["scoreByRound"]。
+    RI＝R-1。
+    RSCORE＝SC[RI]。
+    HTML＝HTML＆「<div class='score-row'>」。
+    HTML＝HTML＆「<span class='score-pname'>」＆PNAME＆「</span>」。
+    HTML＝HTML＆「<span class='score-round-pts'>今局:」＆RSCORE＆「点</span>」。
+    HTML＝HTML＆「<span class='score-total'>累計:」＆TOTAL＆「点</span>」。
+    HTML＝HTML＆「</div>」。
+  ここまで。
+  HTML＝HTML＆「</div></div>」。
+  ROOT＝「#game-root」のDOM要素取得。
+  もし ROOT≠空 ならば
+    ROOTへHTMLをHTML設定。
+  ここまで。
+ここまで。
+
+# ─── アクション実行はサブ関数の後に定義 ───────────────
+
+●アクション実行とは
+  action＝「window.__actionType」をJS実行。
+  もし action＝「座敷」 ならば
+    座敷処理。
+  ここまで。
+  もし action＝「宣伝」 ならば
+    宣伝処理。
+  ここまで。
+  もし action＝「紹介」 ならば
+    紹介処理。
+  ここまで。
+  もし action＝「予約客」 ならば
+    予約客処理。
+  ここまで。
+ここまで。
+
+# ─── 画面初期化は最後に定義 ────────────────────────
+●（stateで）ゲーム画面初期化とは
+  players＝state["players"]。
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  myP＝players[myPID]。
+  PHASE＝state["phase"]。
+
+  # ラウンド数表示
+  ラウンド数＝state["round"]。
+  EL＝「#round-num」のDOM要素取得。
+  ELへラウンド数をテキスト設定。
+
+  # 全プレイヤー表示
+  playersでプレイヤー表示。
+  # 自分の手札表示
+  myP["hand"]で手札表示。
+  # 座敷・宣伝表示
+  playersで座敷表示。
+  playersで宣伝表示。
+
+  # スコア表示
+  SCORE＝myP["tokenTotal"]。
+  SEL＝「#my-score」のDOM要素取得。
+  SELへSCOREをテキスト設定。
+
+  # 局数表示
+  R＝state["round"]。
+  GEL＝「#game-progress」のDOM要素取得。
+  GELへR＆「/3」をテキスト設定。
+
+  # 予約客スロット表示
+  予約カード＝myP["reservation"]。
+  予約カードで予約客スロット表示。
+  # hasReservationフラグ同期
+  HAS＝myP["hasReservation"]。
+  JS文＝「window.__hasReservation = 」＆HAS。
+  JS文をJS実行。
+
+  # イベント初期化（1回だけ）
+  既存フラグ＝「window.__reservationBtnInit || 0」をJS実行。
+  もし 既存フラグ＝0 ならば
+    予約客セットボタン初期化。
+    『window.__reservationBtnInit = 1』をJS実行。
+  ここまで。
+  # フェーズ別UI制御
+  もし PHASE＝「reservation」 ならば
+    # バナー表示
+    BAN＝「#reservation-banner」のDOM要素取得。
+    もし BAN≠空 ならば
+      BAN の「display」へ「block」をDOMスタイル設定。
+    ここまで。
+    # アクションボタン無効
+    0でアクションボタン有効設定。
+    # 予約客スロットをクリック可能に
+    SLOT＝「#reservation-slot」のDOM要素取得。
+    もし SLOT≠空 ならば
+      もし HAS＝0 ならば
+        SLOT の「cursor」へ「pointer」をDOMスタイル設定。
+        SLOT をクリックした時には
+          予約客セット処理。
+        ここまで。
+      ここまで。
+    ここまで。
+  違えば
+    # バナー非表示
+    BAN＝「#reservation-banner」のDOM要素取得。
+    もし BAN≠空 ならば
+      BAN の「display」へ「none」をDOMスタイル設定。
+    ここまで。
+    # 手番チェック
+    turnIdx＝state["turnIndex"]。
+    もし turnIdx＝myPID ならば
+      1でアクションボタン有効設定。
+      myP["hand"]とmyP["reputation"]で出せるカードハイライト。
+    違えば
+      0でアクションボタン有効設定。
+    ここまで。
+  ここまで。
 ここまで。

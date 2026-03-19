@@ -51,6 +51,20 @@ myNickname＝「」。
 
 ●ゲーム状態更新受信とは
   データ＝「window.__nakoData」をJS実行。
+  PHASE＝データ["phase"]。
+  R＝データ["round"]。
+  『console.log("[状態更新] phase:", window.__nakoData.phase, "round:", window.__nakoData.round)』をJS実行。
+  もし PHASE＝「gameover」 ならば
+    GAMEOVERSTATEはデータ。
+    GAMEOVERSTATEでゲームオーバー画面表示。
+  ここまで。
+  もし PHASE≠「gameover」 ならば
+    データでゲーム画面初期化。
+  ここまで。
+ここまで。
+
+●次ラウンド開始とは
+  データ＝「window.__nakoData」をJS実行。
   データでゲーム画面初期化。
 ここまで。
 
