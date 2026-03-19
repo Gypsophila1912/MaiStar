@@ -3,62 +3,6 @@ sendenBtn＝空。
 syoukaiBtn＝空。
 yoyakuBtn＝空。
 
-●（stateで）ゲーム画面初期化とは
-  players＝state[「players」]。
-  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
-  myP＝players[myPID]。
-
-  # 芸者画像設定
-  geisha＝myP[「geisha」]。
-  gImg＝geisha[「image」]。
-  もし gImg ならば
-    JS文＝「document.getElementById('my-maiko-img').src = '」＆gImg＆「'; document.getElementById('my-maiko-area').style.display = 'flex';」。
-    JS文をJS実行。
-
-    # ステータス（評判）表示
-    rep＝geisha[「reputation」]。
-    rR＝rep[「red」]。
-    rB＝rep[「blue」]。
-    rG＝rep[「green」]。
-
-    HTML＝「」。
-    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box red'></div>」＆rR＆「</div>」。
-    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box blue'></div>」＆rB＆「</div>」。
-    HTML＝HTML＆「<div class='maiko-stat-row'><div class='stat-box green'></div>」＆rG＆「</div>」。
-
-    EL＝「#my-maiko-stats」のDOM要素取得。
-    ELへHTMLをHTML設定。
-  違えば
-    「document.getElementById('my-maiko-area').style.display = 'none';」をJS実行。
-  ここまで。
-
-  # ラウンド数表示
-  ラウンド数＝state[「round」]。
-  EL＝「#round-num」のDOM要素取得。
-  ELへラウンド数をテキスト設定。
-
-  # 全プレイヤー表示
-  playersでプレイヤー表示。
-
-  # 自分の手札表示
-  myP[「hand」]で手札表示。
-  playersで座敷表示。
-
-  # 自分のスコア表示
-  SCORE＝myP[「tokenTotal」]。
-  SEL＝「#my-score」のDOM要素取得。
-  SELへSCOREをテキスト設定。
-
-  # 手番チェック（ボタン有効・無効）
-  turnIdx＝state[「turnIndex」]。
-  もし turnIdx＝myPID ならば
-    1でアクションボタン有効設定。
-  違えば
-    0でアクションボタン有効設定。
-  ここまで。
-ここまで。
-
-
 ●（handで）手札表示とは
   HTML＝「」。
   hand を反復して
@@ -328,93 +272,6 @@ yoyakuBtn＝空。
   ここまで。
 ここまで。
 
-●（カードと起点で）カード効果UI表示とは
-  # カードがnullの場合はスキップ
-  もし カード＝空 ならば
-    戻る。
-  ここまで。
-  名前あり＝カードの「name」が辞書キー存在。
-  もし 名前あり＝0 ならば
-    戻る。
-  ここまで。
-
-  NAME＝カード["name"]。
-
-  もし NAME＝「役者」 ならば
-    戻る。
-  ここまで。
-  もし NAME＝「大名」 ならば
-    戻る。
-  ここまで。
-  もし NAME＝「花魁」 ならば
-    戻る。
-  ここまで。
-  もし NAME＝「用心棒」 ならば
-    戻る。
-  ここまで。
-  もし NAME＝「幇間」 ならば
-    戻る。
-  ここまで。
-  もし NAME＝「医師」 ならば
-    戻る。
-  ここまで。
-  もし NAME＝「学者」 ならば
-    戻る。
-  ここまで。
-  もし NAME＝「異人」 ならば
-    戻る。
-  ここまで。
-  もし NAME＝「将軍」 ならば
-    戻る。
-  ここまで。
-
-  CARDJSON＝カードをJSONエンコード。
-  JS文＝「window.__effectCard = 」＆CARDJSON＆「; window.__effectSource = '」＆起点＆「';」。
-  JS文をJS実行。
-
-  もし NAME＝「遊女」 ならば
-    遊女UI表示。
-    戻る。
-  ここまで。
-  もし NAME＝「商人」 ならば
-    商人UI表示。
-    戻る。
-  ここまで。
-  もし NAME＝「町人」 ならば
-    町人UI表示。
-    戻る。
-  ここまで。
-
-  対象判定＝0。
-  もし NAME＝「力士」 ならば
-    対象判定＝1。
-  ここまで。
-  もし NAME＝「侍」 ならば
-    対象判定＝1。
-  ここまで。
-  もし NAME＝「盗人」 ならば
-    対象判定＝1。
-  ここまで。
-  もし NAME＝「やくざ」 ならば
-    対象判定＝1。
-  ここまで。
-  もし NAME＝「忍者」 ならば
-    対象判定＝1。
-  ここまで。
-  もし NAME＝「横綱」 ならば
-    対象判定＝1。
-  ここまで。
-  もし NAME＝「くの一」 ならば
-    対象判定＝1。
-  ここまで。
-  もし NAME＝「奉行」 ならば
-    対象判定＝1。
-  ここまで。
-  もし 対象判定＝1 ならば
-    対象選択UI表示。
-  ここまで。
-ここまで。
-
 ●遊女UI表示とは
   HAND＝「window.__currentHand || []」をJS実行。
   CARD＝「window.__effectCard」をJS実行。
@@ -489,6 +346,33 @@ yoyakuBtn＝空。
   JS文＝「emit('アクション', 」＆DATAJSON＆「)」。
   JS文をJS実行。
   『window.__waitingDiscard = {effectName:"商人", count:1}』をJS実行。
+ここまで。
+
+●町人UI表示とは
+  myPID＝「parseInt(sessionStorage.getItem('myPlayerId'))」をJS実行。
+  HTML＝「」。
+  BTN自分＝『<button class="effect-target-btn" onclick="
+    window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;self&#39;};
+    navigator.nako3.run(&#39;町人自分捨て選択。&#39;);
+  ">自分：1枚引いて1枚捨てる</button>』。
+  HTML＝HTML＆BTN自分。
+  プレイヤー一覧＝「window.__currentPlayers || []」をJS実行。
+  プレイヤー一覧 を反復して
+    TP＝対象。
+    TPID＝TP["id"]。
+    もし TPID＝myPID ならば
+    違えば
+      TNAME＝TP["geisha"]["name"]。
+      BTN＝『<button class="effect-target-btn" onclick="window.__effectData={action:&#39;カード効果確定&#39;,effectName:&#39;町人&#39;,mode:&#39;other&#39;,targetPID:』＆TPID＆『};navigator.nako3.run(&#39;カード効果確定処理。&#39;);">』＆TNAME＆『に1枚引かせる</button>』。
+      HTML＝HTML＆BTN。
+    ここまで。
+  ここまで。
+  MODAL＝「#effect-modal」のDOM要素取得。
+  BODY＝「#effect-modal-body」のDOM要素取得。
+  TITLE＝「#effect-modal-title」のDOM要素取得。
+  TITLEへ「町人の効果」をテキスト設定。
+  BODYへHTMLをHTML設定。
+  MODALの「display」へ「flex」をDOMスタイル設定。
 ここまで。
 
 ●町人自分捨て選択とは
@@ -591,6 +475,94 @@ yoyakuBtn＝空。
   BODYへHTMLをHTML設定。
   MODALの「display」へ「flex」をDOMスタイル設定。
 ここまで。
+
+●（カードと起点で）カード効果UI表示とは
+  # カードがnullの場合はスキップ
+  もし カード＝空 ならば
+    戻る。
+  ここまで。
+  名前あり＝カードの「name」が辞書キー存在。
+  もし 名前あり＝0 ならば
+    戻る。
+  ここまで。
+
+  NAME＝カード["name"]。
+
+  もし NAME＝「役者」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「大名」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「花魁」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「用心棒」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「幇間」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「医師」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「学者」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「異人」 ならば
+    戻る。
+  ここまで。
+  もし NAME＝「将軍」 ならば
+    戻る。
+  ここまで。
+
+  CARDJSON＝カードをJSONエンコード。
+  JS文＝「window.__effectCard = 」＆CARDJSON＆「; window.__effectSource = '」＆起点＆「';」。
+  JS文をJS実行。
+
+  もし NAME＝「遊女」 ならば
+    遊女UI表示。
+    戻る。
+  ここまで。
+  もし NAME＝「商人」 ならば
+    商人UI表示。
+    戻る。
+  ここまで。
+  もし NAME＝「町人」 ならば
+    町人UI表示。
+    戻る。
+  ここまで。
+
+  対象判定＝0。
+  もし NAME＝「力士」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「侍」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「盗人」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「やくざ」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「忍者」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「横綱」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「くの一」 ならば
+    対象判定＝1。
+  ここまで。
+  もし NAME＝「奉行」 ならば
+    対象判定＝1。
+  ここまで。
+  もし 対象判定＝1 ならば
+    対象選択UI表示。
+  ここまで。
+ここまで。
+
 
 ●（handと評判で）出せるカードハイライトとは
   枚数＝handの要素数。
