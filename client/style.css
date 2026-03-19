@@ -817,9 +817,9 @@ body {
 }
 
 #my-maiko-stats {
-  height: 90%;          /* ほぼ全高を使う */
-  margin-bottom: 0;     /* 下寄せ解除 */
-  margin-left: 2px;     /* 重ならないように右へ少しずらす */
+  height: 90%; /* ほぼ全高を使う */
+  margin-bottom: 0; /* 下寄せ解除 */
+  margin-left: 2px; /* 重ならないように右へ少しずらす */
   display: flex;
   flex-direction: column;
   justify-content: space-evenly; /* 縦方向に均等配置 */
@@ -847,11 +847,17 @@ body {
   width: 10px;
   height: 10px;
   margin-right: 4px;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
-.stat-box.red { background-color: #d32f2f; }
-.stat-box.blue { background-color: #1976d2; }
-.stat-box.green { background-color: #388e3c; }
+.stat-box.red {
+  background-color: #d32f2f;
+}
+.stat-box.blue {
+  background-color: #1976d2;
+}
+.stat-box.green {
+  background-color: #388e3c;
+}
 
 #hand-label {
   font-size: 10px;
@@ -1573,4 +1579,16 @@ body {
 #reservation-slot.has-card {
   border: 2px solid rgba(139, 94, 42, 0.8);
   background: rgba(200, 185, 150, 0.5);
+}
+
+.status-closed {
+  background: rgba(80, 80, 80, 0.2);
+  border: 1px solid rgba(100, 100, 100, 0.4);
+  color: #888;
+}
+
+/* 休業中の芸者カードを暗くする */
+.geisha-card.closed {
+  opacity: 0.5;
+  filter: grayscale(60%);
 }
