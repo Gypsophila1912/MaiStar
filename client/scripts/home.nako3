@@ -23,6 +23,7 @@
 
 
 ●部屋作成押下とは
+  『playMainBgm()』をJS実行。
   NN＝「#nickname-input」のDOM要素取得のテキスト取得。
   もし NN＝「」 ならば
     ERR＝「#error-message」のDOM要素取得。
@@ -37,6 +38,7 @@
 ここまで。
 
 ●部屋入室押下とは
+  『playMainBgm()』をJS実行。
   JOINFORM＝「#join-form」のDOM要素取得。
   JOINFORMの「display」へ「block」をDOMスタイル設定。
   # 誤操作防止のためボタン群を隠す
@@ -49,6 +51,7 @@
 ここまで。
 
 ●入室確定押下とは
+  『playMainBgm()』をJS実行。
   「入室確定ボタン処理開始」をコンソール表示。
   NN＝「#nickname-input」のDOM要素取得のテキスト取得。
   PW＝「#password-input」のDOM要素取得のテキスト取得。

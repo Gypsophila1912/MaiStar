@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+      <audio id="bgm-main" loop preload="auto">
+        <source src="assets/title.mp3" type="audio/mpeg" />
+      </audio>
       <!-- ホーム画面 -->
     <div id="screen-home" class="screen active">        
       <div class="home-container">
@@ -251,6 +254,17 @@
            （カードクリック・ボタン処理）
       ======================================== -->
       <script>
+        function playMainBgm() {
+          const bgm = document.getElementById('bgm-main');
+          if (!bgm || window.__bgmStarted) return;
+          bgm.volume = 0.4;
+          const playPromise = bgm.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {});
+          }
+          window.__bgmStarted = true;
+        }
+
         /**
          * カードクリック
          * なでしこ3が生成したカードのonclickから呼ばれる
